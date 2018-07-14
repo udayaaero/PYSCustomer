@@ -1,0 +1,24 @@
+<resources>
+
+    <style name="TextLabel" parent="Widget.Design.TextInputLayout">
+        <!-- Hint color and label color in FALSE state -->
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textSize">17sp</item>
+        <!-- Label color in TRUE state and bar color FALSE and TRUE State -->
+        <item name="colorAccent">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlActivated">@color/white</item>
+
+        <item name="colorControlHighlight">@color/white</item>
+    </style>
+
+    <style name="TextLabel1" parent="Widget.Design.TextInputLayout">
+        <!-- Hint color and label color in FALSE state -->
+        <item name="android:textColorHint">@color/Ash</item>
+        <item name="android:textSize">17sp</item>
+        <!-- Label color in TRUE state and bar color FALSE and TRUE State -->
+        <item name="colorAccent">@color/Ash</item>
+        <item name="colorControlNormal">@color/Ash</item>
+        <item name="colorControlActivated">@color/Ash</item>
+    </style>
+</resources>

@@ -1,0 +1,101 @@
+<resources>
+    <string name="app_name">PYS</string>
+    <string name="app">PYS</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_login">Sign in</string>
+    <string name="About_us">   Pys is India biggest online fitness,aerobics,amrap,zoompa,beauty and hair stylish search and
+    discovery platform which allow user to find their favourite from of above with free trials,appointments and in-depth information
+    on each location.It enables you to shortlist a above activities in their vicinity and gives them the convenience of easy
+    payment options.It have a flexible membership and course</string>
+    <string name="About_us_contact">Reach out to us on 72000 08383 and contactus@coeuz.com</string>
+
+
+    <string name="facebook_app_id">2160878337493796</string>
+    <string name="fb_login_protocol_scheme">fb2160878337493796</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_register">Forgot Password</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="fragment_today">Today</string>
+    <string name="fragment_future">Future</string>
+    <string-array name="maintypes">
+        <item>Select</item>
+        <item>Fitness</item>
+        <item>Sports</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <string name="title_activity_welcome">Home Screen</string>
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_1_title">Welcome!</string>
+    <string name="slide_1_desc">The easiest way to booking your favorite gyms!</string>
+
+    <string name="slide_2_title">Book  your favourite!</string>
+    <string name="slide_2_desc">Book  beauty parlour and saloon for your family and friends!</string>
+
+    <string name="slide_3_title">Get ready!</string>
+    <string name="slide_3_desc">Best discounts on every single service we offer!</string>
+
+    <string name="slide_4_title">Almost done!</string>
+    <string name="slide_4_desc">Improve your personality from anywhere!</string>
+
+    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
+    <string name="play_again">Play Again</string>
+
+    <array name="array_dot_active">
+        <item>@color/dot_light_screen1</item>
+        <item>@color/dot_light_screen2</item>
+        <item>@color/dot_light_screen3</item>
+        <item>@color/dot_light_screen4</item>
+    </array>
+
+    <array name="array_dot_inactive">
+        <item>@color/dot_dark_screen1</item>
+        <item>@color/dot_dark_screen2</item>
+        <item>@color/dot_dark_screen3</item>
+        <item>@color/dot_dark_screen4</item>
+    </array>
+    <string name="Forgot_Your_Password">Forgot Your\n Password?</string>
+    <string name="Forgot_Your_Password_Message">We just need your registered email or mobile number\n to send your password reset</string>
+
+
+    <string name="pin_content_desc">PIN input field</string>
+    <string name="pin_label_text">PIN</string>
+
+
+    <string name="image">image</string>
+    <string name="desc">Being the savage\'s bowsman, that is, the person who pulled the
+    bow-oar in his boat. Dolor sit amet.</string>
+
+    <string name="italic">Friday 12 FEB.</string>
+    <string name="duplicate">DUPLICATE</string>
+    <string name="schedule">SCHEDULE</string>
+    <string name="delete">DELETE</string>
+
+    <string name="clicked_item">Clicked item : %1$s</string>
+    <string name="long_clicked_item">Long clicked item : %1$s</string>
+    <string name="server_client_id">141476679656-us52lonc468hbqjoh7k70gcjqq72i6oo.apps.googleusercontent.com</string>
+
+    <!-- <string name="facebook_app_id">375708112935901</string>
+    <string name="fb_login_protocol_scheme">fb375708112935901</string>-->
+</resources>

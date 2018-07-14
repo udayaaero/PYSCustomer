@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="none"
+    android:overScrollMode="never"
+    android:orientation="vertical"
+    android:fillViewport="true"
+    android:background="@drawable/backgroundmain"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/app_bar_main">
+    <RelativeLayout
+        android:descendantFocusability="blocksDescendants"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
+
+    <RelativeLayout
+        android:descendantFocusability="blocksDescendants"
+       android:id="@+id/allViewlayout"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
+
+    <RelativeLayout
+        android:id="@+id/shedowimage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="190dp">
+        </android.support.v4.view.ViewPager>
+        <LinearLayout
+            android:layout_marginTop="170dp"
+            android:id="@+id/SliderDots"
+            android:orientation="horizontal"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+
+    <ProgressBar
+        android:id="@+id/progressbar100"
+        android:visibility="gone"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:indeterminateDrawable="@drawable/my_progress_indeterminate"
+        android:layout_height="100dp"
+        android:layout_width="100dp">
+    </ProgressBar>
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_below="@+id/shedowimage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <TextView
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:text="Select your categories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <android.support.v7.widget.RecyclerView
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:id="@+id/recycler"
+            android:scrollbars="none"
+            android:clipToPadding="false"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            />
+        <LinearLayout
+            android:padding="5dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/viewMore"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <ImageView
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:src="@drawable/morecategories"
+            android:layout_width="15dp"
+            android:layout_height="15dp" />
+        <TextView
+         android:layout_marginStart="10dp"
+            android:background="@color/white"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="View More Categories"
+            android:id="@+id/viewMoreText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        </LinearLayout>
+        </LinearLayout>
+      <!--  <ViewFlipper
+            android:id="@+id/flipper1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:flipInterval="2000"
+            android:inAnimation="@anim/slide_in_right"
+            android:outAnimation="@anim/slide_out_left"
+            android:layout_centerInParent="true" >
+            <LinearLayout
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:background="#ffffff"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/NoAppointmentText"
+                    android:layout_marginTop="5dp"
+                    android:textStyle="bold|italic"
+                    android:gravity="center"
+                    android:textSize="15dp"
+                    android:textColor="#4BAF6F"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+        </ViewFlipper>-->
+        <LinearLayout
+            android:padding="5dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:background="@color/colorPrimary"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_marginTop="2dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_marginStart="5dp"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:src="@drawable/near_you_icon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp" />
+                <TextView
+                    android:layout_marginStart="5dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:textSize="14dp"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="Service Near you"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                </LinearLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/galleryrecycle"
+                    android:orientation="horizontal"
+                    app:reverseLayout="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                </android.support.v7.widget.RecyclerView>
+            </LinearLayout>
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+    </RelativeLayout>
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/NoInternetLayout"
+            android:background="@color/colorPrimary"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent">
+            <ImageView
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/nointernetbg"
+                android:layout_width="200dp"
+                android:layout_height="200dp">
+
+            </ImageView>
+            <TextView
+                android:textStyle="bold"
+                android:textColor="#ffffff"
+                android:textSize="18dp"
+                android:text="No  Internet  Connection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/TryAgain"
+                android:layout_marginTop="30dp"
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp"
+                android:background="@color/colorPrimaryDark"
+                android:text="Try Again"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:paddingLeft="20dp" />
+        </LinearLayout>
+
+
+    </RelativeLayout>
+</android.support.v4.widget.NestedScrollView>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:background="@drawable/backgroundmain"
+    tools:context="com.coeuz.pyscustomer.LocationChangeActivity">
+<RelativeLayout
+    android:id="@+id/firstviews"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+<android.support.v7.widget.CardView
+    android:id="@+id/cardFirst"
+
+    android:background="#ffffff"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+  <LinearLayout
+      android:weightSum="2"
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+  <TextView
+      android:layout_gravity="center"
+      android:layout_weight="1.7"
+      android:drawableLeft="@drawable/ic_location_on_black_24dp"
+      android:textColor="@color/colorPrimary"
+      android:textStyle="bold"
+      android:layout_marginTop="10dp"
+      android:layout_marginBottom="10dp"
+      android:id="@+id/currentlocation"
+      android:text="Auto-detect Current location"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content" />
+  <ImageView
+      android:layout_marginTop="10dp"
+      android:layout_weight="0.3"
+      android:src="@drawable/ic_gps_fixed_black_24dp"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content" />
+  </LinearLayout>
+
+</android.support.v7.widget.CardView>
+
+
+
+
+  <Button
+      android:layout_centerHorizontal="true"
+      android:gravity="center"
+      android:background="#ffffff"
+      android:layout_marginTop="30dp"
+      android:layout_below="@+id/cardFirst"
+      android:id="@+id/findPlace"
+      android:layout_width="200dp"
+      android:layout_height="wrap_content"
+      android:text="Search by Places"
+      android:onClick="findPlace"/>
+  <ImageView
+      android:layout_marginTop="20dp"
+      android:layout_below="@+id/findPlace"
+      android:background="@drawable/smartcity"
+      android:layout_width="match_parent"
+      android:layout_height="150dp" />
+</RelativeLayout>
+
+
+  <ProgressBar
+      android:id="@+id/progressbar200"
+      android:visibility="gone"
+      android:layout_centerVertical="true"
+      android:layout_centerHorizontal="true"
+      android:indeterminateDrawable="@drawable/my_progress_indeterminate"
+      android:layout_height="100dp"
+      android:layout_width="100dp">
+  </ProgressBar>
+  <RelativeLayout
+      android:visibility="gone"
+      android:layout_centerHorizontal="true"
+      android:layout_centerVertical="true"
+      android:id="@+id/NotYourCity"
+      android:layout_below="@id/firstviews"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+    <Button
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_centerHorizontal="true"
+        android:background="@color/colorPrimary"
+        android:id="@+id/chooseAnother"
+        android:layout_width="250dp"
+        android:layout_height="35dp"
+        android:text="Choose another location"
+        android:onClick="findPlace"/>
+    <TextView
+        android:layout_below="@+id/chooseAnother"
+       android:id="@+id/not"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/block"
+        android:text="We are not in your city"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:layout_below="@+id/not"
+        android:id="@+id/smartcity"
+        android:background="@drawable/smartcity"
+        android:layout_width="match_parent"
+        android:layout_height="150dp" />
+    <TextView
+        android:id="@+id/explore"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/smartcity"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/block"
+        android:text="Explore us in chennai for now"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_centerHorizontal="true"
+        android:id="@+id/chennai"
+        android:layout_below="@+id/explore"
+        android:src="@drawable/chennai"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+    <TextView
+        android:textStyle="bold"
+        android:layout_below="@+id/chennai"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/block"
+        android:text="Chennai"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+  </RelativeLayout>
+
+
+</RelativeLayout>
