@@ -3,12 +3,11 @@ package com.coeuz.pyscustomer.AdapterClass;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.coeuz.pyscustomer.GalleryActivity;
 import com.coeuz.pyscustomer.R;
@@ -16,9 +15,6 @@ import com.coeuz.pyscustomer.Requiredclass.TinyDB;
 
 import java.util.ArrayList;
 
-/**
- * Created by Udayakumar on 19-11-2017.
- */
 
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHolder> {
 
@@ -26,7 +22,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
     TinyDB mtinyDb;
 
 
-    private ArrayList<Integer> ImageList=new ArrayList<Integer>();
+    private ArrayList<Integer> ImageList=new ArrayList<>();
 
 
 
@@ -39,7 +35,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
 
         mtinyDb=new TinyDB(mcontext);
         ImageList.add(R.drawable.gym);
-        ImageList.add(R.drawable.yoga);
         ImageList.add(R.drawable.haircoloring);
         ImageList.add(R.drawable.asaloon);
         ImageList.add(R.drawable.agymsquar);
@@ -50,7 +45,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
         ImageList.add(R.drawable.aparlar);
         ImageList.add(R.drawable.apilatessquar);
         ImageList.add(R.drawable.aspa);
-        ImageList.add(R.drawable.zumba);
+
     }
 
 
@@ -60,7 +55,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            image=(ImageView)itemView.findViewById(R.id.imageview300);
+            image=itemView.findViewById(R.id.imageview300);
 
 
         }
@@ -70,8 +65,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
     public GalleryAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.gallery_adapter,parent,false);
 
-        MyViewHolder viewss = new MyViewHolder(view);
-        return viewss;
+        return new MyViewHolder(view);
     }
 
     @Override
@@ -79,10 +73,11 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
 
         holder.image.setImageResource(ImageList.get(position));
 
+
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ArrayList<Integer> images = new ArrayList<Integer>();
+                ArrayList<Integer> images = new ArrayList<>();
                 images.add(R.drawable.gym);
                 images.add(R.drawable.zumba);
                 images.add(R.drawable.yoga);

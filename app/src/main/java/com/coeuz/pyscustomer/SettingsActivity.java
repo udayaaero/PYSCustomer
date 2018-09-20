@@ -1,6 +1,8 @@
 package com.coeuz.pyscustomer;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,7 +15,6 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -31,27 +32,26 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    private EditText mName,mMobileNumber,mEmail,mCity,mArea;
-    private Button mConfirm;
-    private String iUserName,iPhoneNumber,iEmailId,iCity,iArea;
-    private TinyDB mTinyDb;
+    private EditText mName,mMobileNumber,mEmail;
+    private String iUserName,iPhoneNumber,iEmailId;
     private String mToken;
-    private String muserId,mcustomerName,mmobileNumber,memailId;
+    private String mcustomerName,mmobileNumber,memailId;
 
-    private TextView mChangePass;
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        mChangePass=(TextView)findViewById(R.id.ChangePass);
+        TextView mChangePass =  findViewById(R.id.ChangePass);
 
         mChangePass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,16 +63,16 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
 
-        mTinyDb=new TinyDB(getApplicationContext());
-        mToken=mTinyDb.getString(Constant.TOKEN);
+        TinyDB mTinyDb = new TinyDB(getApplicationContext());
+        mToken= mTinyDb.getString(Constant.TOKEN);
 
 
-        mName = (EditText) findViewById(R.id.username);
-        mMobileNumber = (EditText) findViewById(R.id.MobileNumber);
-        mEmail = (EditText) findViewById(R.id.emails);
-        mCity = (EditText) findViewById(R.id.city);
-        mArea = (EditText) findViewById(R.id.mArea);
-        mConfirm=(Button)findViewById(R.id.confirm);
+        mName = findViewById(R.id.username);
+        mMobileNumber = findViewById(R.id.MobileNumber);
+        mEmail = findViewById(R.id.emails);
+        //mCity = findViewById(R.id.city);
+       // mArea = findViewById(R.id.mArea);
+        Button mConfirm = findViewById(R.id.confirm);
 
 
         String URL1 = Constant.APIONE + "/user/getCurrentUser";
@@ -83,7 +83,7 @@ public class SettingsActivity extends AppCompatActivity {
                 Log.d("mvefn", String.valueOf(response));
                 try {
                     JSONObject jsonObject = new JSONObject(response);
-                    muserId = jsonObject.getString("userId");
+                   // muserId = jsonObject.getString("userId");
                     mcustomerName = jsonObject.getString("customerName");
                     mmobileNumber = jsonObject.getString("mobileNumber");
                     memailId = jsonObject.getString("emailId");
@@ -110,8 +110,6 @@ public class SettingsActivity extends AppCompatActivity {
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                } else if (error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof TimeoutError) {
                     Toast.makeText(getApplicationContext(), "Connection TimeOut! Please check your internet connection.", Toast.LENGTH_SHORT).show();
 
@@ -119,8 +117,8 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers1 = new HashMap<String, String>();
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers1 = new HashMap<>();
 
                 headers1.put("X-Auth-Token", String.valueOf(mToken).replaceAll("\"", ""));
                 return headers1;
@@ -137,8 +135,8 @@ public class SettingsActivity extends AppCompatActivity {
                 iUserName = mName.getText().toString();
                 iPhoneNumber = mMobileNumber.getText().toString();
                 iEmailId = mEmail.getText().toString();
-                iCity = mCity.getText().toString();
-                iArea = mArea.getText().toString();
+                //iCity = mCity.getText().toString();
+                //iArea = mArea.getText().toString();
 
                 String URL = Constant.APIONE + "/user/editProfile ";
                 StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -171,8 +169,6 @@ public class SettingsActivity extends AppCompatActivity {
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof NoConnectionError) {
-                            Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                         } else if (error instanceof TimeoutError) {
                             Toast.makeText(getApplicationContext(), "Connection TimeOut! Please check your internet connection.", Toast.LENGTH_SHORT).show();
                         }
@@ -180,8 +176,8 @@ public class SettingsActivity extends AppCompatActivity {
                 })
                 {
                     @Override
-                    public byte[] getBody() throws AuthFailureError {
-                        HashMap<String, String> hashMap = new HashMap<String, String>();
+                    public byte[] getBody() {
+                        HashMap<String, String> hashMap = new HashMap<>();
                         hashMap.put("customerName", iUserName);
                         hashMap.put("emailId", iEmailId);
                         hashMap.put("mobileNumber", iPhoneNumber);
@@ -195,8 +191,8 @@ public class SettingsActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        HashMap<String, String> headers = new HashMap<String, String>();
+                    public Map<String, String> getHeaders() {
+                        HashMap<String, String> headers = new HashMap<>();
 
                         headers.put("X-Auth-Token", String.valueOf(mToken).replaceAll("\"", ""));
 
@@ -219,8 +215,9 @@ public class SettingsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
+            this.finish();
         }
-        this.finish();
+
         return super.onOptionsItemSelected(item);
     }
 }

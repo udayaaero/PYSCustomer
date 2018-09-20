@@ -32,13 +32,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <de.hdodenhof.circleimageview.CircleImageView
-
                     android:layout_gravity="center"
                     xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/profile_image"
                     android:layout_width="96dp"
                     android:layout_height="96dp"
-                    android:src="@drawable/ic_person_black_24dp"
+                    android:src="@drawable/head"
                     />
 
 
@@ -54,7 +53,8 @@
                         android:inputType="textVisiblePassword"
                         android:singleLine="true"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="HardcodedText" />
                 </android.support.design.widget.TextInputLayout>
                 <android.support.design.widget.TextInputLayout
                     android:textColorHint="@color/colorPrimary"
@@ -69,7 +69,8 @@
                         android:inputType="phone"
                         android:maxLength="10"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="HardcodedText" />
                 </android.support.design.widget.TextInputLayout>
                 <android.support.design.widget.TextInputLayout
                     android:textColorHint="@color/colorPrimary"
@@ -82,7 +83,8 @@
                         android:singleLine="true"
                         android:textColor="@color/colorPrimary"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="HardcodedText,TextFields" />
                 </android.support.design.widget.TextInputLayout>
 
 
@@ -98,7 +100,8 @@
                         android:inputType="textVisiblePassword"
                         android:singleLine="true"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="HardcodedText" />
                 </android.support.design.widget.TextInputLayout>
                 <android.support.design.widget.TextInputLayout
                     android:textColorHint="@color/colorPrimary"
@@ -112,7 +115,8 @@
                         android:inputType="textVisiblePassword"
                         android:singleLine="true"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="HardcodedText" />
                 </android.support.design.widget.TextInputLayout>
                 <LinearLayout
                     android:layout_marginTop="20dp"
@@ -127,7 +131,8 @@
                         android:text="Change"
                         android:background="@drawable/roundbutton"
                         android:layout_width="70dp"
-                        android:layout_height="70dp" />
+                        android:layout_height="70dp"
+                        tools:ignore="HardcodedText" />
                 </LinearLayout>
             </LinearLayout>
         </android.support.v7.widget.CardView>
@@ -154,7 +159,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Change my password"
-                android:textColor="@color/colorPrimary"/>
+                android:textColor="@color/colorPrimary"
+                tools:ignore="HardcodedText,RtlHardcoded" />
 
 
 

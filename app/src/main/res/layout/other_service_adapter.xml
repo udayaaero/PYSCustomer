@@ -13,10 +13,9 @@
 
         android:textColor="@color/block"
         android:textStyle="italic"
-        android:textSize="11sp"
+        android:textSize="12sp"
         android:layout_centerHorizontal="true"
         android:id="@+id/nameofService"
-        android:text="vfwhvgwbvhfew"
         android:layout_width="100dp"
         android:layout_height="wrap_content" />
 </RelativeLayout>

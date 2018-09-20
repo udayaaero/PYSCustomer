@@ -1,6 +1,8 @@
 package com.coeuz.pyscustomer;
 
-import android.content.Intent;
+
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,7 +15,6 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -28,35 +29,36 @@ import com.coeuz.pyscustomer.Requiredclass.TinyDB;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ChangePasswordActivity extends AppCompatActivity {
 
     private EditText mpas,mnewpas,mnewConformpass;
     private String Token;
-    private String CurrentPassword,NewPassWord,ConformPassword;
-    private TinyDB NewTinyDB;
+    private String CurrentPassword,ConformPassword;
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        NewTinyDB = new TinyDB(getApplicationContext());
-        Token = NewTinyDB.getString(Constant.TOKEN);
+        TinyDB newTinyDB = new TinyDB(getApplicationContext());
+        Token = newTinyDB.getString(Constant.TOKEN);
 
-        mpas = (EditText) findViewById(R.id.oldpassword);
-        mnewpas = (EditText) findViewById(R.id.passwordnew);
-        mnewConformpass = (EditText) findViewById(R.id.passwordnewconform);
-        Button mupdatepass = (Button) findViewById(R.id.updatepasswor);
+        mpas = findViewById(R.id.oldpassword);
+        mnewpas =  findViewById(R.id.passwordnew);
+        mnewConformpass =  findViewById(R.id.passwordnewconform);
+        Button mupdatepass = findViewById(R.id.updatepasswor);
 
         mupdatepass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
 
                 CurrentPassword = mpas.getText().toString().trim();
-                NewPassWord = mnewpas.getText().toString().trim();
+                //NewPassWord = mnewpas.getText().toString().trim();
                 ConformPassword = mnewConformpass.getText().toString().trim();
 
 
@@ -130,16 +132,14 @@ public class ChangePasswordActivity extends AppCompatActivity {
                             } else if (error instanceof ParseError) {
                                 Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                            } else if (error instanceof NoConnectionError) {
-                                Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                             } else if (error instanceof TimeoutError) {
                                 Toast.makeText(getApplicationContext(), "Connection TimeOut! Please check your internet connection.", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }) {
                         @Override
-                        public Map<String, String> getHeaders() throws AuthFailureError {
-                            HashMap<String, String> headers = new HashMap<String, String>();
+                        public Map<String, String> getHeaders() {
+                            HashMap<String, String> headers = new HashMap<>();
 
                             headers.put("X-Auth-Token", String.valueOf(Token).replaceAll("\"", ""));
 

@@ -10,6 +10,7 @@ import com.google.gson.annotations.SerializedName;
 public class BookingHistoryModel
     {
 
+
         @SerializedName("bookingId")
         @Expose
         private Integer bookingId;
@@ -60,13 +61,13 @@ public class BookingHistoryModel
         private Object slotReccurence;
         @SerializedName("startTime")
         @Expose
-        private Object startTime;
+        private String startTime;
         @SerializedName("endTime")
         @Expose
-        private Object endTime;
+        private String endTime;
         @SerializedName("amount")
         @Expose
-        private Double amount;
+        private Integer amount;
         @SerializedName("booedforDate")
         @Expose
         private String booedforDate;
@@ -109,6 +110,24 @@ public class BookingHistoryModel
         @SerializedName("memberShipType")
         @Expose
         private Object memberShipType;
+        @SerializedName("errorMessage")
+        @Expose
+        private Object errorMessage;
+        @SerializedName("contactNo")
+        @Expose
+        private Object contactNo;
+        @SerializedName("area")
+        @Expose
+        private Object area;
+        @SerializedName("notes")
+        @Expose
+        private Object notes;
+        @SerializedName("slotStatus")
+        @Expose
+        private Object slotStatus;
+        @SerializedName("otp")
+        @Expose
+        private String otp;
 
 
         public BookingHistoryModel(String bookingStatus, String bookingType, String booedforDate, String bookingtimeStamp,
@@ -126,271 +145,331 @@ public class BookingHistoryModel
 
         }
 
+        public BookingHistoryModel(String bookingStatus, String bookingType, String booedforDate, String bookingtimeStamp,
+                                   String bookingid, String personcount, String amount1, String slotid, String subActivityType,
+                                   String vendorName, String otp) {
+            this.bookingStatus=bookingStatus;
+            this.bookingType=bookingType;
+            this.booedforDate=booedforDate;
+            this.bookingtimeStamp=bookingtimeStamp;
+            this.bookingid=bookingid;
+            this.personcount=personcount;
+            this.amount1=amount1;
+            this.slotid=slotid;
+            this.subActivityType=subActivityType;
+            this.vendorName=vendorName;
+            this.otp=otp;
+        }
         public Integer getBookingId() {
-        return bookingId;
-    }
-
-    public void setBookingId(Integer bookingId) {
-        this.bookingId = bookingId;
-    }
-
-    public Integer getVendorId() {
-        return vendorId;
-    }
-
-    public void setVendorId(Integer vendorId) {
-        this.vendorId = vendorId;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public Integer getSlotId() {
-        return slotId;
-    }
-
-    public void setSlotId(Integer slotId) {
-        this.slotId = slotId;
-    }
-
-    public String getBookingStatus() {
-        return bookingStatus;
-    }
-
-    public void setBookingStatus(String bookingStatus) {
-        this.bookingStatus = bookingStatus;
-    }
-
-    public Object getBookedForDate() {
-        return bookedForDate;
-    }
-
-    public void setBookedForDate(Object bookedForDate) {
-        this.bookedForDate = bookedForDate;
-    }
-
-    public Object getBookingTimeStamp() {
-        return bookingTimeStamp;
-    }
-
-    public void setBookingTimeStamp(Object bookingTimeStamp) {
-        this.bookingTimeStamp = bookingTimeStamp;
-    }
-
-    public Integer getSubActivityId() {
-        return subActivityId;
-    }
-
-    public void setSubActivityId(Integer subActivityId) {
-        this.subActivityId = subActivityId;
-    }
-
-    public Object getPaymentsDTO() {
-        return paymentsDTO;
-    }
-
-    public void setPaymentsDTO(Object paymentsDTO) {
-        this.paymentsDTO = paymentsDTO;
-    }
-
-    public Object getPaymentId() {
-        return paymentId;
-    }
-
-    public void setPaymentId(Object paymentId) {
-        this.paymentId = paymentId;
-    }
-
-    public String getBookingType() {
-        return bookingType;
-    }
-
-    public void setBookingType(String bookingType) {
-        this.bookingType = bookingType;
-    }
-
-    public Integer getPersonCount() {
-        return personCount;
-    }
-
-    public void setPersonCount(Integer personCount) {
-        this.personCount = personCount;
-    }
-
-    public Integer getDays() {
-        return days;
-    }
-
-    public void setDays(Integer days) {
-        this.days = days;
-    }
-
-    public Object getDates() {
-        return dates;
-    }
-
-    public void setDates(Object dates) {
-        this.dates = dates;
-    }
-
-    public Object getType() {
-        return type;
-    }
-
-    public void setType(Object type) {
-        this.type = type;
-    }
-
-    public Object getSlotReccurence() {
-        return slotReccurence;
-    }
-
-    public void setSlotReccurence(Object slotReccurence) {
-        this.slotReccurence = slotReccurence;
-    }
-
-    public Object getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Object startTime) {
-        this.startTime = startTime;
-    }
-
-    public Object getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Object endTime) {
-        this.endTime = endTime;
-    }
-
-    public Double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Double amount) {
-        this.amount = amount;
-    }
-
-    public String getBooedforDate() {
-        return booedforDate;
-    }
-
-    public void setBooedforDate(String booedforDate) {
-        this.booedforDate = booedforDate;
-    }
-
-    public String getBookingtimeStamp() {
-        return bookingtimeStamp;
-    }
+            return bookingId;
+        }
+
+        public void setBookingId(Integer bookingId) {
+            this.bookingId = bookingId;
+        }
+
+        public Integer getVendorId() {
+            return vendorId;
+        }
+
+        public void setVendorId(Integer vendorId) {
+            this.vendorId = vendorId;
+        }
+
+        public Integer getUserId() {
+            return userId;
+        }
+
+        public void setUserId(Integer userId) {
+            this.userId = userId;
+        }
+
+        public Integer getSlotId() {
+            return slotId;
+        }
+
+        public void setSlotId(Integer slotId) {
+            this.slotId = slotId;
+        }
+
+        public String getBookingStatus() {
+            return bookingStatus;
+        }
+
+        public void setBookingStatus(String bookingStatus) {
+            this.bookingStatus = bookingStatus;
+        }
+
+        public Object getBookedForDate() {
+            return bookedForDate;
+        }
+
+        public void setBookedForDate(Object bookedForDate) {
+            this.bookedForDate = bookedForDate;
+        }
+
+        public Object getBookingTimeStamp() {
+            return bookingTimeStamp;
+        }
+
+        public void setBookingTimeStamp(Object bookingTimeStamp) {
+            this.bookingTimeStamp = bookingTimeStamp;
+        }
+
+        public Integer getSubActivityId() {
+            return subActivityId;
+        }
+
+        public void setSubActivityId(Integer subActivityId) {
+            this.subActivityId = subActivityId;
+        }
+
+        public Object getPaymentsDTO() {
+            return paymentsDTO;
+        }
+
+        public void setPaymentsDTO(Object paymentsDTO) {
+            this.paymentsDTO = paymentsDTO;
+        }
+
+        public Object getPaymentId() {
+            return paymentId;
+        }
+
+        public void setPaymentId(Object paymentId) {
+            this.paymentId = paymentId;
+        }
+
+        public String getBookingType() {
+            return bookingType;
+        }
+
+        public void setBookingType(String bookingType) {
+            this.bookingType = bookingType;
+        }
+
+        public Integer getPersonCount() {
+            return personCount;
+        }
+
+        public void setPersonCount(Integer personCount) {
+            this.personCount = personCount;
+        }
+
+        public Integer getDays() {
+            return days;
+        }
+
+        public void setDays(Integer days) {
+            this.days = days;
+        }
+
+        public Object getDates() {
+            return dates;
+        }
+
+        public void setDates(Object dates) {
+            this.dates = dates;
+        }
+
+        public Object getType() {
+            return type;
+        }
+
+        public void setType(Object type) {
+            this.type = type;
+        }
+
+        public Object getSlotReccurence() {
+            return slotReccurence;
+        }
+
+        public void setSlotReccurence(Object slotReccurence) {
+            this.slotReccurence = slotReccurence;
+        }
+
+        public String getStartTime() {
+            return startTime;
+        }
+
+        public void setStartTime(String startTime) {
+            this.startTime = startTime;
+        }
+
+        public String getEndTime() {
+            return endTime;
+        }
+
+        public void setEndTime(String endTime) {
+            this.endTime = endTime;
+        }
+
+        public Integer getAmount() {
+            return amount;
+        }
+
+        public void setAmount(Integer amount) {
+            this.amount = amount;
+        }
+
+        public String getBooedforDate() {
+            return booedforDate;
+        }
+
+        public void setBooedforDate(String booedforDate) {
+            this.booedforDate = booedforDate;
+        }
+
+        public String getBookingtimeStamp() {
+            return bookingtimeStamp;
+        }
+
+        public void setBookingtimeStamp(String bookingtimeStamp) {
+            this.bookingtimeStamp = bookingtimeStamp;
+        }
+
+        public String getBookingid() {
+            return bookingid;
+        }
+
+        public void setBookingid(String bookingid) {
+            this.bookingid = bookingid;
+        }
+
+        public String getPersoncount() {
+            return personcount;
+        }
+
+        public void setPersoncount(String personcount) {
+            this.personcount = personcount;
+        }
+
+        public String getAmount1() {
+            return amount1;
+        }
+
+        public void setAmount1(String amount1) {
+            this.amount1 = amount1;
+        }
+
+        public String getSlotid() {
+            return slotid;
+        }
+
+        public void setSlotid(String slotid) {
+            this.slotid = slotid;
+        }
+
+        public Object getBookedforDate() {
+            return bookedforDate;
+        }
+
+        public void setBookedforDate(Object bookedforDate) {
+            this.bookedforDate = bookedforDate;
+        }
+
+        public String getVendorName() {
+            return vendorName;
+        }
+
+        public void setVendorName(String vendorName) {
+            this.vendorName = vendorName;
+        }
 
-    public void setBookingtimeStamp(String bookingtimeStamp) {
-        this.bookingtimeStamp = bookingtimeStamp;
-    }
+        public String getSubActivityType() {
+            return subActivityType;
+        }
 
-    public String getBookingid() {
-        return bookingid;
-    }
+        public void setSubActivityType(String subActivityType) {
+            this.subActivityType = subActivityType;
+        }
 
-    public void setBookingid(String bookingid) {
-        this.bookingid = bookingid;
-    }
+        public Object getCourseStartDate() {
+            return courseStartDate;
+        }
 
-    public String getPersoncount() {
-        return personcount;
-    }
+        public void setCourseStartDate(Object courseStartDate) {
+            this.courseStartDate = courseStartDate;
+        }
 
-    public void setPersoncount(String personcount) {
-        this.personcount = personcount;
-    }
+        public Object getCourseEndDate() {
+            return courseEndDate;
+        }
 
-    public String getAmount1() {
-        return amount1;
-    }
+        public void setCourseEndDate(Object courseEndDate) {
+            this.courseEndDate = courseEndDate;
+        }
 
-    public void setAmount1(String amount1) {
-        this.amount1 = amount1;
-    }
+        public Object getSlotStartTime() {
+            return slotStartTime;
+        }
 
-    public String getSlotid() {
-        return slotid;
-    }
+        public void setSlotStartTime(Object slotStartTime) {
+            this.slotStartTime = slotStartTime;
+        }
 
-    public void setSlotid(String slotid) {
-        this.slotid = slotid;
-    }
+        public Object getSlotEndTime() {
+            return slotEndTime;
+        }
 
-    public Object getBookedforDate() {
-        return bookedforDate;
-    }
+        public void setSlotEndTime(Object slotEndTime) {
+            this.slotEndTime = slotEndTime;
+        }
 
-    public void setBookedforDate(Object bookedforDate) {
-        this.bookedforDate = bookedforDate;
-    }
+        public Object getMemberShipType() {
+            return memberShipType;
+        }
 
-    public String getVendorName() {
-        return vendorName;
-    }
+        public void setMemberShipType(Object memberShipType) {
+            this.memberShipType = memberShipType;
+        }
 
-    public void setVendorName(String vendorName) {
-        this.vendorName = vendorName;
-    }
+        public Object getErrorMessage() {
+            return errorMessage;
+        }
 
-    public String getSubActivityType() {
-        return subActivityType;
-    }
+        public void setErrorMessage(Object errorMessage) {
+            this.errorMessage = errorMessage;
+        }
 
-    public void setSubActivityType(String subActivityType) {
-        this.subActivityType = subActivityType;
-    }
+        public Object getContactNo() {
+            return contactNo;
+        }
 
-    public Object getCourseStartDate() {
-        return courseStartDate;
-    }
+        public void setContactNo(Object contactNo) {
+            this.contactNo = contactNo;
+        }
 
-    public void setCourseStartDate(Object courseStartDate) {
-        this.courseStartDate = courseStartDate;
-    }
+        public Object getArea() {
+            return area;
+        }
 
-    public Object getCourseEndDate() {
-        return courseEndDate;
-    }
+        public void setArea(Object area) {
+            this.area = area;
+        }
 
-    public void setCourseEndDate(Object courseEndDate) {
-        this.courseEndDate = courseEndDate;
-    }
+        public Object getNotes() {
+            return notes;
+        }
 
-    public Object getSlotStartTime() {
-        return slotStartTime;
-    }
+        public void setNotes(Object notes) {
+            this.notes = notes;
+        }
 
-    public void setSlotStartTime(Object slotStartTime) {
-        this.slotStartTime = slotStartTime;
-    }
+        public Object getSlotStatus() {
+            return slotStatus;
+        }
 
-    public Object getSlotEndTime() {
-        return slotEndTime;
-    }
+        public void setSlotStatus(Object slotStatus) {
+            this.slotStatus = slotStatus;
+        }
 
-    public void setSlotEndTime(Object slotEndTime) {
-        this.slotEndTime = slotEndTime;
-    }
+        public String getOtp() {
+            return otp;
+        }
 
-    public Object getMemberShipType() {
-        return memberShipType;
-    }
+        public void setOtp(String otp) {
+            this.otp = otp;
+        }
 
-    public void setMemberShipType(Object memberShipType) {
-        this.memberShipType = memberShipType;
     }
-
-}
-
-
-

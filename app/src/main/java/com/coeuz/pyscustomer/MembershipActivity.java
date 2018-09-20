@@ -1,5 +1,8 @@
 package com.coeuz.pyscustomer;
 
+import android.content.Intent;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,37 +26,34 @@ import com.coeuz.pyscustomer.Requiredclass.TinyDB;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Objects;
 
 
 public class MembershipActivity extends AppCompatActivity {
-    private Toolbar toolbar;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
     String mToken;
-    TinyDB mtinyTb;
     ViewPagerAdapter adapter;
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_membership);
 
-        mtinyTb=new TinyDB(getApplicationContext());
-        mToken=mtinyTb.getString(Constant.TOKEN);
+        TinyDB mtinyTb = new TinyDB(getApplicationContext());
+        mToken= mtinyTb.getString(Constant.TOKEN);
 
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar =  findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
 
-
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        ViewPager viewPager = findViewById(R.id.viewpager);
 
         setupViewPager(viewPager);
 
 
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout =  findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
 
@@ -70,7 +70,7 @@ public class MembershipActivity extends AppCompatActivity {
         adapter.addFragment(fragment,"AVAILED");*/
         //adapter.addFragment(new AVAILED(), "Booking AVAILED");
         adapter.addFragment(new NEARING1(), "NEARING");
-        adapter.addFragment(new ACTIVE1(), "AVAILED");
+        adapter.addFragment(new ACTIVE1(), "ACTIVE");
         adapter.addFragment(new COMPLETED1(), "COMPLETED");
 
 
@@ -83,7 +83,7 @@ public class MembershipActivity extends AppCompatActivity {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 
-        public ViewPagerAdapter(FragmentManager manager) {
+         ViewPagerAdapter(FragmentManager manager) {
             super(manager);
         }
 
@@ -97,7 +97,7 @@ public class MembershipActivity extends AppCompatActivity {
             return mFragmentList.size();
         }
 
-        public void addFragment(Fragment fragment, String title) {
+         void addFragment(Fragment fragment, String title) {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
         }
@@ -115,9 +115,18 @@ public class MembershipActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
+            Intent intent=new Intent(MembershipActivity.this,MainActivity.class);
+            startActivity(intent);
+            this.finish();
         }
-        this.finish();
+
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onBackPressed() {
+        Intent intent=new Intent(MembershipActivity.this,MainActivity.class);
+        startActivity(intent);
+        MembershipActivity.this.finish();
     }
 
 

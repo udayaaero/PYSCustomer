@@ -7,15 +7,18 @@
         <item
             android:id="@+id/BookSlot"
             android:icon="@drawable/ic_book_black_24dp"
-            android:title="Book Slot" />
+            android:title="Book Slot"
+            tools:ignore="HardcodedText"/>
         <item
             android:id="@+id/SlotSetting"
             android:icon="@drawable/otherservice"
-            android:title="OtherService" />
+            android:title="OtherService"
+            tools:ignore="HardcodedText"/>
         <item
             android:id="@+id/vendorMap"
             android:icon="@drawable/ic_navigation_black_24dp"
-            android:title="Map" />
+            android:title="Map"
+            tools:ignore="HardcodedText"/>
 
     </group>
 

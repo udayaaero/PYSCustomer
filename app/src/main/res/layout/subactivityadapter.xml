@@ -6,7 +6,8 @@
     android:id="@+id/SelectChard"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
 <RelativeLayout
      android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -15,7 +16,8 @@
         android:background="@drawable/gymslide"
         android:id="@+id/image"
         android:layout_width="match_parent"
-        android:layout_height="150dp" />
+        android:layout_height="150dp"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:layout_marginStart="5dp"
@@ -23,6 +25,7 @@
         android:layout_below="@+id/image"
         android:id="@+id/NameOfVendor"
         android:text="Name Of Vendor"
+        tools:ignore="HardcodedText"
         android:textStyle="bold"
         android:textSize="18sp"
         android:textColor="@color/colorPrimary"
@@ -35,6 +38,7 @@
         android:layout_below="@+id/NameOfVendor"
         android:id="@+id/AdressOfVendor"
         android:text="Adress Of Vendor"
+        tools:ignore="HardcodedText"
         android:textSize="14sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

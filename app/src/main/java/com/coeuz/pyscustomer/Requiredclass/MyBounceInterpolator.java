@@ -4,7 +4,7 @@ package com.coeuz.pyscustomer.Requiredclass;
  * Created by vjy on 25-Jan-18.
  */
 
-public class MyBounceInterpolator implements android.view.animation.Interpolator {
+public class  MyBounceInterpolator implements android.view.animation.Interpolator {
     private double mAmplitude = 1;
     private double mFrequency = 10;
 

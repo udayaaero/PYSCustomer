@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -32,13 +31,13 @@
                             android:orientation="vertical"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
-
                             <LinearLayout
                                 android:layout_marginTop="5dp"
                                 android:weightSum="2"
                                 android:orientation="horizontal"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:baselineAligned="false">
                                 <LinearLayout
 
                                     android:layout_gravity="center"
@@ -50,7 +49,8 @@
                                     <ImageView
                                         android:background="@drawable/restaurant"
                                         android:layout_width="100dp"
-                                        android:layout_height="100dp" />
+                                        android:layout_height="100dp"
+                                        tools:ignore="ContentDescription,TooDeepLayout" />
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_gravity="center"
@@ -72,7 +72,8 @@
                                             android:textSize="14sp"
                                             android:text="Name"
                                             android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content" />
+                                            android:layout_height="wrap_content"
+                                            tools:ignore="HardcodedText" />
                                     </LinearLayout>
                                     <LinearLayout
                                         android:layout_marginTop="10dp"
@@ -88,7 +89,8 @@
                                             android:textSize="14sp"
                                             android:text="Date"
                                             android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content" />
+                                            android:layout_height="wrap_content"
+                                            tools:ignore="HardcodedText" />
                                     </LinearLayout>
                                     <LinearLayout
                                         android:layout_gravity="center"
@@ -105,7 +107,8 @@
                                             android:textSize="14sp"
                                             android:text="Time"
                                             android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content" />
+                                            android:layout_height="wrap_content"
+                                            tools:ignore="HardcodedText" />
                                     </LinearLayout>
 
 
@@ -121,7 +124,8 @@
                                         android:layout_centerHorizontal="true"
                                         android:background="@drawable/star1"
                                         android:layout_width="90dp"
-                                        android:layout_height="100dp" />
+                                        android:layout_height="100dp"
+                                        tools:ignore="ContentDescription" />
                                     <LinearLayout
                                         android:gravity="center"
                                         android:layout_centerVertical="true"
@@ -135,7 +139,8 @@
                                             android:textColor="@color/block"
                                             android:text="Rs."
                                             android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content" />
+                                            android:layout_height="wrap_content"
+                                            tools:ignore="HardcodedText" />
                                         <TextView
 
                                             android:layout_marginTop="2dp"
@@ -144,7 +149,8 @@
                                             android:textColor="@color/block"
                                             android:text="100"
                                             android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content" />
+                                            android:layout_height="wrap_content"
+                                            tools:ignore="HardcodedText" />
                                     </LinearLayout>
 
                                 </RelativeLayout>
@@ -164,7 +170,8 @@
                                     android:textSize="14sp"
                                     android:text="Address"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content" />
+                                    android:layout_height="wrap_content"
+                                    tools:ignore="HardcodedText" />
                             </LinearLayout>
 
                         </LinearLayout>
@@ -177,7 +184,8 @@
                     <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        tools:ignore="UselessParent">
                         <LinearLayout
                             android:orientation="vertical"
                             android:layout_width="match_parent"
@@ -199,7 +207,8 @@
                                     android:textSize="14sp"
                                     android:text="Select Person Count"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content" />
+                                    android:layout_height="wrap_content"
+                                    tools:ignore="HardcodedText" />
                                 <LinearLayout
                                     android:gravity="center"
                                     android:orientation="horizontal"
@@ -212,7 +221,8 @@
                                         android:id="@+id/oneButton"
                                         android:text="1"
                                         android:layout_width="50dp"
-                                        android:layout_height="40dp" />
+                                        android:layout_height="40dp"
+                                        tools:ignore="ButtonStyle,HardcodedText" />
                                     <Button
                                         android:textColor="@color/white"
                                         android:background="@drawable/back_person_count"
@@ -220,7 +230,8 @@
                                         android:id="@+id/twoButton"
                                         android:text="2"
                                         android:layout_width="50dp"
-                                        android:layout_height="40dp" />
+                                        android:layout_height="40dp"
+                                        tools:ignore="ButtonStyle,HardcodedText" />
                                     <Button
                                         android:textColor="@color/white"
                                         android:background="@drawable/back_person_count"
@@ -228,7 +239,8 @@
                                         android:id="@+id/threeButton"
                                         android:text="3"
                                         android:layout_width="50dp"
-                                        android:layout_height="40dp" />
+                                        android:layout_height="40dp"
+                                        tools:ignore="ButtonStyle,HardcodedText" />
                                     <Button
                                         android:textColor="@color/white"
                                         android:background="@drawable/back_person_count"
@@ -236,7 +248,8 @@
                                         android:id="@+id/fourButton"
                                         android:text="4"
                                         android:layout_width="50dp"
-                                        android:layout_height="40dp" />
+                                        android:layout_height="40dp"
+                                        tools:ignore="ButtonStyle,HardcodedText" />
                                     <Button
                                         android:textColor="@color/white"
                                         android:background="@drawable/back_person_count"
@@ -244,7 +257,8 @@
                                         android:id="@+id/fiveButton"
                                         android:text="5"
                                         android:layout_width="50dp"
-                                        android:layout_height="40dp" />
+                                        android:layout_height="40dp"
+                                        tools:ignore="ButtonStyle,HardcodedText" />
 
 
                                 </LinearLayout>
@@ -256,15 +270,13 @@
 
 
                         <LinearLayout
+                            android:padding="10dp"
                             android:orientation="vertical"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
                             <android.support.v7.widget.CardView
-                                android:layout_marginBottom="10dp"
-                                android:layout_centerHorizontal="true"
-                                android:layout_centerVertical="true"
+
                                 android:id="@+id/membership_layout"
-                                android:layout_marginTop="10dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
                                 <LinearLayout
@@ -287,7 +299,8 @@
                                             android:layout_gravity="center"
                                             android:text="Membership Type"
                                             android:layout_width="0dp"
-                                            android:layout_height="wrap_content" />
+                                            android:layout_height="wrap_content"
+                                            tools:ignore="HardcodedText" />
                                         <TextView
                                             android:id="@+id/MembershipType"
                                             android:layout_weight="1"
@@ -302,7 +315,35 @@
 
                                 </LinearLayout>
                             </android.support.v7.widget.CardView>
+                            <LinearLayout
+                                android:layout_marginTop="5dp"
+                                android:orientation="horizontal"
+                                android:weightSum="2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                            <TextView
+                                android:layout_weight="1.5"
+                               android:textColor="@color/green"
+                                android:textStyle="bold"
+                             android:layout_gravity="center"
+                                android:text="Whould you like to change your start date"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                tools:ignore="HardcodedText" />
+                                 <LinearLayout
+                                     android:gravity="end"
+                                android:layout_weight="0.5"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content">
+                                <ImageView
+                                    android:id="@+id/changedate"
+                                    android:background="@drawable/calender"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    tools:ignore="ContentDescription" />
+                            </LinearLayout>
 
+                            </LinearLayout>
 
                         </LinearLayout>
 
@@ -317,18 +358,21 @@
                                 android:gravity="center"
                                 android:orientation="horizontal"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                tools:ignore="UseCompoundDrawables">
                                 <ImageView
                                     android:background="@drawable/offer1"
                                     android:layout_width="40dp"
-                                    android:layout_height="40dp" />
+                                    android:layout_height="40dp"
+                                    tools:ignore="ContentDescription" />
                                 <TextView
                                     android:textStyle="bold"
                                     android:text="Offer for you"
                                     android:layout_marginStart="5dp"
                                     android:textColor="@color/colorPrimary"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content" />
+                                    android:layout_height="wrap_content"
+                                    tools:ignore="HardcodedText" />
                             </LinearLayout>
 
                             <android.support.v7.widget.RecyclerView
@@ -356,7 +400,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
                                 android:orientation="horizontal"
-                                >
+                                tools:ignore="DisableBaselineAlignment">
                                 <LinearLayout
                                     android:layout_weight="1.5"
                                     android:orientation="horizontal"
@@ -370,7 +414,8 @@
                                         android:text="Total Discount"
                                         android:textSize="15sp"
                                         android:layout_width="0dp"
-                                        android:layout_height="wrap_content" />
+                                        android:layout_height="wrap_content"
+                                        tools:ignore="HardcodedText,NestedWeights" />
                                 </LinearLayout>
                                 <LinearLayout
                                     android:gravity="end"
@@ -386,7 +431,8 @@
                                         android:id="@+id/TotalDiscount"
                                         android:textSize="14sp"
                                         android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content" />
+                                        android:layout_height="wrap_content"
+                                        tools:ignore="HardcodedText" />
                                     <TextView
                                         android:layout_gravity="end"
                                         android:textColor="@color/colorPrimary"
@@ -394,7 +440,8 @@
                                         android:text=" %"
                                         android:textSize="14sp"
                                         android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content" />
+                                        android:layout_height="wrap_content"
+                                        tools:ignore="HardcodedText" />
                                 </LinearLayout>
 
                             </LinearLayout>
@@ -414,7 +461,8 @@
                     android:id="@+id/memberLayout"
                     android:layout_below="@+id/PreDefined"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    tools:ignore="UnknownIdInLayout">
 
 
                 </RelativeLayout>
@@ -430,7 +478,8 @@
             android:text="Proceed"
             android:id="@+id/nBooking2"
             android:layout_width="match_parent"
-            android:layout_height="40dp" />
+            android:layout_height="40dp"
+            tools:ignore="HardcodedText" />
 
     </RelativeLayout>
 
@@ -445,7 +494,8 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            tools:ignore="ContentDescription" />
         <TextView
             android:layout_marginTop="10dp"
             android:textStyle="bold"
@@ -454,7 +504,8 @@
             android:layout_centerHorizontal="true"
             android:text="No Values"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
     </RelativeLayout>
 
     <LinearLayout
@@ -469,16 +520,18 @@
             android:layout_marginBottom="20dp"
             android:background="@drawable/nointernetbg"
             android:layout_width="200dp"
-            android:layout_height="200dp">
+            android:layout_height="200dp"
+            tools:ignore="ContentDescription">
 
         </ImageView>
         <TextView
             android:textStyle="bold"
             android:textColor="#ffffff"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:text="No  Internet  Connection"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
         <Button
             android:id="@+id/TryAgain"
             android:layout_marginTop="30dp"
@@ -489,7 +542,8 @@
             android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
-            android:paddingLeft="20dp" />
+            android:paddingLeft="20sp"
+            tools:ignore="HardcodedText,RtlHardcoded" />
     </LinearLayout>
 
 </RelativeLayout>

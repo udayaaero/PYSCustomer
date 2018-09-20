@@ -3,6 +3,7 @@ package com.coeuz.pyscustomer;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -33,7 +34,6 @@ public class GalleryActivity extends AppCompatActivity {
     public static final String EXTRA_NAME = "images";
 
     private ArrayList<Integer> _images;
-    private GalleryPagerAdapter _adapter;
 
     @InjectView(R.id.pager)
     ViewPager _pager;
@@ -49,7 +49,7 @@ public class GalleryActivity extends AppCompatActivity {
         _images = (ArrayList<Integer>) getIntent().getSerializableExtra(EXTRA_NAME);
         Assert.assertNotNull(_images);
 
-        _adapter = new GalleryPagerAdapter(this);
+        GalleryPagerAdapter _adapter = new GalleryPagerAdapter(this);
         _pager.setAdapter(_adapter);
         _pager.setOffscreenPageLimit(6); // how many images to load into memory
 
@@ -67,7 +67,7 @@ public class GalleryActivity extends AppCompatActivity {
         Context _context;
         LayoutInflater _inflater;
 
-        public GalleryPagerAdapter(Context context) {
+        GalleryPagerAdapter(Context context) {
             _context = context;
             _inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
@@ -78,12 +78,13 @@ public class GalleryActivity extends AppCompatActivity {
         }
 
         @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == ((LinearLayout) object);
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+            return view == ( object);
         }
 
+        @NonNull
         @Override
-        public Object instantiateItem(ViewGroup container, final int position) {
+        public Object instantiateItem(@NonNull ViewGroup container, final int position) {
             View itemView = _inflater.inflate(R.layout.pager_gallery_item, container, false);
             container.addView(itemView);
 
@@ -116,8 +117,7 @@ public class GalleryActivity extends AppCompatActivity {
                 }
             });
             _thumbnails.addView(thumbView);
-            final SubsamplingScaleImageView imageView =
-                    (SubsamplingScaleImageView) itemView.findViewById(R.id.image);
+            final SubsamplingScaleImageView imageView = itemView.findViewById(R.id.image);
 
             // Asynchronously load the image and set the thumbnail and pager view
             Glide.with(_context)
@@ -135,7 +135,7 @@ public class GalleryActivity extends AppCompatActivity {
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             container.removeView((LinearLayout) object);
         }
     }

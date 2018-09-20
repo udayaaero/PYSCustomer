@@ -1,6 +1,7 @@
 package com.coeuz.pyscustomer;
 
-import android.*;
+
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,11 +12,11 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -26,9 +27,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -38,7 +37,6 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.coeuz.pyscustomer.AdapterClass.GooglePlacesAutompleteAdapter;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -62,6 +60,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 public class LocationChangeActivity extends AppCompatActivity implements PlaceSelectionListener {
 
@@ -73,11 +72,10 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
 
 
     CardView getCurrentLocation;
-    private final static int MY_PERMISSION_REQUEST_lOCATION = 1;
-    private String provider, locatonValues;
+
+    private String  locatonValues;
 
 
-    GooglePlacesAutompleteAdapter dataAdapter;
 
     String mToken;
     TinyDB mtinyDb;
@@ -90,22 +88,23 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
     Location location100;
     boolean notWorking;
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_change);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mtinyDb = new TinyDB(getApplicationContext());
 
 
-        progressBar = (ProgressBar) findViewById(R.id.progressbar200);
-        notYourcity=(RelativeLayout) findViewById(R.id.NotYourCity);
-        firstViews=(RelativeLayout) findViewById(R.id.firstviews);
+        progressBar =  findViewById(R.id.progressbar200);
+        notYourcity=findViewById(R.id.NotYourCity);
+        firstViews= findViewById(R.id.firstviews);
 
-        getCurrentLocation = (CardView) findViewById(R.id.cardFirst);
+        getCurrentLocation = findViewById(R.id.cardFirst);
 
 
         getCurrentLocation.setOnClickListener(new View.OnClickListener() {
@@ -164,6 +163,7 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
 
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             boolean isGpsProviderEnabled, isNetworkProviderEnabled;
+            assert locationManager != null;
             isGpsProviderEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             isNetworkProviderEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
@@ -210,7 +210,7 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
     public void hereLocattion(double lat, double lon) {
 
         Log.d("fhrwuihejriytruuwei1", "fhrwuihejriytruuwei");
-        String curCity = "";
+        String curCity;
         Geocoder geocoder = new Geocoder(LocationChangeActivity.this, Locale.getDefault());
         List<Address> addressList;
         try {
@@ -389,7 +389,8 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
                     }
                     Log.d("fiuwhwiufrew2", String.valueOf(jsonArray));
                     String areaName = null;
-                    for(int i=0;i<jsonArray.length();i++){
+                    assert jsonArray != null;
+                    for(int i = 0; i<jsonArray.length(); i++){
                         JSONObject jsonObject2= jsonArray.getJSONObject(1);
                         areaName=jsonObject2.getString("long_name");
 
@@ -439,17 +440,15 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                } else if (error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof TimeoutError) {
+                }  else if (error instanceof TimeoutError) {
                     Toast.makeText(getApplicationContext(), "Connection TimeOut! Please check your internet connection.", Toast.LENGTH_SHORT).show();
 
                 }
             }
         }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers1 = new HashMap<String, String>();
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers1 = new HashMap<>();
 
                 headers1.put("X-Auth-Token", String.valueOf(mToken).replaceAll("\"", ""));
                 return headers1;

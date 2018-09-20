@@ -1,9 +1,8 @@
 package com.coeuz.pyscustomer.AdapterClass;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,8 +11,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-
-import com.coeuz.pyscustomer.AfterSelectVendor;
 import com.coeuz.pyscustomer.ModelClass.SlotModel;
 import com.coeuz.pyscustomer.R;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
@@ -25,24 +22,15 @@ import java.util.ArrayList;
 
 public class DateBookingAdapter extends RecyclerView.Adapter<DateBookingAdapter.MyViewHolder> {
 
-
-
-    private static FragmentManager context1;
     public Context context;
-    public TinyDB tinyDB;
-    private int row_index=-1;
-    int selectedPosition=-1;
+    private TinyDB tinyDB;
 
-    String selectedItem;
-    ArrayList<Integer> selectedSlotId= new ArrayList<Integer>();
-    ArrayList<Integer> selectedSlotCost= new ArrayList<Integer>();
-    ArrayList<String> selectedStartTime= new ArrayList<String>();
-    ArrayList<String> selectedEndTime= new ArrayList<String>();
+
+    private ArrayList<String> selectedStartTime= new ArrayList<>();
+    private ArrayList<String> selectedEndTime= new ArrayList<>();
     private ArrayList<SlotModel> slotModels;
-    private ArrayList<String> sartList=new ArrayList<>();
-    private ArrayList<String> endlist=new ArrayList<>();
-    private ArrayList<String> idlist=new ArrayList<>();
-    private ArrayList<String> Dateslist=new ArrayList<>();
+
+
 
     public DateBookingAdapter(Context applicationContext, ArrayList<SlotModel> slotModel) {
         this.context=applicationContext;
@@ -57,23 +45,22 @@ public class DateBookingAdapter extends RecyclerView.Adapter<DateBookingAdapter.
         public int position=0;
         public MyViewHolder(View itemView) {
             super(itemView);
-            startTime=(TextView)itemView.findViewById(R.id.Starttimee);
-            Endtime=(TextView)itemView.findViewById(R.id.Endtimee);
-            cost=(TextView)itemView.findViewById(R.id.cost);
-            layout=(LinearLayout)itemView.findViewById(R.id.timemorning);
+            startTime=itemView.findViewById(R.id.Starttimee);
+            Endtime=itemView.findViewById(R.id.Endtimee);
+            cost=itemView.findViewById(R.id.cost);
+            layout=itemView.findViewById(R.id.timemorning);
         }
     }
 
     @Override
     public DateBookingAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.datebookingadapter,parent,false);
-       /* return new MyViewHolder(view);*/
-        MyViewHolder viewss = new MyViewHolder(view);
-        return viewss;
+
+        return new MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final DateBookingAdapter.MyViewHolder holder, final int position) {
+    public void onBindViewHolder(final DateBookingAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
 
         holder.startTime.setText(slotModels.get(position).getSlotStartTime());
         holder.Endtime.setText(slotModels.get(position).getSlotEndTime());
@@ -92,6 +79,10 @@ public class DateBookingAdapter extends RecyclerView.Adapter<DateBookingAdapter.
                 tinyDB.putString("SlotbookingEndTime",bookingEndTime);
                 tinyDB.putString("SlotbookingCost",bookingCost);
                 tinyDB.putString(Constant.PRESLOTID,slotIds);
+                tinyDB.putString(Constant.SELECTEDTYPE,"PRE-DEFINED");
+
+                tinyDB.putString(Constant.PAYMENTSTARTTIME,bookingStartTime);
+                tinyDB.putString(Constant.PAYMENTENDTIME,bookingEndTime);
 
                 Intent intent=new Intent(context,SlotPages.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -103,16 +94,11 @@ public class DateBookingAdapter extends RecyclerView.Adapter<DateBookingAdapter.
 
     @Override
     public int getItemCount() {
-        Log.d("hshdhgwiogjow", String.valueOf(sartList.size()));
+
         return slotModels.size();
     }
 
-    public ArrayList<Integer> getSelectedSlotId() {
-        return selectedSlotId;
-    }
-    public ArrayList<Integer> getSelectedSlotCost() {
-        return selectedSlotCost;
-    }
+
     public ArrayList<String> getSlotStartTime() {
         return selectedStartTime;
     }

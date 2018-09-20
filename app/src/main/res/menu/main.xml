@@ -9,12 +9,12 @@
         android:id="@+id/mlocation"
         android:title="Location"
         app:showAsAction="always"
-
-        tools:ignore="AppCompatResource" />
+        tools:ignore="AppCompatResource,HardcodedText" />
     <item
         android:id="@+id/LocationChange"
         android:icon="@drawable/ic_location_on_black_24dp"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
+        tools:ignore="HardcodedText"
         android:title="" />
 
 </menu>

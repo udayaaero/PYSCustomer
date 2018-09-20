@@ -2,7 +2,6 @@
 
 <android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,16 +14,14 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp">
-
-
     <TextView
-
-        android:paddingLeft="5dp"
+        android:paddingStart="5dp"
         android:textColor="#000000"
         android:textStyle="bold"
         android:text="Gender"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText,RtlSymmetry" />
 
     <android.support.v7.widget.CardView
         android:layout_marginTop="10dp"
@@ -42,7 +39,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="3"
-        android:id="@+id/radioGroup1">
+        android:id="@+id/radioGroup1"
+        tools:ignore="UselessParent">
         <RadioButton
             android:paddingStart="5dp"
             android:button="@drawable/radiobtnmale"
@@ -53,10 +51,11 @@
             android:id="@+id/radioMale"
             android:layout_gravity="center_horizontal"
             android:checked="false"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            tools:ignore="HardcodedText,RtlSymmetry" />
 
         <RadioButton
-            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
             android:button="@drawable/radiobtnmale"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -65,9 +64,10 @@
             android:layout_gravity="center_horizontal"
             android:checked="false"
             android:textSize="14sp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            tools:ignore="HardcodedText,RtlSymmetry" />
         <RadioButton
-            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
             android:button="@drawable/radiobtnuni"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -76,20 +76,22 @@
             android:layout_gravity="center_horizontal"
             android:checked="false"
             android:textSize="14sp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            tools:ignore="HardcodedText,RtlSymmetry" />
     </RadioGroup>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
     <TextView
 
-        android:paddingLeft="5dp"
+        android:paddingStart="5dp"
         android:layout_marginTop="10dp"
         android:textColor="#000000"
         android:textStyle="bold"
         android:text="Pick one"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText,RtlSymmetry" />
 
     <android.support.v7.widget.CardView
         android:layout_marginTop="10dp"
@@ -108,10 +110,10 @@
                 android:layout_height="wrap_content"
                 android:weightSum="2"
                 android:id="@+id/radioGroup2"
-                >
+                tools:ignore="UselessParent">
 
                 <RadioButton
-                    android:paddingLeft="5dp"
+                    android:paddingStart="5dp"
                     android:button="@drawable/radiobtnfemale"
                     android:layout_weight="1"
                     android:layout_width="0dp"
@@ -120,10 +122,11 @@
                     android:id="@+id/radioLow"
                     android:layout_gravity="center_horizontal"
                     android:checked="false"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    tools:ignore="HardcodedText,RtlSymmetry" />
 
                 <RadioButton
-                    android:paddingLeft="5dp"
+                    android:paddingStart="5dp"
                     android:button="@drawable/radiobtnfemale"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -132,7 +135,8 @@
                     android:layout_gravity="center_horizontal"
                     android:checked="false"
                     android:textSize="14sp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    tools:ignore="HardcodedText,RtlSymmetry" />
 
             </RadioGroup>
         </LinearLayout>
@@ -149,7 +153,8 @@
         android:textStyle="bold"
         android:text="Consultation Fee"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText" />
     <TextView
        android:gravity="right"
         android:layout_marginStart="100dp"
@@ -158,7 +163,8 @@
         android:textStyle="bold"
         android:text="0"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText,RtlHardcoded" />
 </LinearLayout>
     <SeekBar
         android:layout_marginTop="20dp"
@@ -170,13 +176,14 @@
         android:progressDrawable="@drawable/custom_progress"/>
     <TextView
 
-        android:paddingLeft="5dp"
+        android:paddingStart="5dp"
         android:layout_marginTop="20dp"
         android:textColor="#000000"
         android:textStyle="bold"
         android:text="Pick one"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText,RtlSymmetry" />
 
     <android.support.v7.widget.CardView
         android:layout_marginTop="10dp"
@@ -195,11 +202,11 @@
                 android:layout_height="wrap_content"
                 android:weightSum="4"
                 android:id="@+id/radioGroup3"
-                >
+                tools:ignore="UselessParent">
 
                 <RadioButton
                     android:layout_marginTop="5dp"
-                    android:paddingLeft="5dp"
+                    android:paddingStart="5dp"
                     android:layout_weight="1"
                     android:layoutDirection="rtl"
                     android:layout_width="match_parent"
@@ -208,12 +215,13 @@
                     android:id="@+id/amount1"
                     android:layout_gravity="center_horizontal"
                     android:checked="false"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    tools:ignore="HardcodedText,RtlSymmetry" />
 
                 <RadioButton
                     android:layoutDirection="rtl"
                     android:layout_marginTop="5dp"
-                    android:paddingLeft="5dp"
+                    android:paddingStart="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:text="200 - 300 INR"
@@ -221,11 +229,12 @@
                     android:layout_gravity="center_horizontal"
                     android:checked="false"
                     android:textSize="14sp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    tools:ignore="HardcodedText,RtlSymmetry" />
                 <RadioButton
                     android:layoutDirection="rtl"
                     android:layout_marginTop="5dp"
-                    android:paddingLeft="5dp"
+                    android:paddingStart="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:text="300 - 400 INR"
@@ -233,11 +242,12 @@
                     android:layout_gravity="center_horizontal"
                     android:checked="false"
                     android:textSize="14sp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    tools:ignore="HardcodedText,RtlSymmetry" />
                 <RadioButton
                     android:layoutDirection="rtl"
                     android:layout_marginTop="5dp"
-                    android:paddingLeft="5dp"
+                    android:paddingStart="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:text="400 - 500 INR"
@@ -245,20 +255,22 @@
                     android:layout_gravity="center_horizontal"
                     android:checked="false"
                     android:textSize="14sp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    tools:ignore="HardcodedText,RtlSymmetry" />
             </RadioGroup>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
     <TextView
 
-        android:paddingLeft="5dp"
+        android:paddingStart="5dp"
         android:layout_marginTop="10dp"
         android:textColor="#000000"
         android:textStyle="bold"
         android:text="Amenities"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText,RtlSymmetry" />
     <android.support.v7.widget.CardView
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"

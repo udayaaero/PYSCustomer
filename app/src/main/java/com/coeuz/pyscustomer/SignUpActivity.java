@@ -1,32 +1,26 @@
 package com.coeuz.pyscustomer;
 
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.Paint;
+
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -42,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -51,30 +46,29 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText muserName,mphoneNumber,mEmailId,mPassword;
 
     private String iUserName,iPhoneNumber,iEmailId,iPassword;
-    private Button msignUp;
 
     private LinearLayout noInternetLayout;
     private ScrollView allViewLayout;
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        muserName = (EditText) findViewById(R.id.Username);
-        mphoneNumber = (EditText) findViewById(R.id.PhoneNumber);
-        mEmailId = (EditText) findViewById(R.id.EmailId);
+        muserName = findViewById(R.id.Username);
+        mphoneNumber = findViewById(R.id.PhoneNumber);
+        mEmailId = findViewById(R.id.EmailId);
 
-        noInternetLayout = (LinearLayout) findViewById(R.id.NoInternetLayout);
-        allViewLayout = (ScrollView) findViewById(R.id.allViewlayout);
+        noInternetLayout =  findViewById(R.id.NoInternetLayout);
+        allViewLayout = findViewById(R.id.allViewlayout);
 
-        mPassword = (EditText) findViewById(R.id.Passwords);
+        mPassword =findViewById(R.id.Passwords);
 
 
-
-        msignUp = (Button) findViewById(R.id.signup1);
+        Button msignUp = findViewById(R.id.signup1);
 
 
         msignUp.setOnClickListener(new View.OnClickListener() {
@@ -92,40 +86,41 @@ public class SignUpActivity extends AppCompatActivity {
                 if (muserName.getText().toString().equals("")) {
                     muserName.setError("Please enter valid name");
                     muserName.requestFocus();
-                    return;
                 } else if (mphoneNumber.getText().toString().equals("") || !mphoneNumber.getText().toString().matches(MobilePattern)) {
                     mphoneNumber.setError("Please enter valid PhoneNumber");
                     mphoneNumber.requestFocus();
-                    return;
+
                 } else if (TextUtils.isEmpty(mEmailId.getText().toString())) {
                     mEmailId.setError("Please enter Email");
                     mEmailId.requestFocus();
-                    return;
+
 
                 } else if (!mEmailId.getText().toString().trim().matches(emailPattern)) {
                     mEmailId.setError("Invalid Email Address");
                     mEmailId.requestFocus();
-                    return;
+
                 } else if (TextUtils.isEmpty(mPassword.getText().toString())) {
                     mPassword.setError("Please enter Password");
                     mPassword.requestFocus();
-                    return;
+
 
                 } else if (mPassword.getText().toString().length() < 6) {
                     mPassword.setError("Enter minimum six characters");
                     mPassword.requestFocus();
-                    return;
+
 
                 }
                 else {
                     try  {
                         InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-                    } catch (Exception e) {
+                        if (imm != null) {
+                            imm.hideSoftInputFromWindow(Objects.requireNonNull(getCurrentFocus()).getWindowToken(), 0);
+                        }
+                    } catch (Exception ignored) {
 
                     }
 
-                    String URL = Constant.API+ "/base/reg/user ";
+                    String URL = Constant.API+ "/base/reg/user";
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -139,7 +134,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     SharedPreferences sharedpreferences = getApplicationContext().getSharedPreferences(LoginActivity.MyPREFERENCES, Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedpreferences.edit();
                                     editor.clear();
-                                    editor.commit();
+                                    editor.apply();
                                     finish();
                                     Toast.makeText(getApplicationContext(), "Successful ", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
@@ -159,11 +154,12 @@ public class SignUpActivity extends AppCompatActivity {
                         public void onErrorResponse(VolleyError error) {
 
                             Log.d("ooo2", error.toString());
+                         //   Log.d("dfewfewrf", String.valueOf(error.networkResponse.statusCode));
 
                             if (error instanceof NetworkError) {
                                 noInternetLayout.setVisibility(View.VISIBLE);
                                 allViewLayout.setVisibility(View.GONE);
-                                Button button=(Button)findViewById(R.id.TryAgain);
+                                Button button=findViewById(R.id.TryAgain);
                                 button.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -175,12 +171,10 @@ public class SignUpActivity extends AppCompatActivity {
                             } else if (error instanceof ParseError) {
                                 Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                            } else if (error instanceof NoConnectionError) {
-                                Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                             } else if (error instanceof TimeoutError) {
                                 noInternetLayout.setVisibility(View.VISIBLE);
                                 allViewLayout.setVisibility(View.GONE);
-                                Button button=(Button)findViewById(R.id.TryAgain);
+                                Button button=findViewById(R.id.TryAgain);
                                 button.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -191,8 +185,8 @@ public class SignUpActivity extends AppCompatActivity {
                         }
                     }) {
                         @Override
-                        public byte[] getBody() throws AuthFailureError {
-                            HashMap<String, String> hashMap = new HashMap<String, String>();
+                        public byte[] getBody() {
+                            HashMap<String, String> hashMap = new HashMap<>();
                             hashMap.put("customerName", iUserName);
                             hashMap.put("emailId", iEmailId);
                             hashMap.put("mobileNumber", iPhoneNumber);
@@ -217,8 +211,9 @@ public class SignUpActivity extends AppCompatActivity {
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
             if (id == android.R.id.home) {
+                this.finish();
             }
-            this.finish();
+
             return super.onOptionsItemSelected(item);
         }
     }

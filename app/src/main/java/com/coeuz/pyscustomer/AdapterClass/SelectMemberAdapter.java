@@ -1,5 +1,6 @@
 package com.coeuz.pyscustomer.AdapterClass;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -13,16 +14,12 @@ import com.coeuz.pyscustomer.MembershipBookingSummary;
 import com.coeuz.pyscustomer.R;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
-import com.coeuz.pyscustomer.SlotPages;
 
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
-/**
- * Created by vjy on 01-Jul-18.
- */
 
 public class SelectMemberAdapter extends RecyclerView.Adapter<SelectMemberAdapter.MyViewHolder> {
 
@@ -32,14 +29,10 @@ public class SelectMemberAdapter extends RecyclerView.Adapter<SelectMemberAdapte
 
 
 
-    private ArrayList<String> typeList=new ArrayList<>();
-    private ArrayList<String> CostList=new ArrayList<>();
-    private ArrayList<String> idList=new ArrayList<>();
+    private ArrayList<String> typeList;
+    private ArrayList<String> CostList;
+    private ArrayList<String> idList;
 
-    public SelectMemberAdapter(Context applicationContext, ArrayList<String> memberbookingType, ArrayList<String> memberbookingCost) {
-
-
-    }
 
     public SelectMemberAdapter(Context applicationContext, ArrayList<String> memberbookingType, ArrayList<String> memberbookingCost, ArrayList<String> memberbookingSlotId) {
         mcontext=applicationContext;
@@ -50,17 +43,6 @@ public class SelectMemberAdapter extends RecyclerView.Adapter<SelectMemberAdapte
         mtinyDb=new TinyDB(mcontext);
     }
 
-   /* public SelectMemberAdapter(Context applicationContext, ArrayList<String> otherServiceid, ArrayList<String> motherServiceList) {
-
-        mcontext=applicationContext;
-        this.serviceList =motherServiceList;
-        this.subActivityIdList =otherServiceid;
-
-        mtinyDb=new TinyDB(mcontext);
-
-    }*/
-
-
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -70,9 +52,9 @@ public class SelectMemberAdapter extends RecyclerView.Adapter<SelectMemberAdapte
         public MyViewHolder(View itemView) {
             super(itemView);
 
-            types=(TextView)itemView.findViewById(R.id.typesOfmembership);
-            mcost=(TextView)itemView.findViewById(R.id.Bookcost);
-            mbook=(Button)itemView.findViewById(R.id.book);
+            types=itemView.findViewById(R.id.typesOfmembership);
+            mcost=itemView.findViewById(R.id.Bookcost);
+            mbook=itemView.findViewById(R.id.book);
 
         }
     }
@@ -81,22 +63,19 @@ public class SelectMemberAdapter extends RecyclerView.Adapter<SelectMemberAdapte
     public SelectMemberAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.member_course_layout,parent,false);
 
-        MyViewHolder viewss = new MyViewHolder(view);
-        return viewss;
+        return new MyViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(final SelectMemberAdapter.MyViewHolder holder, final int position) {
-
-
-
+    public void onBindViewHolder(final SelectMemberAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
 
         holder.types.setText(typeList.get(position));
         holder.mcost.setText("Rs."+CostList.get(position));
         holder.mbook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String clickedItem = String.valueOf(position);
+               // String clickedItem = String.valueOf(position);
                 String bookingCost=CostList.get(position);
                 String membershipType=typeList.get(position);
                 String membershipslotID=idList.get(position);
@@ -104,13 +83,14 @@ public class SelectMemberAdapter extends RecyclerView.Adapter<SelectMemberAdapte
 
                 mtinyDb.putString("SlotbookingCost",bookingCost);
                 Calendar calendar = Calendar.getInstance();
-                SimpleDateFormat mdformat = new SimpleDateFormat("hh:mmaa");
+                SimpleDateFormat mdformat = new SimpleDateFormat("hh:mmaa", Locale.getDefault());
                 String bookingTime = mdformat.format(calendar.getTime());
                 bookingTime = bookingTime.replace(".", "");
 
                 mtinyDb.putString(Constant.MEMSLOTID,membershipslotID);
                 mtinyDb.putString("SlotbookingTime",bookingTime);
                 mtinyDb.putString("membershipType",membershipType);
+                mtinyDb.putString(Constant.SELECTEDTYPE,"MEMBERSHIP");
 
                 Intent intent=new Intent(mcontext,MembershipBookingSummary.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -11,8 +11,8 @@
     <dimen name="dots_margin_bottom">20dp</dimen>
     <dimen name="img_width_height">120dp</dimen>
     <dimen name="img_width_heights">150dp</dimen>
-    <dimen name="slide_title">30dp</dimen>
-    <dimen name="slide_desc">16dp</dimen>
+    <dimen name="slide_title">30sp</dimen>
+    <dimen name="slide_desc">16sp</dimen>
     <dimen name="desc_padding">40dp</dimen>
     <dimen name="offset">1sp</dimen>
 
@@ -35,4 +35,6 @@
     <dimen name="dimen_32dp">32dp</dimen>
     <dimen name="dimen_48dp">48dp</dimen>
     <dimen name="dimen_56dp">56dp</dimen>
+
+    <integer name="animation_dur_medium">300</integer>
 </resources>

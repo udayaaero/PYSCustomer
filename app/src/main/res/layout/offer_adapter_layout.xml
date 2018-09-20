@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginTop="10dp"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -13,8 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:orientation="vertical"
-       >
+        android:orientation="vertical">
         <LinearLayout
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
@@ -22,7 +21,8 @@
             android:weightSum="2"
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            tools:ignore="DisableBaselineAlignment,UselessParent">
         <LinearLayout
             android:layout_weight="0.4"
             android:orientation="vertical"
@@ -31,7 +31,8 @@
         <ImageView
             android:background="@drawable/spoffer"
             android:layout_width="70dp"
-            android:layout_height="70dp" />
+            android:layout_height="70dp"
+            tools:ignore="ContentDescription" />
 
         </LinearLayout>
 
@@ -43,6 +44,7 @@
             android:layout_height="wrap_content">
                 <TextView
                     android:text="All User"
+                    tools:ignore="HardcodedText"
                     android:textColor="@color/colorPrimary"
                     android:textStyle="bold"
                     android:id="@+id/offerCategorytype"
@@ -68,7 +70,8 @@
                         android:text=" % discount"
                         android:textSize="14sp"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="HardcodedText" />
                 </LinearLayout>
                     <LinearLayout
                         android:layout_gravity="center"
@@ -81,6 +84,7 @@
                             android:textColor="@color/colorPrimary"
                             android:textStyle="bold"
                             android:text="From - "
+                            tools:ignore="HardcodedText"
                             android:textSize="14sp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
@@ -97,6 +101,7 @@
                             android:textColor="@color/colorPrimary"
                             android:textStyle="bold"
                             android:text=",To - "
+                            tools:ignore="HardcodedText"
                             android:textSize="14sp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />

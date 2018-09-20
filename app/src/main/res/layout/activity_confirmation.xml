@@ -1,0 +1,275 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backgroundmain"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:fitsSystemWindows="true"
+android:id="@+id/allviewsLayout"
+    tools:context="com.coeuz.pyscustomer.ConfirmationActivity">
+    <LinearLayout
+        android:weightSum="2"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_weight="0.8"
+        android:id="@+id/confirm"
+        android:gravity="center"
+        android:background="@color/green"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/im"
+            android:background="@drawable/roundtick"
+            android:layout_gravity="center"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            tools:ignore="ContentDescription" />
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
+            android:textStyle="italic"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:text="Your Booking Confirmed:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_weight="1.2"
+            android:padding="5dp"
+            android:id="@+id/fullscreen_content_controls"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical">
+    <LinearLayout
+
+        android:background="@color/white"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="UselessParent"
+            android:baselineAligned="false">
+            <LinearLayout
+                android:layout_weight="0.4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+            <ImageView
+                android:textStyle="bold"
+               android:background="@drawable/success"
+                android:gravity="start"
+                android:textSize="14sp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+            <LinearLayout
+                android:padding="2dp"
+                android:orientation="vertical"
+                android:layout_weight="1.6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                <TextView
+
+                    android:textStyle="bold"
+                    android:textColor="@color/block"
+                    android:gravity="start"
+                    android:textSize="14sp"
+                    android:text="Hi "
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText" />
+                <TextView
+                    android:id="@+id/customerName"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
+                    android:gravity="start"
+                    android:textSize="16sp"
+                    android:text=""
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/block"
+                    android:gravity="start"
+                    android:textSize="14sp"
+                    android:text=", your booking for "
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText" />
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/vendName"
+                    android:textStyle="bold"
+                    android:textColor="@color/green"
+                    android:gravity="start"
+                    android:textSize="16sp"
+                    android:text=""
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/continues"
+                    android:textStyle="bold"
+                    android:textColor="@color/block"
+                    android:gravity="start"
+                    android:textSize="14sp"
+                    android:text=""
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+
+            <LinearLayout
+              android:layout_marginTop="20dp"
+                android:background="@color/white"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:textColor="@color/block"
+                        android:gravity="start"
+                        android:textSize="14sp"
+                        android:text="Date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        tools:ignore="HardcodedText" />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/SessionDates"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:text="date"
+                        android:textColor="@color/block"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:ignore="HardcodedText" />
+
+                </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:textColor="@color/block"
+                        android:gravity="start"
+                        android:textSize="14sp"
+                        android:text="Time"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        tools:ignore="HardcodedText" />
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+
+                            android:textStyle="bold"
+                            android:textColor="@color/block"
+                            android:id="@+id/Sessiontimes"
+                            android:gravity="start"
+                            android:textSize="14sp"
+                            android:text="time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:ignore="HardcodedText" />
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:textColor="@color/block"
+                        android:gravity="start"
+                        android:textSize="14sp"
+                        android:text="Address"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:textColor="@color/block"
+                        android:id="@+id/Addressd"
+                        android:gravity="start"
+                        android:textSize="14sp"
+                        android:text="Address"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        tools:ignore="HardcodedText" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/homes"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/homess"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        tools:ignore="ContentDescription" />
+
+
+</RelativeLayout>

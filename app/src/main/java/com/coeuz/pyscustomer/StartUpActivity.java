@@ -1,7 +1,6 @@
 package com.coeuz.pyscustomer;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,31 +8,22 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
-import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 
 import android.location.LocationManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
+
 import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -44,7 +34,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
-import com.coeuz.pyscustomer.Requiredclass.LocationAddress;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
 
 
@@ -56,7 +45,6 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -65,16 +53,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class StartUpActivity extends AppCompatActivity implements ConnectionCallbacks,
         OnConnectionFailedListener, LocationListener {
@@ -83,7 +65,8 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
     private String locatonValues;
 
     TinyDB mtinyDb;
-    private String mToken, muserId, mcustomerName, mmobileNumber, memailId;
+    private String mToken, muserId, mcustomerName;
+    String mmobileNumber,memailId;
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 999;
 
@@ -92,13 +75,14 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-    private double currentLatitude;
-    private double currentLongitude;
+     double currentLatitude;
+     double currentLongitude;
 
     FusedLocationProviderClient fusedLocationProviderClient;
     Location location100;
-    boolean notWorking;
-
+    boolean notWorking=true;
+    double la,lo;
+String notRun="true";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +112,7 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)
-                .setFastestInterval(1 * 1000);
+                .setFastestInterval(1000);
 
 
        mHandler.postDelayed(new Runnable() {
@@ -150,10 +134,12 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
             String lati = String.valueOf(latitude);
             Log.d("feuihiuer", String.valueOf(latitude));
             if (!lati.equals("0.0")) {
+                Log.d("feuihiuerccfdf10", String.valueOf(longitude));
                 mtinyDb.putString(Constant.INITIALLAT, String.valueOf(latitude));
                 mtinyDb.putString(Constant.INITIALLONG, String.valueOf(longitude));
                 hereLocattion(latitude, longitude);
             } else {
+                notRun="false";
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
@@ -164,17 +150,20 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
                     // for ActivityCompat#requestPermissions for more details.
                     return;
                 }
-                fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+
+                    fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
                     @Override
                     public void onComplete(@NonNull Task<Location> task) {
+                        if (ActivityCompat.checkSelfPermission(StartUpActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(StartUpActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            return;
+                        }
                         location100 = task.getResult();
                         double lat = location100.getLatitude();
                         double lon = location100.getLongitude();
                         Log.d("fhewuihfw", String.valueOf(lat+lon));
                         mtinyDb.putString(Constant.INITIALLAT, String.valueOf(lat));
                         mtinyDb.putString(Constant.INITIALLONG, String.valueOf(lon));
-                        hereLocattion(lat, lon);
-
 
                     }
                 });
@@ -184,9 +173,13 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
         } else{
 
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            boolean isGpsProviderEnabled, isNetworkProviderEnabled;
-            isGpsProviderEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            isNetworkProviderEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            boolean isGpsProviderEnabled = false, isNetworkProviderEnabled = false;
+            if (locationManager != null) {
+                isGpsProviderEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            }
+            if (locationManager != null) {
+                isNetworkProviderEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            }
 
             if (!isGpsProviderEnabled && !isNetworkProviderEnabled) {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -212,7 +205,7 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
         }
 
 
-        if (mToken != null) {
+        if (!mToken.isEmpty()) {
             String URL1 = Constant.APIONE + "/user/getCurrentUser";
 
             StringRequest request = new StringRequest(Request.Method.GET, URL1, new Response.Listener<String>() {
@@ -226,6 +219,7 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
                         mmobileNumber = jsonObject.getString("mobileNumber");
                         memailId = jsonObject.getString("emailId");
                         mtinyDb.putString(Constant.CUSTOMERNAME, mcustomerName);
+                        mtinyDb.putString(Constant.USERID, muserId);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -257,8 +251,6 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
                     } else if (error instanceof ParseError) {
                         Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                    } else if (error instanceof NoConnectionError) {
-                        Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                     } else if (error instanceof TimeoutError) {
                         Toast.makeText(getApplicationContext(), "Connection TimeOut! Please check your internet connection.", Toast.LENGTH_SHORT).show();
 
@@ -266,8 +258,8 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
                 }
             }) {
                 @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers1 = new HashMap<String, String>();
+                public Map<String, String> getHeaders() {
+                    HashMap<String, String> headers1 = new HashMap<>();
 
                     headers1.put("X-Auth-Token", String.valueOf(mToken).replaceAll("\"", ""));
                     return headers1;
@@ -282,11 +274,14 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
     }
 
 
-    public String hereLocattion(double lat, double lon) {
-
+    public void hereLocattion(double lat, double lon) {
+la=lat;
+lo=lon;
+        Log.d("feuihiuerccfdf11", String.valueOf(lat));
         Log.d("ttwrtfrefr", "tret3t5");
-        String curCity = "";
+        String curCity;
         Geocoder geocoder = new Geocoder(StartUpActivity.this, Locale.getDefault());
+        Log.d("feuihiuerccfdf12","run1");
         List<Address> addressList;
         try {
             addressList = geocoder.getFromLocation(lat, lon, 2);
@@ -296,7 +291,7 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
                 Log.d("yfhuewir", locatonValues);
 
 
-
+                Log.d("feuihiuerccfdf13","run2");
             }
             List<Address> addressList1 = geocoder.getFromLocation(
                     lat, lon, 1);
@@ -315,6 +310,7 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
                 sb.append(address.getLocality()).append("\n");*/
                 /*sb.append(address.getPostalCode()).append("\n");
                 sb.append(address.getCountryName());*/
+                Log.d("feuihiuerccfdf14","run3");
                 locatonValues = sb.toString() + System.getProperty("line.separator") + sb1;
 
                 if (!locatonValues.equals("")) {
@@ -333,12 +329,13 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Log.d("feuihiuerccfdf16","run5");
         if(notWorking){
+            Log.d("feuihiuerccfdf17","run6");
             getFromLocations(lat,lon);
             Log.d("fhuwifhi","fhuwhe");
         }
 
-        return curCity;
     }
 
 
@@ -363,14 +360,14 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
     }
 
 
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+ /*   private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(StartUpActivity.this)
                 .setMessage(message)
                 .setPositiveButton("OK", okListener)
                 .setNegativeButton("Cancel", null)
                 .create()
                 .show();
-    }
+    }*/
 
     @Override
     protected void onResume() {
@@ -385,14 +382,15 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
         Log.v(this.getClass().getSimpleName(), "onPause()");
 
         //Disconnect from API onPause()
-        if (mGoogleApiClient.isConnected()) {
+       /* if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
-        }
+        }*/
 
 
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onConnected(Bundle bundle) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -402,7 +400,7 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         if (location == null) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            LocationServices.FusedLocationApi.requestLocationUpdates( mGoogleApiClient, mLocationRequest, this);
 
         } else {
 
@@ -419,7 +417,7 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
     public void onConnectionSuspended(int i) {}
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
         if (connectionResult.hasResolution()) {
             try {
@@ -447,6 +445,7 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
 
 
         public  void getFromLocations(double lat, double lng) {
+            Log.d("feuihiuerccfdf18","run7");
 
             String address = String.format(Locale.US,
                     "https://maps.googleapis.com/maps/api/geocode/json?latlng=%1$f,%2$f&sensor=false&language="
@@ -456,7 +455,8 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
             StringRequest request45 = new StringRequest(Request.Method.GET, address, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.d("fiuwhwiufrew", String.valueOf(response));
+                    Log.d("fdssfrfer", String.valueOf(response));
+                    Log.d("feuihiuerccfdf19","run8");
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         JSONArray valuess=jsonObject.getJSONArray("results");
@@ -468,10 +468,14 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
                         }
                         Log.d("fiuwhwiufrew2", String.valueOf(jsonArray));
                         String areaName = null;
-                        for(int i=0;i<jsonArray.length();i++){
-                            JSONObject jsonObject2= jsonArray.getJSONObject(1);
-                            areaName=jsonObject2.getString("long_name");
 
+
+                        if (jsonArray != null) {
+                            for(int i = 0; i<jsonArray.length(); i++){
+                                JSONObject jsonObject2= jsonArray.getJSONObject(1);
+                                areaName=jsonObject2.getString("long_name");
+
+                            }
                         }
                         if(areaName!=null){
                             mtinyDb.putString(Constant.INITIALLOCATION, areaName);
@@ -519,17 +523,15 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
                     } else if (error instanceof ParseError) {
                         Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                    } else if (error instanceof NoConnectionError) {
-                        Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
-                    } else if (error instanceof TimeoutError) {
+                    }  else if (error instanceof TimeoutError) {
                         Toast.makeText(getApplicationContext(), "Connection TimeOut! Please check your internet connection.", Toast.LENGTH_SHORT).show();
 
                     }
                 }
             }) {
                 @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers1 = new HashMap<String, String>();
+                public Map<String, String> getHeaders() {
+                    HashMap<String, String> headers1 = new HashMap<>();
 
                     headers1.put("X-Auth-Token", String.valueOf(mToken).replaceAll("\"", ""));
                     return headers1;

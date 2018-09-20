@@ -1,9 +1,7 @@
 package com.coeuz.pyscustomer.AdapterClass;
 
-/**
- * Created by vjy on 18-Mar-18.
- */
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -20,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -36,6 +33,7 @@ import com.coeuz.pyscustomer.R;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,8 +43,9 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
     public Context mcontext;
     private ArrayList<SubActivityModel> subActivityModel;
     private TinyDB mtinyDb;
+    private ArrayList<String> slotTypeList=new ArrayList<>();
+    private String mBookingType,mcBookingType;
 
-    //private ArrayList<Integer> ImageList=new ArrayList<Integer>();
 
 
     public NearYouAdapter(Context applicationContext, ArrayList<SubActivityModel> subActivityModels) {
@@ -58,13 +57,13 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
 
     @Override
     public NearYouAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // inflate your custom row layout here
+
         return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.near_you_adapter, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(NearYouAdapter.MyViewHolder holder, final int position) {
-        // update your data here
+    public void onBindViewHolder(NearYouAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
+
 
         holder.nNameOfVendor.setText(subActivityModel.get(position).getVendorName());
         holder.nAdressOfvendor.setText(subActivityModel.get(position).getArea());
@@ -83,8 +82,10 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
                 final String  mVendorName=subActivityModel.get(position).getVendorName();
                 final String  mArea=subActivityModel.get(position).getArea();
                 final Integer  mVendorIds=subActivityModel.get(position).getVendorId();
+                final String  subActivityId= String.valueOf(subActivityModel.get(position).getSubActivityId());
+                Log.d("fnruiferui",subActivityId);
 
-                String vendorId= String.valueOf(mVendorIds);
+                final String vendorId= String.valueOf(mVendorIds);
 
                 String URL = Constant.API +"/general/getVendorByVendorId?vendorId="+vendorId;
 
@@ -109,20 +110,114 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
                                 mtinyDb.putString("latttt",latitude);
                                 mtinyDb.putString("longggg",longitude);
                                 mtinyDb.putString(Constant.VENDORNAME,mVendorName);
-                                Log.d("fnrjnf",latitude);
+                                mtinyDb.putString(Constant.VENDORAREA,mArea);
+                                mtinyDb.putString("activityId",subActivityId);
+                                String msubActivityId=mtinyDb.getString("activityId");
+                                Log.d("fnrjnf",msubActivityId);
 
-                                Intent intent=new Intent(mcontext, AfterSelectVendor.class);
-                                Bundle bundle = new Bundle();
-                                bundle.putString("positionValue",clickedItem);
-                                bundle.putString("mVendorName",mVendorName);
-                                bundle.putInt("mVendorIds",mVendorIds);
-                                bundle.putString("mArea",mArea);
-                                intent.putExtras(bundle);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                mcontext.startActivity(intent);
 
-                               // notifyDataSetChanged();
-                                mProgressDialog.dismiss();
+
+
+                                slotTypeList.clear();
+                                String URL10 = Constant.API +"/user/getSlotTypesBySubActivityIdAndVendorId?subActivityId="+subActivityId+"&vendorId="+vendorId;
+
+                                StringRequest request10 = new StringRequest(Request.Method.GET, URL10, new Response.Listener<String>() {
+                                    @Override
+                                    public void onResponse(String response) {
+                                        Log.d("bfhfbfjdew", String.valueOf(response));
+
+                                        try {
+                                            JSONArray jsonArray = new JSONArray(response);
+
+                                            if (jsonArray.length() == 0) {
+                                                Log.d("rtrews", String.valueOf(response));
+                                                mProgressDialog.dismiss();
+                                                mBookingType="";
+                                                mtinyDb.putString(Constant.BOOKINGTYPE,mBookingType);
+                                                mcBookingType="";
+                                                mtinyDb.putString(Constant.MCBOOKINGTYPE,mcBookingType);
+                                                Intent intent=new Intent(mcontext, AfterSelectVendor.class);
+                                                Bundle bundle = new Bundle();
+                                                bundle.putString("positionValue",clickedItem);
+                                                bundle.putString("mVendorName",mVendorName);
+                                                bundle.putInt("mVendorIds",mVendorIds);
+                                                bundle.putString("mArea",mArea);
+                                                intent.putExtras(bundle);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                mcontext.startActivity(intent);
+
+                                            } else {
+                                                for (int i = 0; i < jsonArray.length(); i++) {
+                                                    String slotTypes = String.valueOf(jsonArray.get(i));
+                                                    Log.d("fsdfw", String.valueOf(slotTypes));
+
+                                                    slotTypeList.add(slotTypes);
+                                                }
+                                                mBookingType="";
+                                                mtinyDb.putString(Constant.BOOKINGTYPE,mBookingType);
+                                                mcBookingType="";
+                                                mtinyDb.putString(Constant.MCBOOKINGTYPE,mcBookingType);
+                                                Log.d("fdsfger1", String.valueOf(slotTypeList));
+
+                                                if(slotTypeList.contains("PRE_DEFINED_SLOT")){
+                                                    mBookingType="PRE_DEFINED_SLOT";
+                                                    mtinyDb.putString(Constant.BOOKINGTYPE,mBookingType);
+
+                                                }else if(slotTypeList.contains("CONSECUTIVE")){
+                                                    mBookingType="CONSECUTIVE";
+                                                    mtinyDb.putString(Constant.BOOKINGTYPE,mBookingType);
+                                                }
+                                                if(slotTypeList.contains("MEMBERSHIP")){
+                                                    mcBookingType="MEMBERSHIP";
+                                                    mtinyDb.putString(Constant.MCBOOKINGTYPE,mcBookingType);
+
+                                                }else if(slotTypeList.contains("COURSE")){
+
+                                                    mcBookingType="COURSE";
+                                                    mtinyDb.putString(Constant.MCBOOKINGTYPE,mcBookingType);
+
+                                                }
+                                                mProgressDialog.dismiss();
+                                                Intent intent=new Intent(mcontext, AfterSelectVendor.class);
+                                                Bundle bundle = new Bundle();
+                                                bundle.putString("positionValue",clickedItem);
+                                                bundle.putString("mVendorName",mVendorName);
+                                                bundle.putInt("mVendorIds",mVendorIds);
+                                                bundle.putString("mArea",mArea);
+                                                intent.putExtras(bundle);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                mcontext.startActivity(intent);
+
+
+                                            }
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Log.d("ewqreqw", String.valueOf(error));
+                                        mProgressDialog.dismiss();
+                                        if (error instanceof NetworkError) {
+                                            Toast.makeText(mcontext, "Cannot connect to Internet...Please check your connection!", Toast.LENGTH_SHORT).show();
+                                        } else if (error instanceof ServerError) {
+
+                                            Log.d("heuiwirhu1", String.valueOf(error));
+                                        }  else if (error instanceof ParseError) {
+                                            Toast.makeText(mcontext, "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
+
+                                        } else if (error instanceof TimeoutError) {
+                                            Toast.makeText(mcontext, "Connection TimeOut! Please check your internet connection.", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    }
+                                });
+                                RequestQueue requestQueue10 = Volley.newRequestQueue(mcontext);
+                                requestQueue10.add(request10);
+
+
                             }
 
                         } catch (JSONException e) {
@@ -142,8 +237,6 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
                         }  else if (error instanceof ParseError) {
                             Toast.makeText(mcontext, "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof NoConnectionError) {
-                            Toast.makeText(mcontext, "NoConnectionError", Toast.LENGTH_SHORT).show();
                         } else if (error instanceof TimeoutError) {
                             Toast.makeText(mcontext, "Connection TimeOut! Please check your internet connection.", Toast.LENGTH_SHORT).show();
 
@@ -169,16 +262,16 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
     class MyViewHolder extends RecyclerView.ViewHolder {
         // view this our custom row layout, so intialize your variables here
         private TextView nNameOfVendor,nAdressOfvendor;
-        private ImageView mImage;
+         ImageView mImage;
         private CardView mLayout;
 
         MyViewHolder(View view) {
             super(view);
 
-            nNameOfVendor=(TextView)view.findViewById(R.id.NameOfVendor);
-            nAdressOfvendor=(TextView)view.findViewById(R.id.AdressOfVendor);
-            mLayout=(CardView)view.findViewById(R.id.SelectChard);
-            mImage=(ImageView) view.findViewById(R.id.image);
+            nNameOfVendor=view.findViewById(R.id.NameOfVendor);
+            nAdressOfvendor=view.findViewById(R.id.AdressOfVendor);
+            mLayout=view.findViewById(R.id.SelectChard);
+            mImage=view.findViewById(R.id.image);
 
 
 

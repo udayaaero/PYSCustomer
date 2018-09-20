@@ -1,51 +1,28 @@
 package com.coeuz.pyscustomer;
 
-import android.app.AlertDialog;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
-import android.graphics.Typeface;
+
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View.OnClickListener;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.Window;
-import android.view.accessibility.AccessibilityEvent;
-import android.view.animation.TranslateAnimation;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ExpandableListView;
-
-import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ExpandableListView.OnGroupCollapseListener;
-import android.widget.ExpandableListView.OnGroupExpandListener;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -56,15 +33,11 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.coeuz.pyscustomer.AdapterClass.CourseAdapter;
-import com.coeuz.pyscustomer.AdapterClass.DateBookingAdapter;
-import com.coeuz.pyscustomer.AdapterClass.FilterAmenityAdapter;
-import com.coeuz.pyscustomer.AdapterClass.OfferAdapter;
+
 import com.coeuz.pyscustomer.AdapterClass.OfferAdapterBookSummary;
-import com.coeuz.pyscustomer.ModelClass.SlotModel;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
-import com.transitionseverywhere.TransitionManager;
+
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.json.JSONArray;
@@ -75,21 +48,22 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import devs.mulham.horizontalcalendar.HorizontalCalendar;
-import devs.mulham.horizontalcalendar.HorizontalCalendarListener;
-import devs.mulham.horizontalcalendar.HorizontalCalendarView;
+import java.util.Locale;
+
+import java.util.Objects;
+
 
 public class SlotPages extends AppCompatActivity implements View.OnClickListener {
 
 
-
-    private String  mToken,msubActivityId,mVendorId,selectedSlotIds,personCounts,days;
+    private String msubActivityId;
+    private String selectedSlotIds;
+    private String personCounts;
+    private String days;
 
 
     private RadioButton mweekDays,mWeekEnd,mNextSevendays,mNextThirtyDays;
@@ -115,7 +89,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
 
 
     RecyclerView offerRecycler;
-    private String offerStart,offerEnd,totalDiscount;
+    private String offerStart,offerEnd;
     ArrayList<String> offerStartList=new ArrayList<>();
     ArrayList<String> offerEndList=new ArrayList<>();
     ArrayList<String> offerTypeList=new ArrayList<>();
@@ -124,37 +98,39 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
     TextView mTotalDiscount;
     Integer sum=0;
     private Button btnOne,btnTwo,btnThree,btnFour,btnFive;
-    private Button proceed;
     Date date11;
 
 
+    @SuppressLint("SetTextI18n")
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slot_pages);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         tinyDB=new TinyDB(getApplicationContext());
-
-        mToken=tinyDB.getString(Constant.TOKEN);
+        tinyDB.putString(Constant.HISTORYPAGE,"PRE");
+       // String mToken = tinyDB.getString(Constant.TOKEN);
         msubActivityId=tinyDB.getString(Constant.PREDEFINEDSUBACTIVITYID);
         selectedSlotIds=tinyDB.getString(Constant.PRESLOTID);
-        mVendorId=tinyDB.getString(Constant.VENDORID);
+        String mVendorId = tinyDB.getString(Constant.VENDORID);
         mBookingType=tinyDB.getString(Constant.BOOKINGTYPE);
         vvendorName=tinyDB.getString(Constant.VENDORNAME);
         vvendorArea=tinyDB.getString(Constant.VENDORAREA);
         vsessionDate=tinyDB.getString(Constant.CALENDERDATE);
         vsessionStartTime=tinyDB.getString("SlotbookingStartTime");
         vsessionEndTime=tinyDB.getString("SlotbookingEndTime");
-
         vsessionCost=tinyDB.getString("SlotbookingCost");
+        tinyDB.putString(Constant.PAYMENTPAGESUBID,msubActivityId);
+        tinyDB.putString(Constant.PAYMENTPAGESLOTID,selectedSlotIds);
 
         try {
-            final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.getDefault());
             final Date dateObj = sdf.parse(vsessionStartTime);
-            String timein12Format=new SimpleDateFormat("hh:mmaa").format(dateObj);
+            String timein12Format=new SimpleDateFormat("hh:mmaa",Locale.getDefault()).format(dateObj);
             Log.d("fnuifreui45", String.valueOf(timein12Format));
             newvsessionStartTime=String.valueOf(timein12Format);
             newvsessionStartTime = newvsessionStartTime.replace(".", "");
@@ -162,9 +138,9 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
             e.printStackTrace();
         }
         try {
-            final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.getDefault());
             final Date dateObj = sdf.parse(vsessionEndTime );
-            String timein12Format=new SimpleDateFormat("hh:mmaa").format(dateObj);
+            String timein12Format=new SimpleDateFormat("hh:mmaa",Locale.getDefault()).format(dateObj);
             Log.d("fnuifreui45", String.valueOf(timein12Format));
             newvsessionEndTime=String.valueOf(timein12Format);
             newvsessionEndTime = newvsessionEndTime.replace(".", "");
@@ -175,9 +151,9 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
 
 
 
-        offerRecycler=(RecyclerView)findViewById(R.id.RecyclerOffer);
-        mTotalDiscount=(TextView) findViewById(R.id.TotalDiscount);
-        proceed = (Button) findViewById(R.id.nBooking1);
+        offerRecycler=findViewById(R.id.RecyclerOffer);
+        mTotalDiscount=findViewById(R.id.TotalDiscount);
+        Button proceed = findViewById(R.id.nBooking1);
         proceed.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -187,23 +163,23 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
 
 
 
-        noInternetLayout = (LinearLayout) findViewById(R.id.NoInternetLayout);
-        allViewLayout = (RelativeLayout) findViewById(R.id.allViewlayout);
+        noInternetLayout = findViewById(R.id.NoInternetLayout);
+        allViewLayout = findViewById(R.id.allViewlayout);
 
 
-        mSessionBookedFor=(TextView) findViewById(R.id.SessionBookedFor);
-        mSessionDate=(TextView) findViewById(R.id.SessionDate);
-        mSessionDateEnd=(TextView) findViewById(R.id.SessionDateEnd);
-        mSessionStartTime=(TextView) findViewById(R.id.SessionStartTime);
-        mSessionEndTime=(TextView) findViewById(R.id.SessionEndTime);
-        mAddress=(TextView) findViewById(R.id.Address);
-        mbookCosts=(TextView) findViewById(R.id.bookCosts);
+        mSessionBookedFor= findViewById(R.id.SessionBookedFor);
+        mSessionDate=findViewById(R.id.SessionDate);
+        mSessionDateEnd=findViewById(R.id.SessionDateEnd);
+        mSessionStartTime=findViewById(R.id.SessionStartTime);
+        mSessionEndTime=findViewById(R.id.SessionEndTime);
+        mAddress=findViewById(R.id.Address);
+        mbookCosts= findViewById(R.id.bookCosts);
 
         try {
             Log.d("fhruifhruei1",vsessionDate);
-            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            Date date = (Date)formatter.parse(vsessionDate);
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy");
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Date date = formatter.parse(vsessionDate);
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
             newDates = sdf.format(date);
 
             Log.d("fhruifhruei",newDates);
@@ -225,10 +201,10 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
         text.setText("வணக்கம்");*/
 
 
-        mweekDays=(RadioButton)findViewById(R.id.weekDays);
-        mWeekEnd=(RadioButton)findViewById(R.id.weekEnds);
-        mNextSevendays=(RadioButton)findViewById(R.id.nextseven);
-        mNextThirtyDays=(RadioButton)findViewById(R.id.nextthirty);
+        mweekDays= findViewById(R.id.weekDays);
+        mWeekEnd= findViewById(R.id.weekEnds);
+        mNextSevendays= findViewById(R.id.nextseven);
+        mNextThirtyDays= findViewById(R.id.nextthirty);
 
         mweekDays.setOnClickListener(this);
         mWeekEnd.setOnClickListener(this);
@@ -237,15 +213,15 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
 
 
 
-         btnOne = (Button) findViewById(R.id.oneButton);
+         btnOne = findViewById(R.id.oneButton);
         btnOne.setOnClickListener(this); // calling onClick() method
-         btnTwo = (Button) findViewById(R.id.twoButton);
+         btnTwo = findViewById(R.id.twoButton);
         btnTwo.setOnClickListener(this);
-         btnThree = (Button) findViewById(R.id.threeButton);
+         btnThree =  findViewById(R.id.threeButton);
         btnThree.setOnClickListener(this);
-        btnFour = (Button) findViewById(R.id.fourButton);
+        btnFour = findViewById(R.id.fourButton);
         btnFour.setOnClickListener(this);
-        btnFive = (Button) findViewById(R.id.fiveButton);
+        btnFive = findViewById(R.id.fiveButton);
         btnFive.setOnClickListener(this);
 
 
@@ -255,7 +231,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
         offerTypeList.clear();
         offerBenefits.clear();
 
-        String URL3 = Constant.API +"/general/viewOffers?vendorId="+mVendorId;
+        String URL3 = Constant.API +"/general/viewOffers?vendorId="+ mVendorId;
 
         StringRequest request3 = new StringRequest(Request.Method.GET, URL3, new Response.Listener<String>() {
             @Override
@@ -275,7 +251,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                             String expiryDate = jsonObject.getString("expiryDate");
                             String discount = jsonObject.getString("discount");
                             String category = jsonObject.getString("category");
-                            String type = jsonObject.getString("type");
+                          //  String type = jsonObject.getString("type");
                             Log.d("nfjfnjfr", String.valueOf(startDate));
                             Log.d("nfjfnjfr1", String.valueOf(expiryDate));
                             Integer discount1 = jsonObject.getInt("discount");
@@ -283,7 +259,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                             Long timestamp10 = Long.parseLong(startDate);
                             Long timestamp20 = Long.parseLong(expiryDate);
                             try {
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
                                 Date netDate = (new Date(timestamp10));
                                 offerStart = sdf.format(netDate);
 
@@ -292,7 +268,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                                 e.printStackTrace();
                             }
                             try {
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
                                 Date netDate = (new Date(timestamp20));
                                 offerEnd = sdf.format(netDate);
 
@@ -348,7 +324,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
 
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
+                    Button button= findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -360,13 +336,11 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                } else if (error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof TimeoutError) {
 
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
+                    Button button= findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -388,10 +362,10 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
             if(personCounts==null){
                 personCounts="1";
             }
-
+        tinyDB.putString(Constant.PAYMENTPERSONCOUNT,personCounts);
                  totalCost=Integer.valueOf(mbookCosts.getText().toString());
                 Log.d("jfwiejfiwre", String.valueOf(totalCost));
-
+                     days="0";
                        if(mweekDays.isSelected()){
                            days="5";
                            totalCost=totalCost*5;
@@ -414,7 +388,8 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                               Log.d("jfierj", days);
                            }
 
-
+if(days!=null){
+            tinyDB.putString(Constant.PAYMENTPREDEFINEDDAYS,days);}
 
             final ProgressDialog mProgressDialog;
             mProgressDialog = new ProgressDialog(this);
@@ -428,7 +403,12 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                     @Override
                     public void onResponse(String response) {
                         mProgressDialog.dismiss();
-                        Log.d("fhhuiefh", response);
+                        Log.d("cdsfsfwe", response);
+                        try {
+                            JSONObject jsonObject=new JSONObject(response);
+                            String status=jsonObject.getString("status");
+                            if(status.equals("true")){
+
                         String sDate=mSessionDate.getText().toString();
 
                         if(!sDate.isEmpty()){
@@ -439,7 +419,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                             Log.d("nenioer",eDate);
                             tinyDB.putString(Constant.PAYEDATE,eDate);
                         }else{
-                            tinyDB.putString(Constant.PAYEDATE,sDate);
+                            tinyDB.putString(Constant.PAYEDATE,"");
                         }
                         String tCost= mbookCosts.getText().toString();
 
@@ -461,12 +441,19 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
 
                         Intent refresh = new Intent(SlotPages.this, PaymentActivity.class);
                         startActivity(refresh);
-
+                            }else{
+                                Toast.makeText(SlotPages.this, "Please Select another slot", Toast.LENGTH_LONG).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
+
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("ryeuiryweq", error.toString());
+                        Log.d("vfdvdfdsv", error.toString());
+
                         mProgressDialog.dismiss();
                       //  Log.d("ewqdadsfewr", String.valueOf(error.networkResponse.statusCode));
                         Toast.makeText(SlotPages.this, "Please try again", Toast.LENGTH_SHORT).show();
@@ -474,29 +461,30 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                     }
                 }) {
                     @Override
-                    public byte[] getBody() throws AuthFailureError {
+                    public byte[] getBody() {
 
                         HashMap<String, Object> hashMap = new HashMap<>();
 
-                        Log.d("jfiojfero2",mVendorId);
-                        Log.d("jfiojfero3",msubActivityId);
-                        Log.d("jfiojfero4",personCounts);
-                        Log.d("jfiojfero5",selectedSlotIds);
-                        Log.d("jfiojfero6",vsessionDate);
-                        hashMap.put("vendorId", mVendorId);
+
+                        Log.d("fewfew2",msubActivityId);
+                        Log.d("fewfew3",personCounts);
+                        Log.d("fewfew4",selectedSlotIds);
+                        Log.d("fewfew5",vsessionDate);
+                        Log.d("fewfew6",days);
+                      //  hashMap.put("vendorId", mVendorId);
                         hashMap.put("subActivityId", msubActivityId);
                         hashMap.put("personCount", personCounts);
                         hashMap.put("slotId", selectedSlotIds);
                         hashMap.put("bookingType", "PRE_DEFINED_SLOT");
                         hashMap.put("bookedForDate", vsessionDate);
-                        if(days != null && !days.isEmpty()) {
+                        if(days.equals("0")) {
+                            hashMap.put("type", "single");
+                            Log.d("jfiojfero1","hewruithui");
+                        }
+                        else{
                             hashMap.put("type", "continous");
                             hashMap.put("days", days);
                             Log.d("jfiojfero","hewruithui");
-                        }
-                        else{
-                            hashMap.put("type", "single");
-                            Log.d("jfiojfero1","hewruithui");
                         }
 
                         return new JSONObject(hashMap).toString().getBytes();
@@ -513,16 +501,16 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                 request.setRetryPolicy(new RetryPolicy() {
                     @Override
                     public int getCurrentTimeout() {
-                        return 60000;
+                        return 200000;
                     }
 
                     @Override
                     public int getCurrentRetryCount() {
-                        return 60000;
+                        return 200000;
                     }
 
                     @Override
-                    public void retry(VolleyError error) throws VolleyError {
+                    public void retry(VolleyError error) {
 
                     }
                 });
@@ -533,16 +521,147 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
 
 
     }
+    public void checkPersonCount(){
+       // http://13.126.119.71:8081/service/slot/validatePersonCount
+
+
+        if(personCounts==null){
+            personCounts="1";
+        }
+        tinyDB.putString(Constant.PAYMENTPERSONCOUNT,personCounts);
+        totalCost=Integer.valueOf(mbookCosts.getText().toString());
+        Log.d("jfwiejfiwre", String.valueOf(totalCost));
+        days="0";
+        if(mweekDays.isSelected()){
+            days="5";
+            totalCost=totalCost*5;
+            Log.d("jfierj", days);
+        }
+        if(mWeekEnd.isSelected()){
+            days="2";
+            totalCost=totalCost*2;
+            Log.d("jfierj", days);
+        }
+
+        if(mNextSevendays.isSelected()){
+            days="7";
+            totalCost=totalCost*7;
+            Log.d("jfierj", days);
+        }
+        if(mNextThirtyDays.isSelected()){
+            days="30";
+            totalCost=totalCost*30;
+            Log.d("jfierj", days);
+        }
+
+        if(days!=null){
+            tinyDB.putString(Constant.PAYMENTPREDEFINEDDAYS,days);}
+
+
+
+        String URL = Constant.API + "/slot/validatePersonCount";
+        StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Log.d("feifjeije", response);
+                try {
+                    JSONObject jsonObject=new JSONObject(response);
+                    String status=jsonObject.getString("status");
+                    String errorMessage=jsonObject.getString("errorMessage");
+                    if(status.equals("true")){
+                        Log.d("feifjeije", response);
+                    }else {
+                        Toast toast = Toast.makeText(SlotPages.this, errorMessage, Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("fioerjfierj", error.toString());
+
+            }
+        }) {
+            @Override
+            public byte[] getBody() {
+
+                HashMap<String, Object> hashMap = new HashMap<>();
+
+
+                Log.d("fewfew2",msubActivityId);
+                Log.d("fewfew3",personCounts);
+                Log.d("fewfew4",selectedSlotIds);
+                Log.d("fewfew5",vsessionDate);
+                Log.d("fewfew6",days);
+
+                hashMap.put("subActivityId", msubActivityId);
+                hashMap.put("personCount", personCounts);
+                hashMap.put("slotId", selectedSlotIds);
+                hashMap.put("bookingType", "PRE_DEFINED_SLOT");
+                hashMap.put("bookedForDate", vsessionDate);
+                if(days.equals("0")) {
+                    hashMap.put("type", "single");
+                    Log.d("jfiojfero1","hewruithui");
+                }
+                else{
+                    hashMap.put("type", "continous");
+                    hashMap.put("days", days);
+                    Log.d("jfiojfero",days);
+                }
+
+                return new JSONObject(hashMap).toString().getBytes();
+
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+
+
+        };
+        request.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 200000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 200000;
+            }
+
+            @Override
+            public void retry(VolleyError error) {
+
+            }
+        });
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(request);
+
+
+
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
+            this.finish();
         }
-        this.finish();
+
         return super.onOptionsItemSelected(item);
     }
 
 
+    @SuppressWarnings("deprecation")
+    @SuppressLint("SetTextI18n")
     @Override
     public void onClick(View view) {
 
@@ -554,8 +673,8 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                     mweekDays.setSelected(false);
                     mweekDays.setChecked(false);
                 }else{
-                    String startDate=mSessionDate.getText().toString();
-                    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                    //String startDate=mSessionDate.getText().toString();
+                    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
                     try {
                         date11 = format1.parse(vsessionDate);
                         Log.d("nfuinfr", String.valueOf(date11));
@@ -563,8 +682,8 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                         e.printStackTrace();
                     }
                     Date increment = DateUtils.addDays(date11, 5);
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy");
-                    Date date = new Date();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
+                  //  Date date = new Date();
                     String dateTime = dateFormat.format(increment);
 
                     mSessionDateEnd.setText(" - "+dateTime);
@@ -587,8 +706,8 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                 mWeekEnd.setChecked(false);
 
             }else{
-                String startDate=mSessionDate.getText().toString();
-                SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+              //  String startDate=mSessionDate.getText().toString();
+                SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
                 try {
                     date11 = format1.parse(vsessionDate);
                     Log.d("nfuinfr", String.valueOf(date11));
@@ -596,8 +715,8 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                     e.printStackTrace();
                 }
                 Date increment = DateUtils.addDays(date11, 2);
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy");
-                Date date = new Date();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
+
                 String dateTime = dateFormat.format(increment);
 
                 mSessionDateEnd.setText(" - "+dateTime);
@@ -618,8 +737,8 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                     mNextSevendays.setSelected(false);
                     mNextSevendays.setChecked(false);
                 }else{
-                    String startDate=mSessionDate.getText().toString();
-                    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+
+                    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
                     try {
                         date11 = format1.parse(vsessionDate);
                         Log.d("nfuinfr", String.valueOf(date11));
@@ -627,8 +746,8 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                         e.printStackTrace();
                     }
                     Date increment = DateUtils.addDays(date11, 7);
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy");
-                    Date date = new Date();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
+
                     String dateTime = dateFormat.format(increment);
 
                     mSessionDateEnd.setText(" - "+dateTime);
@@ -649,8 +768,8 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                     mNextThirtyDays.setSelected(false);
                     mNextThirtyDays.setChecked(false);
                 }else{
-                    String startDate=mSessionDate.getText().toString();
-                    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                   // String startDate=mSessionDate.getText().toString();
+                    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
                     try {
                         date11 = format1.parse(vsessionDate);
                         Log.d("nfuinfr", String.valueOf(date11));
@@ -658,8 +777,8 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                         e.printStackTrace();
                     }
                     Date increment = DateUtils.addDays(date11, 30);
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy");
-                    Date date = new Date();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
+
                     String dateTime = dateFormat.format(increment);
 
                     mSessionDateEnd.setText(" - "+dateTime);
@@ -677,6 +796,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                 break;
             case R.id.oneButton:
                 personCounts = btnOne.getText().toString();
+                checkPersonCount();
                 final int a1 = Integer.parseInt(vsessionCost);
                     int count1=Integer.parseInt(personCounts);
                     Integer AddingBookCost1=a1*count1;
@@ -704,6 +824,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
 
             case R.id.twoButton:
                 personCounts = btnTwo.getText().toString();
+                checkPersonCount();
                 final int a2 = Integer.parseInt(vsessionCost);
                 int count2=Integer.parseInt(personCounts);
                 Integer AddingBookCost2=a2*count2;
@@ -729,6 +850,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
 
             case R.id.threeButton:
                 personCounts = btnThree.getText().toString();
+                checkPersonCount();
                 final int a3 = Integer.parseInt(vsessionCost);
                 int count3=Integer.parseInt(personCounts);
                 Integer AddingBookCost3=a3*count3;
@@ -756,6 +878,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
 
             case R.id.fourButton:
                 personCounts = btnFour.getText().toString();
+                checkPersonCount();
                 final int a4 = Integer.parseInt(vsessionCost);
                 int count4=Integer.parseInt(personCounts);
                 Integer AddingBookCost4=a4*count4;
@@ -781,6 +904,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
 
             case R.id.fiveButton:
                 personCounts = btnFive.getText().toString();
+                checkPersonCount();
                 final int a5 = Integer.parseInt(vsessionCost);
                 int count5=Integer.parseInt(personCounts);
                 Integer AddingBookCost5=a5*count5;

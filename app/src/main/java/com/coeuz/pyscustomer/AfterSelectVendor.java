@@ -3,7 +3,6 @@ package com.coeuz.pyscustomer;
 import android.Manifest;
 
 import android.app.Dialog;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
@@ -18,6 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -40,12 +40,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -59,13 +59,13 @@ import com.coeuz.pyscustomer.AdapterClass.AfterSelectVendorAmenitiesAdapter;
 import com.coeuz.pyscustomer.AdapterClass.ConsecutiveDateBookingAdapter;
 import com.coeuz.pyscustomer.AdapterClass.DateBookingAdapter;
 import com.coeuz.pyscustomer.AdapterClass.GalleryAdapter;
+import com.coeuz.pyscustomer.AdapterClass.NearVendorSLotsAdapter;
 import com.coeuz.pyscustomer.AdapterClass.SelectCourseAdapter;
 import com.coeuz.pyscustomer.AdapterClass.SelectMemberAdapter;
 import com.coeuz.pyscustomer.AdapterClass.OfferAdapter;
 import com.coeuz.pyscustomer.AdapterClass.OtherServiceAdapter;
-import com.coeuz.pyscustomer.ModelClass.ConsecutiveSlotModel;
-import com.coeuz.pyscustomer.ModelClass.OfferModel;
 import com.coeuz.pyscustomer.ModelClass.SlotModel;
+import com.coeuz.pyscustomer.ModelClass.SubActivityModel;
 import com.coeuz.pyscustomer.Requiredclass.ConnectionDetector;
 
 import com.coeuz.pyscustomer.Requiredclass.Constant;
@@ -84,8 +84,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -98,6 +97,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 
 import android.view.animation.Animation;
@@ -111,7 +111,7 @@ import devs.mulham.horizontalcalendar.HorizontalCalendarView;
 public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener,OnItemClick  {
 
-
+    public static RequestQueue mRequestQueue;
     OnItemClick listener;
     private  String changedSubActivityId;
     BarChart barChart;
@@ -120,31 +120,29 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
     ArrayList<String> mlabelList = new ArrayList<>();
     ArrayList<JSONArray> firstLableList = new ArrayList<>();
     JSONArray jsonArray1;
-    JSONArray jsonArray4;
     String label,lables;
-    HashMap<String,JSONArray> totalGraphValue = new HashMap<String, JSONArray>();
+    HashMap<String,JSONArray> totalGraphValue = new HashMap<>();
 
     private TinyDB mTinyDb;
     Bundle bundle;
-    private String vendorName,area,vendorId,msubActivityId,mBookingType,mcbookingType;;
+    private String vendorId;
+    private String msubActivityId;
+    private String mBookingType;
+    private String mcbookingType;
     private ArrayList<String> slotTypeList=new ArrayList<>();
 
     private GoogleMap gMap;
-    private Button getDirection;
     ConnectionDetector cd;
     private static LatLng GREENBELT1;
-    private String latString,longSting;
     Double lat;
     Double longi;
+    private RelativeLayout amenitiesLayout;
     LinearLayout mapVisibleLayout;
     RecyclerView recyclerViewAmenities,recyclerGallery;
-    ArrayList<String> subActivityList=new ArrayList<>();
     private ArrayList<String> amenitiesList=new ArrayList<>();
     private ArrayList<String> amenitiesImagesList=new ArrayList<>();
     private TextView nArea,nCity,nMobile,nEmail;
     private TextView nFrom,nTo;
-    private TextView nvendorArea,nvendorName;
-    private String vvendorArea,vvendorName;
 
 
     private String offerStart,offerEnd;
@@ -154,16 +152,10 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
 
      boolean visible;
 
-
-    private ArrayList<OfferModel> mOfferModel;
-    private OfferAdapter offerAdapter;
     ArrayList<String> offerStartList=new ArrayList<>();
     ArrayList<String> offerEndList=new ArrayList<>();
     ArrayList<String> offerTypeList=new ArrayList<>();
     ArrayList<String> offerBenefits=new ArrayList<>();
-
-    boolean flag = true;
-
 
 
     ArrayList<String> motherServiceList=new ArrayList<>();
@@ -172,26 +164,29 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
 
     private String  mCalenderdate,todayDate;
     private ArrayList<SlotModel> slotModel;
-    private ArrayList<String> consecutiveslotModel=new ArrayList<String>();
-    private ArrayList<String> consecutiveslotModelTiming=new ArrayList<String>();
+    private ArrayList<String> consecutiveslotModel=new ArrayList<>();
+    private ArrayList<String> consecutiveslotModelCost=new ArrayList<>();
+    private ArrayList<String> consecutiveslotModelTiming=new ArrayList<>();
+    private ArrayList<String> sendconsecutiveslotModelTiming=new ArrayList<>();
     private ConsecutiveDateBookingAdapter consecutiveSlotDateAdapter;
     private DateBookingAdapter SlotDateAdapter;
     private RecyclerView RecyclerDateSlot;
     private  Integer maxAllowed,slotId,bookingSlotCost;
-    private String slotStartTime,slotEndTime;
+    private String slotStartTime,slotEndTime,sendStartTime;
     JSONArray ConsecutiveTimingArray=new JSONArray();
 
-    private Animation myAnim;
+    public Animation myAnim;
     private  ImageView mofferDetails;
     Dialog offerDialog;
     ImageView cancel;
-    RecyclerView offerRecycler,memberCourseRecycler;
-
-    private CardView membershipBtn,courseBtn;
+    LinearLayout membersLayout;
+    RecyclerView offerRecycler,memberCourseRecycler,nearVendorRecycler;
+    private LinearLayout courseBtn;
+    private CardView membershipBtn;
     ArrayList<String> memberbookingType = new ArrayList<>();
     ArrayList<String> memberbookingCost = new ArrayList<>();
     ArrayList<String> memberbookingSlotId = new ArrayList<>();
-
+private Button cAllday,cweekday,cweekend;
 
     ArrayList<String> mslotidsList=new ArrayList<>();
     ArrayList<String> mslotStartTimeList=new ArrayList<>();
@@ -202,9 +197,17 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
     ArrayList<String> mcourseEndDateList=new ArrayList<>();
     ArrayList<String> mcourseRegistrationEndDateList=new ArrayList<>();
     ArrayList<String> mCourseCostList=new ArrayList<>();
+    ArrayList<String> mCourseDurationList=new ArrayList<>();
 
-    private LinearLayout mapView;
     boolean layoutShow=true;
+    private RelativeLayout recommendedLayout;
+    private NearVendorSLotsAdapter nearVendorSLotsAdapter;
+    private ArrayList<SubActivityModel> subActivityModels;
+    private LinearLayout calendarViewLayout,noCourseData;
+    private String courseTypes;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,7 +219,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
             w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar1); // get the reference of Toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar1); // get the reference of Toolbar
         setSupportActionBar(toolbar); // Setting/replace toolbar as the ActionBar
         getSupportActionBar().setDisplayShowTitleEnabled(false); // hide the current title from the Toolbar
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -224,14 +227,14 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
         toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
 
         mTinyDb=new TinyDB(getApplicationContext());
-        latString=mTinyDb.getString("latttt");
-        longSting=mTinyDb.getString("longggg");
+        String latString = mTinyDb.getString("latttt");
+        String longSting = mTinyDb.getString("longggg");
         msubActivityId=mTinyDb.getString("activityId");
-        vvendorName=mTinyDb.getString(Constant.VENDORNAME);
-        vvendorArea=mTinyDb.getString(Constant.VENDORAREA);
+        String vvendorName = mTinyDb.getString(Constant.VENDORNAME);
+        String vvendorArea = mTinyDb.getString(Constant.VENDORAREA);
 
         if(latString !=null &&!latString.isEmpty()){
-            Log.d("jgreio",latString);
+            Log.d("jgreio", latString);
             lat= Double.valueOf(latString);
             longi= Double.valueOf(longSting);
         }
@@ -243,21 +246,27 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
 
 
         cd=new ConnectionDetector(getApplicationContext());
-        recyclerGallery=(RecyclerView)findViewById(R.id.galleryrecycle);
-        recyclerViewAmenities=(RecyclerView)findViewById(R.id.amenitiesrecycle);
-
-        mapVisibleLayout=(LinearLayout)findViewById(R.id.mapVisible);
-        RecyclerDateSlot = (RecyclerView)findViewById(R.id.RecyclerDateBooking);
+        recyclerGallery= findViewById(R.id.galleryrecycle);
+        recyclerViewAmenities= findViewById(R.id.amenitiesrecycle);
+      /*  recommendedRecycler=(RecyclerView)findViewById(R.id.recommendedRecycle);
+        recommendedLayout=(RelativeLayout) findViewById(R.id.RecommendedLayout);
+        recommendedRecycler.setLayoutManager(new GridLayoutManager(this, 1, GridLayoutManager.HORIZONTAL, false));
+        recommendedRecycler.setHasFixedSize(true);
+       // recommendedRecycler.setAdapter(nearYouAdapter);*/
+        amenitiesLayout= findViewById(R.id.amenities);
+        calendarViewLayout= findViewById(R.id.calenderViewLayout);
+        mapVisibleLayout= findViewById(R.id.mapVisible);
+        RecyclerDateSlot = findViewById(R.id.RecyclerDateBooking);
         mapVisibleLayout.setVisibility(View.GONE);
 
-        mofferDetails=(ImageView)findViewById(R.id.offerDetails);
+        mofferDetails= findViewById(R.id.offerDetails);
         myAnim = AnimationUtils.loadAnimation(this, R.anim.bounce);
         MyBounceInterpolator interpolator = new MyBounceInterpolator(0.2, 20);
         myAnim.setInterpolator(interpolator);
         myAnim.setRepeatCount(Animation.INFINITE);
         mofferDetails.startAnimation(myAnim);
 
-        mapView=(LinearLayout)findViewById(R.id.mapview);
+        LinearLayout mapView = findViewById(R.id.mapview);
         mapView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -282,29 +291,42 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
         mOfferRecyclerView.setHasFixedSize(true);
         mOfferRecyclerView.setAdapter(offerAdapter);*/
 
-        noInternetLayout = (LinearLayout) findViewById(R.id.NoInternetLayout);
-        allViewLayout = (ScrollView) findViewById(R.id.allViewlayout);
+        noInternetLayout = findViewById(R.id.NoInternetLayout);
+        allViewLayout = findViewById(R.id.allViewlayout);
 
 
-        linearLayout1=(HorizontalScrollView) findViewById(R.id.l1);
-         barChart = (BarChart) findViewById(R.id.barchart);
+        linearLayout1= findViewById(R.id.l1);
+         barChart = findViewById(R.id.barchart);
 
-        nvendorName=(TextView)findViewById(R.id.NameOfVendor);
-        nvendorArea=(TextView)findViewById(R.id.AdressOfVendor);
-        nArea=(TextView)findViewById(R.id.mArea);
-        nCity=(TextView)findViewById(R.id.mCity);
-        nMobile=(TextView)findViewById(R.id.mMobile);
-        nEmail=(TextView)findViewById(R.id.mEmails);
-        nFrom=(TextView)findViewById(R.id.from);
-        nTo=(TextView)findViewById(R.id.to);
-        mRecyclerView=(RecyclerView)findViewById(R.id.recycler);
-        membershipBtn=(CardView)findViewById(R.id.membershibBtn);
-        courseBtn=(CardView)findViewById(R.id.CourseBtn);
-        memberCourseRecycler=(RecyclerView)findViewById(R.id.recycle_memberCourse);
+        TextView nvendorName = findViewById(R.id.NameOfVendor);
+        TextView nvendorArea = findViewById(R.id.AdressOfVendor);
+        nArea= findViewById(R.id.mArea);
+        nCity= findViewById(R.id.mCity);
+        nMobile= findViewById(R.id.mMobile);
+        nEmail= findViewById(R.id.mEmails);
+        nFrom= findViewById(R.id.from);
+        nTo= findViewById(R.id.to);
+        mRecyclerView= findViewById(R.id.recycler);
+        membershipBtn= findViewById(R.id.membershibBtn);
+        courseBtn= findViewById(R.id.CourseBtn);
+        cAllday= findViewById(R.id.allday);
+        cweekday= findViewById(R.id.weekday);
+        cweekend= findViewById(R.id.weekEnd);
+
+        memberCourseRecycler= findViewById(R.id.recycle_memberCourse);
+        membersLayout= findViewById(R.id.memberslayout);
+        noCourseData= findViewById(R.id.noCourseData);
 
         nvendorName.setText(vvendorName);
         nvendorArea.setText(vvendorArea);
 
+        recommendedLayout= findViewById(R.id.RecommendedLayout);
+        nearVendorRecycler= findViewById(R.id.recommendedRecycle);
+        subActivityModels = new ArrayList<>();
+        nearVendorSLotsAdapter = new NearVendorSLotsAdapter(AfterSelectVendor.this,subActivityModels);
+        nearVendorRecycler.setLayoutManager(new GridLayoutManager(this, 1, GridLayoutManager.HORIZONTAL, false));
+        nearVendorRecycler.setHasFixedSize(true);
+        nearVendorRecycler.setAdapter(nearVendorSLotsAdapter);
 
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AfterSelectVendor.this, LinearLayoutManager.HORIZONTAL, false);
@@ -314,40 +336,20 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
 
 
 
-        offerDialog = new Dialog(AfterSelectVendor.this,R.style.AppTheme);
-
-        offerDialog.setContentView(R.layout.offer_layout);
-
-        offerDialog.setCancelable(true);
-
-        cancel = (ImageView) offerDialog.findViewById(R.id.cancels);
-        offerRecycler=(RecyclerView)offerDialog.findViewById(R.id.RecyclerOffer);
-
-
-        cancel.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                offerDialog.dismiss();
-            }
-        });
-
-
 
         bundle=getIntent().getExtras();
         if (bundle != null) {
-            vendorName=bundle.getString("mVendorName");
+           // String vendorName = bundle.getString("mVendorName");
             vendorId= String.valueOf(bundle.getInt("mVendorIds"));
-            area=bundle.getString("mArea");
+           // String area = bundle.getString("mArea");
            // this.setTitle(vendorName);
         }
         mTinyDb.putString(Constant.VENDORID,vendorId);
 
         mBookingType=mTinyDb.getString(Constant.BOOKINGTYPE);
         mcbookingType=mTinyDb.getString(Constant.MCBOOKINGTYPE);
-
-
+        Log.d("fhwwufhuewi",mcbookingType);
+        membersLayout.setVisibility(View.GONE);
         if(mcbookingType.equals("MEMBERSHIP")){
             mcbookingType="MEMBERSHIP";
             membershipBtn.setVisibility(View.VISIBLE);
@@ -356,7 +358,10 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
         }else if(mcbookingType.equals("COURSE")){
             mcbookingType="COURSE";
             courseBtn.setVisibility(View.VISIBLE);
+          //  courseDetails();
             membershipBtn.setVisibility(View.GONE);
+            calendarViewLayout.setVisibility(View.GONE);
+            courseTypes="ALL_DAYS";
         }
 
 
@@ -388,7 +393,9 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                             Log.d("jfrij2",value);
                             changedSubActivityId=value;
                             if(changedSubActivityId!=null){
-                            changingSubActivityTypes(changedSubActivityId);
+                           // changingSubActivityTypes(changedSubActivityId);
+                                recommendedLayout.setVisibility(View.GONE);
+                                membersLayout.setVisibility(View.GONE);
 
 
                             slotTypeList.clear();
@@ -417,25 +424,29 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                                             if(slotTypeList.contains("PRE_DEFINED_SLOT")){
                                                 mBookingType="PRE_DEFINED_SLOT";
                                                 mTinyDb.putString(Constant.BOOKINGTYPE,mBookingType);
-                                                memberCourseRecycler.setVisibility(View.GONE);
+                                                membersLayout.setVisibility(View.GONE);
                                             }else if(slotTypeList.contains("CONSECUTIVE")){
                                                 mBookingType="CONSECUTIVE";
-                                                memberCourseRecycler.setVisibility(View.GONE);
+                                                membersLayout.setVisibility(View.GONE);
                                                 courseBtn.setVisibility(View.GONE);
                                                 membershipBtn.setVisibility(View.GONE);
                                                 mTinyDb.putString(Constant.BOOKINGTYPE,mBookingType);
                                             }
                                             if(slotTypeList.contains("MEMBERSHIP")){
-                                                memberCourseRecycler.setVisibility(View.GONE);
+                                                membersLayout.setVisibility(View.GONE);
                                                 mcbookingType="MEMBERSHIP";
                                                 membershipBtn.setVisibility(View.VISIBLE);
+                                                membersLayout.setVisibility(View.GONE);
                                                 courseBtn.setVisibility(View.GONE);
 
                                             }else if(slotTypeList.contains("COURSE")){
                                                 mcbookingType="COURSE";
-                                                memberCourseRecycler.setVisibility(View.GONE);
+                                                membersLayout.setVisibility(View.GONE);
                                                 courseBtn.setVisibility(View.VISIBLE);
+                                                courseDetails();
                                                 membershipBtn.setVisibility(View.GONE);
+                                                calendarViewLayout.setVisibility(View.GONE);
+                                                courseTypes="ALL_DAYS";
                                             }
                                         }
     if(mBookingType.equals("PRE_DEFINED_SLOT")){
@@ -459,10 +470,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                                                 try {
                                                     JSONArray jsonArray = new JSONArray(response);
                                                     if (jsonArray.length() == 0) {
-                                                        Log.d("yrwuiyiw1", String.valueOf(response));
-                                /*Toast toast = Toast.makeText(SlotPages.this, "No Values", Toast.LENGTH_LONG);
-                                toast.setGravity(Gravity.CENTER, 0, 0);
-                                toast.show();*/
+                                                         getNearVendorSlots();
                                                     } else {
 
                                                         for (int i = 0; i < jsonArray.length(); i++) {
@@ -513,7 +521,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                                                 if (error instanceof NetworkError) {
                                                     noInternetLayout.setVisibility(View.VISIBLE);
                                                     allViewLayout.setVisibility(View.GONE);
-                                                    Button button = (Button) findViewById(R.id.TryAgain);
+                                                    Button button = findViewById(R.id.TryAgain);
                                                     button.setOnClickListener(new View.OnClickListener() {
                                                         @Override
                                                         public void onClick(View view) {
@@ -526,12 +534,10 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                                                 } else if (error instanceof ParseError) {
                                                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                                                } else if (error instanceof NoConnectionError) {
-                                                    Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                                                 } else if (error instanceof TimeoutError) {
                                                     noInternetLayout.setVisibility(View.VISIBLE);
                                                     allViewLayout.setVisibility(View.GONE);
-                                                    Button button = (Button) findViewById(R.id.TryAgain);
+                                                    Button button = findViewById(R.id.TryAgain);
                                                     button.setOnClickListener(new View.OnClickListener() {
                                                         @Override
                                                         public void onClick(View view) {
@@ -547,9 +553,10 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
     else if(mBookingType.equals("CONSECUTIVE")){
 
         mTinyDb.putString(Constant.PREDEFINEDSUBACTIVITYID,value);
-
+        consecutiveslotModelCost.clear();
         consecutiveslotModel.clear();
         consecutiveslotModelTiming.clear();
+        sendconsecutiveslotModelTiming.clear();
 
 
         String URL = Constant.API + "/slot/getSlotsByDate?vendorId=" + vendorId + "&subActivityId=" + value + "&date=" + mCalenderdate + "&type=" + mBookingType;
@@ -562,10 +569,8 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                 try {
                     JSONArray jsonArray = new JSONArray(response);
                     if (jsonArray.length() == 0) {
-                        Log.d("yrwuiyiw1", String.valueOf(response));
-                                /*Toast toast = Toast.makeText(SlotPages.this, "No Values", Toast.LENGTH_LONG);
-                                toast.setGravity(Gravity.CENTER, 0, 0);
-                                toast.show();*/
+
+                      getNearVendorSlots();
                     } else {
 
                         for (int i = 0; i < jsonArray.length(); i++) {
@@ -580,15 +585,16 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                         for (int i = 0; i < ConsecutiveTimingArray.length(); i++) {
                             JSONObject jsonObject = ConsecutiveTimingArray.getJSONObject(i);
                             slotStartTime = jsonObject.getString("startTime");
+                            sendStartTime=jsonObject.getString("startTime");
                             slotEndTime = jsonObject.getString("endTime");
                         }
                         Log.d("ewfwefewfew2", String.valueOf(slotStartTime));
                         Log.d("ewfwefewfew5", String.valueOf(slotId));
 
                         try {
-                            final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                            final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.getDefault());
                             final Date dateObj = sdf.parse(slotStartTime );
-                            String timein12Format=new SimpleDateFormat("hh:mmaa").format(dateObj);
+                            String timein12Format=new SimpleDateFormat("hh:mmaa",Locale.getDefault()).format(dateObj);
                             Log.d("mcmcemciqc", String.valueOf(timein12Format));
                             slotStartTime=String.valueOf(timein12Format);
                             slotStartTime = slotStartTime.replace(".", "");
@@ -598,14 +604,16 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
 
 
                         consecutiveslotModel.add(String.valueOf(slotId));
+                        consecutiveslotModelCost.add(String.valueOf(bookingSlotCost));
                         consecutiveslotModelTiming.add( slotStartTime);
+                        sendconsecutiveslotModelTiming.add(sendStartTime);
                         Log.d("fnrifi1", String.valueOf(consecutiveslotModel.size()));
                         Log.d("fnrifi2", String.valueOf(consecutiveslotModelTiming.size()));
 
 
 
                     }
-                    consecutiveSlotDateAdapter = new ConsecutiveDateBookingAdapter(getApplicationContext(), consecutiveslotModel,consecutiveslotModelTiming);
+                    consecutiveSlotDateAdapter = new ConsecutiveDateBookingAdapter(getApplicationContext(), consecutiveslotModel,consecutiveslotModelCost,consecutiveslotModelTiming,sendconsecutiveslotModelTiming);
                     RecyclerDateSlot.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
                     RecyclerDateSlot.setHasFixedSize(true);
                     RecyclerDateSlot.setAdapter(consecutiveSlotDateAdapter);
@@ -623,7 +631,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                 if (error instanceof NetworkError) {
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button = (Button) findViewById(R.id.TryAgain);
+                    Button button = findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -636,12 +644,10 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                } else if (error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof TimeoutError) {
+                }  else if (error instanceof TimeoutError) {
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button = (Button) findViewById(R.id.TryAgain);
+                    Button button = findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -679,8 +685,6 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                                     } else if (error instanceof ParseError) {
                                         Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                                    } else if (error instanceof NoConnectionError) {
-                                        Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                                     } else if (error instanceof TimeoutError) {
                                         Log.d("ewqreqw", String.valueOf(error));
 
@@ -689,12 +693,6 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                             });
                             RequestQueue requestQueue10 = Volley.newRequestQueue(getApplicationContext());
                             requestQueue10.add(request10);
-
-
-
-
-
-
 
                         }}
                     });
@@ -713,7 +711,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                 if (error instanceof NetworkError) {
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
+                    Button button= findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -725,12 +723,10 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                } else if (error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof TimeoutError) {
+                }  else if (error instanceof TimeoutError) {
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
+                    Button button= findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -841,7 +837,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                             String area = jsonObject.getString("area");
                             String latitude = jsonObject.getString("latitude");
                             String longitude = jsonObject.getString("longitude");
-                            String availableAmenities = jsonObject.getString("availableAmenities");
+                           // String availableAmenities = jsonObject.getString("availableAmenities");
                             String email = jsonObject.getString("email");
                             String mobile = jsonObject.getString("mobile");
                             String openingTime = jsonObject.getString("openingTime");
@@ -850,9 +846,9 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                         lat= Double.valueOf(latitude);
                         longi= Double.valueOf(longitude);
                         try {
-                            final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                            final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.getDefault());
                             final Date dateObj = sdf.parse(openingTime );
-                            String timein12Format=new SimpleDateFormat("hh:mmaa").format(dateObj);
+                            String timein12Format=new SimpleDateFormat("hh:mmaa",Locale.getDefault()).format(dateObj);
                             Log.d("mcmcemciqc", String.valueOf(timein12Format));
                             openingTime=String.valueOf(timein12Format);
                             openingTime = openingTime.replace(".", "");
@@ -860,9 +856,9 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                             e.printStackTrace();
                         }
                         try {
-                            final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                            final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.getDefault());
                             final Date dateObj = sdf.parse(closingTime );
-                            String timein12Format=new SimpleDateFormat("hh:mmaa").format(dateObj);
+                            String timein12Format=new SimpleDateFormat("hh:mmaa",Locale.getDefault()).format(dateObj);
                             Log.d("mcmcemciqc", String.valueOf(timein12Format));
                             closingTime=String.valueOf(timein12Format);
                             closingTime = closingTime.replace(".", "");
@@ -879,12 +875,19 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                         nEmail.setText(email);
                             JSONArray jsonArray=jsonObject.getJSONArray("amenities");
                         Log.d("nfirni4", String.valueOf(jsonArray));
+                        if (jsonArray.length() == 0) {
+                            amenitiesLayout.setVisibility(View.GONE);
+                            Log.d("yertyuir", String.valueOf(jsonArray));
+                       /* Toast toast = Toast.makeText(AfterSelectVendor.this, "No Values", Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();*/
+                        }else{
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                            String amenityId = jsonObject1.getString("amenityId");
+                           // String amenityId = jsonObject1.getString("amenityId");
                             String amenityType = jsonObject1.getString("amenityType");
                             String image1 = jsonObject1.getString("image");
-                            String status = jsonObject1.getString("status");
+                            //String status = jsonObject1.getString("status");
                             Log.d("nfirni5",amenityType);
                             amenitiesList.add(amenityType);
                          /*   byte[] imageBytes = Base64.decode(image1, Base64.DEFAULT);
@@ -896,9 +899,9 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
 
                             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AfterSelectVendor.this, LinearLayoutManager.HORIZONTAL, false);
                             recyclerViewAmenities.setLayoutManager(layoutManager);
-                            RecyclerView.Adapter adapter = new AfterSelectVendorAmenitiesAdapter(getApplicationContext(), amenitiesList,amenitiesImagesList);
+                            RecyclerView.Adapter adapter = new AfterSelectVendorAmenitiesAdapter(getApplicationContext(), amenitiesList);
                             recyclerViewAmenities.setAdapter(adapter);
-                        }
+                        }}
 
 
                     }
@@ -916,7 +919,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                 if (error instanceof NetworkError) {
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
+                    Button button= findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -928,12 +931,10 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                } else if (error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof TimeoutError) {
+                }  else if (error instanceof TimeoutError) {
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
+                    Button button= findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -960,14 +961,14 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                 .startDate(date)
                 .endDate(endDate.getTime())
                 .datesNumberOnScreen(5)// Number of Dates cells shown on screen (Recommended 5)
-                .dayNameFormat("EEE")	  // WeekDay text format
+                .dayNameFormat("EEE")      // WeekDay text format
                 .textSizeDayNumber(15)
                 .textSizeDayName(9)
                 // Month format.monthFormat("KKK")
                 .dayNumberFormat("dd")    // DateBooking format
                 .selectedDateBackground(Drawable.createFromPath("#16711936"))
-                .showDayName(true)	  // Show or Hide dayName text
-                .showMonthName(true)	  // Show or Hide month text
+                .showDayName(true)      // Show or Hide dayName text
+                .showMonthName(true)      // Show or Hide month text
                 .textColor(Color.BLACK, Color.GREEN)    // Text color for none selected Dates, Text color for selected DateBooking.
                 // Background Drawable of the selected date cell.
                 .selectorColor(Color.GREEN)   // Color of the selection indicator bar (default to colorAccent).
@@ -989,7 +990,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                 Log.d("popopop1", String.valueOf(timeStamp200));
                 Long timestamp1 = Long.parseLong(S1);
                 try {
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
                     Date netDate = (new Date(timestamp1));
                     String CalenderDate1 = sdf.format(netDate);
                     mCalenderdate = CalenderDate1;
@@ -1005,6 +1006,23 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                     msubActivityId=changedSubActivityId;
                     }
                     mTinyDb.putString(Constant.PREDEFINEDSUBACTIVITYID,msubActivityId);
+                recommendedLayout.setVisibility(View.GONE);
+
+                if(mcbookingType.equals("MEMBERSHIP")){
+                    mcbookingType="MEMBERSHIP";
+                    membershipBtn.setVisibility(View.VISIBLE);
+                    layoutShow=true;
+                    membersLayout.setVisibility(View.GONE);
+                    courseBtn.setVisibility(View.GONE);
+
+                }else if(mcbookingType.equals("COURSE")){
+                    mcbookingType="COURSE";
+                    courseBtn.setVisibility(View.VISIBLE);
+                    courseDetails();
+                    membershipBtn.setVisibility(View.GONE);
+                    calendarViewLayout.setVisibility(View.GONE);
+                    courseTypes="ALL_DAYS";
+                }
 
                 if(mBookingType.equals("PRE_DEFINED_SLOT")){
                 slotModel = new ArrayList<>();
@@ -1025,7 +1043,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                         try {
                             JSONArray jsonArray = new JSONArray(response);
                             if (jsonArray.length() == 0) {
-
+                                getNearVendorSlots();
                                 /*Toast toast = Toast.makeText(SlotPages.this, "No Values", Toast.LENGTH_LONG);
                                 toast.setGravity(Gravity.CENTER, 0, 0);
                                 toast.show();*/
@@ -1080,7 +1098,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button = (Button) findViewById(R.id.TryAgain);
+                            Button button = findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -1093,12 +1111,10 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof NoConnectionError) {
-                            Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                         } else if (error instanceof TimeoutError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button = (Button) findViewById(R.id.TryAgain);
+                            Button button = findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -1118,6 +1134,11 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
 
                     consecutiveslotModel.clear();
                     consecutiveslotModelTiming.clear();
+                    consecutiveslotModelCost.clear();
+                    sendconsecutiveslotModelTiming.clear();
+                    Log.d("fhwusifhsr",vendorId);
+                    Log.d("fhwusifhsr1",msubActivityId);
+                    Log.d("fhwusifhsr2",mCalenderdate);
 
 
                     String URL = Constant.API + "/slot/getSlotsByDate?vendorId=" + vendorId + "&subActivityId=" + msubActivityId + "&date=" + mCalenderdate + "&type=" + mBookingType;
@@ -1130,10 +1151,8 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                             try {
                                 JSONArray jsonArray = new JSONArray(response);
                                 if (jsonArray.length() == 0) {
-                                    Log.d("yrwuiyiw1", String.valueOf(response));
-                                /*Toast toast = Toast.makeText(SlotPages.this, "No Values", Toast.LENGTH_LONG);
-                                toast.setGravity(Gravity.CENTER, 0, 0);
-                                toast.show();*/
+                                    Log.d("fhwusifhsr","fhwusifhsr");
+                                    getNearVendorSlots();
                                 } else {
 
                                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -1148,15 +1167,16 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                                     for (int i = 0; i < ConsecutiveTimingArray.length(); i++) {
                                         JSONObject jsonObject = ConsecutiveTimingArray.getJSONObject(i);
                                         slotStartTime = jsonObject.getString("startTime");
+                                        sendStartTime = jsonObject.getString("startTime");
                                         slotEndTime = jsonObject.getString("endTime");
                                     }
                                     Log.d("ewfwefewfew2", String.valueOf(slotStartTime));
                                     Log.d("ewfwefewfew5", String.valueOf(slotId));
 
-                                    try {
-                                        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                                  try {
+                                        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.getDefault());
                                         final Date dateObj = sdf.parse(slotStartTime );
-                                        String timein12Format=new SimpleDateFormat("hh:mmaa").format(dateObj);
+                                        String timein12Format=new SimpleDateFormat("hh:mmaa",Locale.getDefault()).format(dateObj);
                                         Log.d("mcmcemciqc", String.valueOf(timein12Format));
                                         slotStartTime=String.valueOf(timein12Format);
                                         slotStartTime = slotStartTime.replace(".", "");
@@ -1166,14 +1186,16 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
 
 
                                     consecutiveslotModel.add(String.valueOf(slotId));
+                                    consecutiveslotModelCost.add(String.valueOf(bookingSlotCost));
                                     consecutiveslotModelTiming.add( slotStartTime);
+                                    sendconsecutiveslotModelTiming.add( sendStartTime);
                                     Log.d("fnrifi1", String.valueOf(consecutiveslotModel.size()));
                                     Log.d("fnrifi2", String.valueOf(consecutiveslotModelTiming.size()));
 
 
 
                                 }
-                                consecutiveSlotDateAdapter = new ConsecutiveDateBookingAdapter(getApplicationContext(), consecutiveslotModel,consecutiveslotModelTiming);
+                                consecutiveSlotDateAdapter = new ConsecutiveDateBookingAdapter(getApplicationContext(), consecutiveslotModel,consecutiveslotModelCost,consecutiveslotModelTiming,sendconsecutiveslotModelTiming);
                                 RecyclerDateSlot.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
                                 RecyclerDateSlot.setHasFixedSize(true);
                                 RecyclerDateSlot.setAdapter(consecutiveSlotDateAdapter);
@@ -1191,7 +1213,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                             if (error instanceof NetworkError) {
                                 noInternetLayout.setVisibility(View.VISIBLE);
                                 allViewLayout.setVisibility(View.GONE);
-                                Button button = (Button) findViewById(R.id.TryAgain);
+                                Button button = findViewById(R.id.TryAgain);
                                 button.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -1204,12 +1226,10 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                             } else if (error instanceof ParseError) {
                                 Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                            } else if (error instanceof NoConnectionError) {
-                                Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
-                            } else if (error instanceof TimeoutError) {
+                            }  else if (error instanceof TimeoutError) {
                                 noInternetLayout.setVisibility(View.VISIBLE);
                                 allViewLayout.setVisibility(View.GONE);
-                                Button button = (Button) findViewById(R.id.TryAgain);
+                                Button button = findViewById(R.id.TryAgain);
                                 button.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -1290,7 +1310,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                             @Override
                             public void onCheckedChanged(RadioGroup group, int checkedId) {
                                 int checkedRadioButtonId = rg.getCheckedRadioButtonId();
-                                RadioButton radioBtn = (RadioButton) findViewById(checkedRadioButtonId);
+                                RadioButton radioBtn = findViewById(checkedRadioButtonId);
                                // Toast.makeText(AfterSelectVendor.this, radioBtn.getText(), Toast.LENGTH_SHORT).show();
                                 String selectedLable=radioBtn.getText().toString();
 
@@ -1320,7 +1340,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
 
                                     barDataSet1.setColors(ColorTemplate.COLORFUL_COLORS);
 
-                                    ArrayList<String> labels = new ArrayList<String>();
+                                    ArrayList<String> labels = new ArrayList<>();
                                     labels.add("Sun");
                                     labels.add("Mon");
                                     labels.add("Tue");
@@ -1366,7 +1386,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
 
                             barDataSet1.setColors(ColorTemplate.COLORFUL_COLORS);
 
-                            ArrayList<String> labels = new ArrayList<String>();
+                            ArrayList<String> labels = new ArrayList<>();
                             labels.add("Sun");
                             labels.add("Mon");
                             labels.add("Tue");
@@ -1430,7 +1450,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                 if (error instanceof NetworkError) {
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
+                    Button button= findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -1442,12 +1462,10 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                } else if (error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof TimeoutError) {
+                }  else if (error instanceof TimeoutError) {
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
+                    Button button= findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -1488,7 +1506,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                 if (error instanceof NetworkError) {
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
+                    Button button= findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -1500,12 +1518,10 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                } else if (error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof TimeoutError) {
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
+                    Button button= findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -1521,30 +1537,31 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
         mofferDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                offerDialog = new Dialog(AfterSelectVendor.this,R.style.AppTheme);
+
+                offerDialog.setContentView(R.layout.offer_layout);
+
+                offerDialog.setCancelable(true);
+
+                cancel = offerDialog.findViewById(R.id.cancels);
+                offerRecycler= offerDialog.findViewById(R.id.RecyclerOffer);
+
+
+                cancel.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        offerDialog.dismiss();
+                    }
+                });
 
                 offerDialog.show();
-
-                /* visible = !visible;
-                TransitionSet set = null;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    set = new TransitionSet()
-                            .addTransition(new Scale(0.7f))
-                            .addTransition(new Fade())
-                            .setInterpolator(visible ? new LinearOutSlowInInterpolator() :
-                                    new FastOutLinearInInterpolator());
-                }
-
-                TransitionManager.beginDelayedTransition(OfferViewData, set);
-                OfferViewData.setVisibility(visible ? View.VISIBLE : View.GONE);*/
-            }
-        });
-
-
-        offerStartList.clear();
-        offerEndList.clear();
-        offerTypeList.clear();
-        offerBenefits.clear();
-       // http://localhost:8080/UPass/api/service/general/viewOffers
+                offerStartList.clear();
+                offerEndList.clear();
+                offerTypeList.clear();
+                offerBenefits.clear();
+                // http://localhost:8080/UPass/api/service/general/viewOffers
                 String URL3 = Constant.API +"/general/viewOffers?vendorId="+vendorId;
 
                 StringRequest request3 = new StringRequest(Request.Method.GET, URL3, new Response.Listener<String>() {
@@ -1567,30 +1584,30 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                                     String expiryDate = jsonObject.getString("expiryDate");
                                     String discount = jsonObject.getString("discount");
                                     String category = jsonObject.getString("category");
-                                    String type = jsonObject.getString("type");
+                                   // String type = jsonObject.getString("type");
                                     Log.d("nfjfnjfr", String.valueOf(startDate));
                                     Log.d("nfjfnjfr1", String.valueOf(expiryDate));
 
-                              Long timestamp10 = Long.parseLong(startDate);
-                                Long timestamp20 = Long.parseLong(expiryDate);
-                                try {
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-                                    Date netDate = (new Date(timestamp10));
-                                    offerStart = sdf.format(netDate);
+                                    Long timestamp10 = Long.parseLong(startDate);
+                                    Long timestamp20 = Long.parseLong(expiryDate);
+                                    try {
+                                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
+                                        Date netDate = (new Date(timestamp10));
+                                        offerStart = sdf.format(netDate);
 
 
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-                                    Date netDate = (new Date(timestamp20));
-                                    offerEnd = sdf.format(netDate);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    try {
+                                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
+                                        Date netDate = (new Date(timestamp20));
+                                        offerEnd = sdf.format(netDate);
 
 
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
 
                                     offerStartList.add(offerStart);
                                     offerEndList.add(offerEnd);
@@ -1619,7 +1636,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
 
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button= findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -1631,13 +1648,11 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof NoConnectionError) {
-                            Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                         } else if (error instanceof TimeoutError) {
 
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button= findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -1651,12 +1666,31 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                 requestQueue3.add(request3);
 
 
+                /* visible = !visible;
+                TransitionSet set = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    set = new TransitionSet()
+                            .addTransition(new Scale(0.7f))
+                            .addTransition(new Fade())
+                            .setInterpolator(visible ? new LinearOutSlowInInterpolator() :
+                                    new FastOutLinearInInterpolator());
+                }
+
+                TransitionManager.beginDelayedTransition(OfferViewData, set);
+                OfferViewData.setVisibility(visible ? View.VISIBLE : View.GONE);*/
+            }
+        });
+
+
+
+
 
         membershipBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(layoutShow){
-                  memberCourseRecycler.setVisibility(View.VISIBLE);
+
+                  membersLayout.setVisibility(View.VISIBLE);
 
                     Log.d("fhdufhew",vendorId+msubActivityId+mCalenderdate);
                     if(changedSubActivityId!=null){
@@ -1723,7 +1757,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                             if (error instanceof NetworkError) {
                                 noInternetLayout.setVisibility(View.VISIBLE);
                                 allViewLayout.setVisibility(View.GONE);
-                                Button button=(Button)findViewById(R.id.TryAgain);
+                                Button button= findViewById(R.id.TryAgain);
                                 button.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -1735,12 +1769,10 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                             } else if (error instanceof ParseError) {
                                 Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                            } else if (error instanceof NoConnectionError) {
-                                Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
-                            } else if (error instanceof TimeoutError) {
+                            }else if (error instanceof TimeoutError) {
                                 noInternetLayout.setVisibility(View.VISIBLE);
                                 allViewLayout.setVisibility(View.GONE);
-                                Button button=( Button)findViewById(R.id.TryAgain);
+                                Button button= findViewById(R.id.TryAgain);
                                 button.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -1754,7 +1786,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                     requestQueue25.add(request25);
                     layoutShow=false;
                 }else{
-                    memberCourseRecycler.setVisibility(View.GONE);
+                    membersLayout.setVisibility(View.GONE);
                     layoutShow=true;
                 }
 
@@ -1762,150 +1794,73 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
         });
 
 
-        courseBtn.setOnClickListener(new View.OnClickListener() {
+        cAllday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(layoutShow){
-                    memberCourseRecycler.setVisibility(View.VISIBLE);
+                courseTypes="ALL_DAYS";
 
-                    Log.d("fhdufhew",vendorId+msubActivityId+mCalenderdate);
-                    if(changedSubActivityId!=null){
-                        msubActivityId=changedSubActivityId;
-                    }
-                    mTinyDb.putString(Constant.COURSESUBACTIVITYID,msubActivityId);
+                final int sdk = android.os.Build.VERSION.SDK_INT;
+                if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    cAllday.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg1) );
+                    cweekday.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2) );
+                    cweekend.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2) );
 
-                    mslotidsList.clear();
-                    mslotStartTimeList.clear();
-                    mslotEndTimeList.clear();
-                    mmaxAllowedList.clear();
-                    mslotReccurenceList.clear();
-                    mcourseStartDateList.clear();
-                    mcourseEndDateList.clear();
-                    mcourseRegistrationEndDateList.clear();
-                    mCourseCostList.clear();
-                    Log.d("fhdufhew123",vendorId+msubActivityId+mCalenderdate);
-                    String URL50 = Constant.API + "/slot/getSlotsByDate?vendorId=" + vendorId + "&subActivityId=" + msubActivityId + "&date=" + mCalenderdate + "&type=COURSE";
+                } else {
+                    cAllday.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg1));
+                    cweekday.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2));
+                    cweekend.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2));
 
-                    StringRequest request50 = new StringRequest(Request.Method.GET, URL50, new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            Log.d("tyrutyrwi", String.valueOf(response));
-
-                            try {
-                                JSONArray jsonArray = new JSONArray(response);
-                                if (jsonArray.length() == 0) {
-                                    Log.d("uytjuki", String.valueOf(response));
-                                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AfterSelectVendor.this);
-                                    memberCourseRecycler.setLayoutManager(layoutManager);
-                                    RecyclerView.Adapter adapter = new SelectCourseAdapter(getApplicationContext(), mslotidsList,mslotStartTimeList,
-                                            mslotEndTimeList,mmaxAllowedList,mslotReccurenceList,mcourseStartDateList,mcourseEndDateList,
-                                            mcourseRegistrationEndDateList,mCourseCostList);
-                                    memberCourseRecycler.setAdapter(adapter);
-                       /* Toast toast = Toast.makeText(AfterSelectVendor.this, "No Values", Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER, 0, 0);
-                        toast.show();*/
-                                } else {
-                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-                                        String slotId = jsonObject.getString("slotId");
-                                        String slotStartTime = jsonObject.getString("slotStartTime");
-                                        String slotEndTime = jsonObject.getString("slotEndTime");
-                                        String maxAllowed = jsonObject.getString("maxAllowed");
-                                        String slotReccurence = jsonObject.getString("slotReccurence");
-                                        String courseStartDate = jsonObject.getString("courseStartDate");
-                                        String courseEndDate = jsonObject.getString("courseEndDate");
-                                        String courseRegistrationEndDate = jsonObject.getString("courseRegistrationEndDate");
-                                        String courseCost = jsonObject.getString("bookingCost");
-
-                           mslotidsList.add(slotId);
-                            mslotStartTimeList.add(slotStartTime);
-                            mslotEndTimeList.add(slotEndTime);
-                            mmaxAllowedList.add(maxAllowed);
-                            mslotReccurenceList.add(slotReccurence);
-                            mcourseStartDateList.add(courseStartDate);
-                            mcourseEndDateList.add(courseEndDate);
-                            mcourseRegistrationEndDateList.add(courseRegistrationEndDate);
-                            mCourseCostList.add(courseCost);
-
-
-
-
-                                    }
-
-                                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AfterSelectVendor.this);
-                                    memberCourseRecycler.setLayoutManager(layoutManager);
-                                    RecyclerView.Adapter adapter = new SelectCourseAdapter(getApplicationContext(), mslotidsList,mslotStartTimeList,
-                                            mslotEndTimeList,mmaxAllowedList,mslotReccurenceList,mcourseStartDateList,mcourseEndDateList,
-                                            mcourseRegistrationEndDateList,mCourseCostList);
-                                    memberCourseRecycler.setAdapter(adapter);
-
-                                }
-
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Log.d("dscer", String.valueOf(error));
-
-                            if (error instanceof NetworkError) {
-                                noInternetLayout.setVisibility(View.VISIBLE);
-                                allViewLayout.setVisibility(View.GONE);
-                                Button button = (Button) findViewById(R.id.TryAgain);
-                                button.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        recreate();
-                                    }
-                                });
-                            } else if (error instanceof ServerError) {
-
-                                Log.d("heuiwirhu1", String.valueOf(error));
-                            } else if (error instanceof ParseError) {
-                                Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
-
-                            } else if (error instanceof NoConnectionError) {
-                                Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
-                            } else if (error instanceof TimeoutError) {
-                                noInternetLayout.setVisibility(View.VISIBLE);
-                                allViewLayout.setVisibility(View.GONE);
-                                Button button = (Button) findViewById(R.id.TryAgain);
-                                button.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        recreate();
-                                    }
-                                });
-
-                            }
-                        }
-                    });
-                    RequestQueue requestQueue50 = Volley.newRequestQueue(getApplicationContext());
-                    requestQueue50.add(request50);
-
-
-                    layoutShow=false;
-                }else{
-                    memberCourseRecycler.setVisibility(View.GONE);
-                    layoutShow=true;
                 }
 
+                courseDetails();
+            }
+        });
+        cweekday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                courseTypes="WEEKDAYS";
+                final int sdk = android.os.Build.VERSION.SDK_INT;
+                if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    cAllday.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2) );
+                    cweekday.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg1) );
+                    cweekend.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2) );
+
+                } else {
+                    cAllday.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2));
+                    cweekday.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg1));
+                    cweekend.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2));
+
+                }
+                courseDetails();
+            }
+        });
+        cweekend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                courseTypes="WEEKEND";
+                final int sdk = android.os.Build.VERSION.SDK_INT;
+                if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    cAllday.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2) );
+                    cweekday.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2) );
+                    cweekend.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg1) );
+
+                } else {
+                    cAllday.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2));
+                    cweekday.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2));
+                    cweekend.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg1));
+
+                }
+                courseDetails();
             }
         });
 
 
 
 
-
-        FragmentManager myFragmentManager = getFragmentManager();
        SupportMapFragment mapFragment = ((SupportMapFragment)this.getSupportFragmentManager().findFragmentById(R.id.map));
         mapFragment.getMapAsync(this);
          GREENBELT1 = new LatLng(lat, longi);
-        getDirection=(Button)findViewById(R.id.getDirection);
+        Button getDirection = findViewById(R.id.getDirection);
         getDirection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1914,13 +1869,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                     if (!gMap.isMyLocationEnabled())
                         if (ActivityCompat.checkSelfPermission(AfterSelectVendor.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                                 ActivityCompat.checkSelfPermission(AfterSelectVendor.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            // TODO: Consider calling
-                            //    ActivityCompat#requestPermissions
-                            // here to request the missing permissions, and then overriding
-                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                            //                                          int[] grantResults)
-                            // to handle the case where the user grants the permission. See the documentation
-                            // for ActivityCompat#requestPermissions for more details.
+
                             ActivityCompat.requestPermissions(AfterSelectVendor.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
                             ActivityCompat.requestPermissions(AfterSelectVendor.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
                             ActivityCompat.requestPermissions(AfterSelectVendor.this, new String[]{Manifest.permission.INTERNET}, 1);
@@ -1957,13 +1906,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                 if (ActivityCompat.checkSelfPermission(AfterSelectVendor.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
                         PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(AfterSelectVendor.this, Manifest.permission.ACCESS_COARSE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+
                     ActivityCompat.requestPermissions(AfterSelectVendor.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
                     ActivityCompat.requestPermissions(AfterSelectVendor.this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
                     ActivityCompat.requestPermissions(AfterSelectVendor.this, new String[]{android.Manifest.permission.INTERNET}, 1);
@@ -1971,7 +1914,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
                 } else {
 
 
-                    Marker davao = gMap.addMarker(new MarkerOptions().position(GREENBELT1).title("COEUZ").snippet("Technology"));
+                  //  Marker davao = gMap.addMarker(new MarkerOptions().position(GREENBELT1).title("COEUZ").snippet("Technology"));
 
                     // zoom in the camera to Greenbelt 1
                     gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(GREENBELT1, 15));
@@ -1986,12 +1929,294 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
         }
 
     }
-    private  void changingSubActivityTypes(String changedSubActivityId){
+  /*  private  void changingSubActivityTypes(String changedSubActivityId){
+
+    }*/
+    private void courseDetails(){
+     membersLayout.setVisibility(View.VISIBLE);
+        Date today = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
+        String todayDates = format.format(today);
 
 
+            if(changedSubActivityId!=null){
+                msubActivityId=changedSubActivityId;
+            }
+            mTinyDb.putString(Constant.COURSESUBACTIVITYID,msubActivityId);
+
+            mslotidsList.clear();
+            mslotStartTimeList.clear();
+            mslotEndTimeList.clear();
+            mmaxAllowedList.clear();
+            mslotReccurenceList.clear();
+            mcourseStartDateList.clear();
+            mcourseEndDateList.clear();
+            mcourseRegistrationEndDateList.clear();
+            mCourseCostList.clear();
+            mCourseDurationList.clear();
+
+            String URL50 = Constant.API + "/slot/getSlotsByDate?vendorId=" + vendorId + "&subActivityId=" + msubActivityId + "&date=" + todayDates + "&type=COURSE";
+
+            StringRequest request50 = new StringRequest(Request.Method.GET, URL50, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.d("cdewdwesa", String.valueOf(response));
+
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+                        if (jsonArray.length() == 0) {
+                            Log.d("uytjuki", String.valueOf(response));
+                            noCourseData.setVisibility(View.VISIBLE);
+                            membersLayout.setVisibility(View.GONE);
+                        /*    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AfterSelectVendor.this);
+                            memberCourseRecycler.setLayoutManager(layoutManager);
+                            RecyclerView.Adapter adapter = new SelectCourseAdapter(getApplicationContext(), mslotidsList,mslotStartTimeList,
+                                    mslotEndTimeList,mmaxAllowedList,mslotReccurenceList,mcourseStartDateList,mcourseEndDateList,
+                                    mcourseRegistrationEndDateList,mCourseCostList,mCourseDurationList);
+                            memberCourseRecycler.setAdapter(adapter);*/
+                       /* Toast toast = Toast.makeText(AfterSelectVendor.this, "No Values", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();*/
+                        } else {
+                            noCourseData.setVisibility(View.GONE);
+                            membersLayout.setVisibility(View.VISIBLE);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                                String slotId = jsonObject.getString("slotId");
+                                String slotStartTime = jsonObject.getString("slotStartTime");
+                                String slotEndTime = jsonObject.getString("slotEndTime");
+                                String maxAllowed = jsonObject.getString("maxAllowed");
+                                String slotReccurence = jsonObject.getString("slotReccurence");
+                                String courseStartDate = jsonObject.getString("courseStartDate");
+                                String courseEndDate = jsonObject.getString("courseEndDate");
+                                String courseRegistrationEndDate = jsonObject.getString("courseRegistrationEndDate");
+                                String courseCost = jsonObject.getString("bookingCost");
+
+                                Date sDate = null;
+                                try {
+                                    sDate = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault()).parse(courseStartDate);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                                Date eDate = null;
+                                try {
+                                    eDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(courseEndDate);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                                long diff = 0;
+                                if (sDate != null) {
+                                    if (eDate != null) {
+                                        diff = eDate.getTime() - sDate.getTime();
+                                    }
+                                }
+
+                                int numOfDays = (int) (diff / (1000 * 60 * 60 * 24));
+                                String duration=String.valueOf(numOfDays);
+
+                                try {
+
+                                    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
+                                    Date date = formatter.parse(courseStartDate);
+                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
+                                    courseStartDate = sdf.format(date);
+                                    Log.d("fewrwerw",courseStartDate);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+
+                                    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
+                                    Date date = formatter.parse(courseEndDate);
+                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
+                                    courseEndDate = sdf.format(date);
+                                    Log.d("fewrwerw1",courseEndDate);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+
+                                    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
+                                    Date date = formatter.parse(courseRegistrationEndDate);
+                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
+                                    courseRegistrationEndDate = sdf.format(date);
+                                    Log.d("fewrwerw1",courseRegistrationEndDate);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+
+
+if(slotReccurence.equals(courseTypes)) {
+    mslotidsList.add(slotId);
+    mslotStartTimeList.add(slotStartTime);
+    mslotEndTimeList.add(slotEndTime);
+    mmaxAllowedList.add(maxAllowed);
+    mslotReccurenceList.add(slotReccurence);
+    mcourseStartDateList.add(courseStartDate);
+    mcourseEndDateList.add(courseEndDate);
+    mcourseRegistrationEndDateList.add(courseRegistrationEndDate);
+    mCourseCostList.add(courseCost);
+    mCourseDurationList.add(duration);
+
+}
+
+
+
+                            }
+                            if(mslotidsList.size()!=0) {
+
+                                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AfterSelectVendor.this);
+                                memberCourseRecycler.setLayoutManager(layoutManager);
+                                RecyclerView.Adapter adapter = new SelectCourseAdapter(getApplicationContext(), mslotidsList, mslotStartTimeList,
+                                        mslotEndTimeList, mmaxAllowedList, mslotReccurenceList, mcourseStartDateList, mcourseEndDateList,
+                                        mcourseRegistrationEndDateList, mCourseCostList, mCourseDurationList);
+                                memberCourseRecycler.setAdapter(adapter);
+
+                        }else {      noCourseData.setVisibility(View.VISIBLE);
+                                membersLayout.setVisibility(View.GONE);}
+
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("dscer", String.valueOf(error));
+
+                    if (error instanceof NetworkError) {
+                        noInternetLayout.setVisibility(View.VISIBLE);
+                        allViewLayout.setVisibility(View.GONE);
+                        Button button = findViewById(R.id.TryAgain);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                recreate();
+                            }
+                        });
+                    } else if (error instanceof ServerError) {
+
+                        Log.d("heuiwirhu1", String.valueOf(error));
+                    } else if (error instanceof ParseError) {
+                        Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
+
+                    }  else if (error instanceof TimeoutError) {
+                        noInternetLayout.setVisibility(View.VISIBLE);
+                        allViewLayout.setVisibility(View.GONE);
+                        Button button = findViewById(R.id.TryAgain);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                recreate();
+                            }
+                        });
+
+                    }
+                }
+            });
+            RequestQueue requestQueue50 = Volley.newRequestQueue(getApplicationContext());
+            requestQueue50.add(request50);
 
     }
+    private  void getNearVendorSlots(){
 
+        subActivityModels.clear();
+        String lat;
+        String lon;
+        String  initialLat=mTinyDb.getString(Constant.INITIALLAT);
+        String  intialLong=mTinyDb.getString(Constant.INITIALLONG);
+        String  searchLat=mTinyDb.getString(Constant.LATITUDE);
+        String  searchLong=mTinyDb.getString(Constant.LONGITUDE);
+        if (searchLat != null && !searchLat.isEmpty()) {
+            lat=searchLat;
+            lon=searchLong;
+        }else{
+            lat=initialLat;
+            lon=intialLong;
+        }
+        if(changedSubActivityId!=null){
+            msubActivityId=changedSubActivityId;
+        }
+        Log.d("gnerigit",lat);
+        Log.d("ryrru65",msubActivityId+"-"+mCalenderdate+"-"+mBookingType+"-"+lat+"-"+lon);
+
+
+        String URL = Constant.API + "/general/getVendorsByAvailableSlots?subActivityId="+msubActivityId+"&offset=0&limit=7&lat="+lat+"&long="+lon+"&distance=5"+"&date="+mCalenderdate+"&type="+mBookingType;
+
+        StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("dewfrr3ew3", String.valueOf(response));
+
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    if (jsonArray.length() == 0) {
+                        Log.d("dewfrr3ew34", String.valueOf(response));
+
+                    } else {
+                        recommendedLayout.setVisibility(View.VISIBLE);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                            String vendorName = jsonObject.getString("vendorName");
+                            Integer vendorId = jsonObject.getInt("vendorId");
+                            String area = jsonObject.getString("area");
+
+                            Log.d("ncwiwnfiri1", vendorName);
+
+                            subActivityModels.add(new SubActivityModel(vendorName, area,vendorId));
+                            nearVendorSLotsAdapter.notifyDataSetChanged();
+
+                        }
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("frwgtw", String.valueOf(error));
+
+
+                if (error instanceof NetworkError) {
+                    noInternetLayout.setVisibility(View.VISIBLE);
+                    allViewLayout.setVisibility(View.GONE);
+                    Button button= findViewById(R.id.TryAgain);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            recreate();
+                        }});
+                } else if (error instanceof ServerError) {
+
+                    Log.d("heuiwirhu1", String.valueOf(error));
+                } else if (error instanceof ParseError) {
+                    Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
+
+                } else if (error instanceof TimeoutError) {
+                    noInternetLayout.setVisibility(View.VISIBLE);
+                    allViewLayout.setVisibility(View.GONE);
+                    Button button= findViewById(R.id.TryAgain);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            recreate();
+                        }});
+
+                }
+            }
+        });
+        RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
+        requestQueue1.add(request1);
+
+    }
 
     @Override
     public void onLocationChanged(Location location) {
@@ -2028,6 +2253,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
 
     }
 
+
  @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -2043,5 +2269,11 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
     public void onClick(String value) {
         Log.d("dhewuirw",value);
 
+    }
+    public  RequestQueue getRequestQueue() {
+        if (mRequestQueue == null) {
+            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+        }
+        return mRequestQueue;
     }
 }

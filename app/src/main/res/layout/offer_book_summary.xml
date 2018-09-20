@@ -3,6 +3,7 @@
 
 
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -15,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:orientation="horizontal"
-            >
+            tools:ignore="DisableBaselineAlignment,UselessParent">
         <LinearLayout
             android:layout_weight="1.5"
             android:orientation="horizontal"
@@ -26,12 +27,14 @@
              android:textColor="@color/block"
              android:id="@+id/offerCategorytype"
              android:layout_width="wrap_content"
-             android:layout_height="wrap_content" />
+             android:layout_height="wrap_content"
+               tools:ignore="HardcodedText" />
             <TextView
                 android:textColor="@color/block"
                 android:text=" Discount"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                tools:ignore="HardcodedText" />
         </LinearLayout>
                     <LinearLayout
                        android:gravity="end"
@@ -42,6 +45,7 @@
 
                         <TextView
                             android:text="10"
+                            tools:ignore="HardcodedText"
                             android:textColor="@color/block"
                             android:textStyle="bold"
                             android:id="@+id/benefits"
@@ -53,6 +57,7 @@
                             android:textColor="@color/block"
                             android:textStyle="bold"
                             android:text=" %"
+                            tools:ignore="HardcodedText"
                             android:textSize="14sp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />

@@ -1,30 +1,26 @@
 package com.coeuz.pyscustomer.AdapterClass;
 
-/**
- * Created by vjy on 18-Mar-18.
- */
 
-import android.app.Activity;
+
+
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
 import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -35,14 +31,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.coeuz.pyscustomer.AfterSelectVendor;
-import com.coeuz.pyscustomer.FilterActivity;
-import com.coeuz.pyscustomer.ModelClass.AmenitiesModel;
-import com.coeuz.pyscustomer.ModelClass.OfferModel;
 import com.coeuz.pyscustomer.ModelClass.SubActivityModel;
 import com.coeuz.pyscustomer.R;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
-import com.coeuz.pyscustomer.SubActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,7 +49,6 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
     private ArrayList<String> slotTypeList=new ArrayList<>();
     private String mBookingType,mcBookingType;
 
-    //private ArrayList<Integer> ImageList=new ArrayList<Integer>();
 
 
     public SubActivityAdapter(Context applicationContext, ArrayList<SubActivityModel> subActivityModels) {
@@ -74,7 +65,7 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
     }
 
     @Override
-    public void onBindViewHolder(SubActivityAdapter.MyViewHolder holder, final int position) {
+    public void onBindViewHolder(SubActivityAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
         // update your data here
 
         holder.nNameOfVendor.setText(subActivityModel.get(position).getVendorName());
@@ -90,6 +81,7 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
                 mProgressDialog.setCancelable(false);
                 mProgressDialog.show();
 
+
                 final String clickedItem = String.valueOf(position);
                 final String  mVendorName=subActivityModel.get(position).getVendorName();
                 final String  mArea=subActivityModel.get(position).getArea();
@@ -97,6 +89,7 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
 
 
                 final String vendorId= String.valueOf(mVendorIds);
+                Log.d("fwfhuiew",vendorId);
 
                 String URL = Constant.API +"/general/getVendorByVendorId?vendorId="+vendorId;
 
@@ -138,6 +131,19 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
                                             if (jsonArray.length() == 0) {
                                                 Log.d("rtrews", String.valueOf(response));
                                                 mProgressDialog.dismiss();
+                                                mBookingType="";
+                                                mtinyDb.putString(Constant.BOOKINGTYPE,mBookingType);
+                                                mcBookingType="";
+                                                mtinyDb.putString(Constant.MCBOOKINGTYPE,mcBookingType);
+                                                Intent intent=new Intent(mcontext, AfterSelectVendor.class);
+                                                Bundle bundle = new Bundle();
+                                                bundle.putString("positionValue",clickedItem);
+                                                bundle.putString("mVendorName",mVendorName);
+                                                bundle.putInt("mVendorIds",mVendorIds);
+                                                bundle.putString("mArea",mArea);
+                                                intent.putExtras(bundle);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                mcontext.startActivity(intent);
 
                                             } else {
                                                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -146,6 +152,10 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
 
                                                     slotTypeList.add(slotTypes);
                                                 }
+                                                mBookingType="";
+                                                mtinyDb.putString(Constant.BOOKINGTYPE,mBookingType);
+                                                mcBookingType="";
+                                                mtinyDb.putString(Constant.MCBOOKINGTYPE,mcBookingType);
                                                 if(slotTypeList.contains("PRE_DEFINED_SLOT")){
                                                     mBookingType="PRE_DEFINED_SLOT";
                                                     mtinyDb.putString(Constant.BOOKINGTYPE,mBookingType);
@@ -162,7 +172,7 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
                                                     mtinyDb.putString(Constant.MCBOOKINGTYPE,mcBookingType);
 
                                                 }
-
+                                                mProgressDialog.dismiss();
                                                 Intent intent=new Intent(mcontext, AfterSelectVendor.class);
                                                 Bundle bundle = new Bundle();
                                                 bundle.putString("positionValue",clickedItem);
@@ -174,7 +184,7 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
                                                 mcontext.startActivity(intent);
 
                                                 // notifyDataSetChanged();
-                                                mProgressDialog.dismiss();
+
 
                                             }
 
@@ -195,9 +205,7 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
                                         }  else if (error instanceof ParseError) {
                                             Toast.makeText(mcontext, "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                                        } else if (error instanceof NoConnectionError) {
-                                            Toast.makeText(mcontext, "NoConnectionError", Toast.LENGTH_SHORT).show();
-                                        } else if (error instanceof TimeoutError) {
+                                        }  else if (error instanceof TimeoutError) {
                                             Toast.makeText(mcontext, "Connection TimeOut! Please check your internet connection.", Toast.LENGTH_SHORT).show();
 
                                         }
@@ -227,9 +235,7 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
                         }  else if (error instanceof ParseError) {
                             Toast.makeText(mcontext, "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof NoConnectionError) {
-                            Toast.makeText(mcontext, "NoConnectionError", Toast.LENGTH_SHORT).show();
-                        } else if (error instanceof TimeoutError) {
+                        }else if (error instanceof TimeoutError) {
                             Toast.makeText(mcontext, "Connection TimeOut! Please check your internet connection.", Toast.LENGTH_SHORT).show();
 
                         }
@@ -238,10 +244,6 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
                 });
                 RequestQueue requestQueue1 = Volley.newRequestQueue(mcontext);
                 requestQueue1.add(request1);
-
-
-
-
 
             }});
     }
@@ -254,18 +256,16 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
     class MyViewHolder extends RecyclerView.ViewHolder {
         // view this our custom row layout, so intialize your variables here
         private TextView nNameOfVendor,nAdressOfvendor;
-        private ImageView mImage;
+         ImageView mImage;
         private CardView mLayout;
 
         MyViewHolder(View view) {
             super(view);
 
-            nNameOfVendor=(TextView)view.findViewById(R.id.NameOfVendor);
-            nAdressOfvendor=(TextView)view.findViewById(R.id.AdressOfVendor);
-            mLayout=(CardView)view.findViewById(R.id.SelectChard);
-            mImage=(ImageView) view.findViewById(R.id.image);
-
-
+            nNameOfVendor=view.findViewById(R.id.NameOfVendor);
+            nAdressOfvendor=view.findViewById(R.id.AdressOfVendor);
+            mLayout=view.findViewById(R.id.SelectChard);
+            mImage= view.findViewById(R.id.image);
 
         }
     }

@@ -1,11 +1,12 @@
 package com.coeuz.pyscustomer;
 
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,15 +15,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
+
 import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -33,10 +31,7 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.coeuz.pyscustomer.AdapterClass.CourseAdapter;
-import com.coeuz.pyscustomer.AdapterClass.DateBookingAdapter;
 import com.coeuz.pyscustomer.AdapterClass.OfferAdapterBookSummary;
-import com.coeuz.pyscustomer.ModelClass.SlotModel;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
 
@@ -50,43 +45,29 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 public class ConsecutiveBookingSummary extends AppCompatActivity implements View.OnClickListener {
 
-
-
-    private String  mToken,msubActivityId,mVendorId,selectedSlotIds,selectedDays,personCounts;
-
+    private String msubActivityId;
+    private String mVendorId;
+    private String selectedSlotIds;
+    private String personCounts;
 
     private TinyDB tinyDB;
-    private RecyclerView RecyclerDateSlot;
-
-    private LinearLayout noInternetLayout,preConsecLayout;
+    private LinearLayout noInternetLayout;
     private RelativeLayout allViewLayout;
-
-    private ArrayList<SlotModel> slotModel;
-    private DateBookingAdapter SlotDateAdapter;
-    private  Integer maxAllowed,slotId,bookingSlotCost,totalCost;
-    private String selectedSlotId,selectedSlotCost,selectedStarttime,selectedEndtime;
-    private  String slotStartTime,slotEndTime,membershipType,bookingCost;
-
-    private TextView membershipText;
-
-    ArrayList<String> slotTypeList=new ArrayList<>();
+    private  Integer totalCost;
     String mBookingType;
-
-
     boolean visible;
-
-
 
     TextView mSessionBookedFor,mSessionDate,mSessionTime,mAddress,mbookCosts;
     String vvendorName,vvendorArea,vsessionDate,vsessionTime,vsessionCost,newDates;
     String sendTimeFormate;
 
     RecyclerView offerRecycler;
-    private String offerStart,offerEnd,totalDiscount;
+    private String offerStart,offerEnd;
     ArrayList<String> offerStartList=new ArrayList<>();
     ArrayList<String> offerEndList=new ArrayList<>();
     ArrayList<String> offerTypeList=new ArrayList<>();
@@ -95,19 +76,21 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
     TextView mTotalDiscount;
     Integer sum=0;
     private Button btnOne,btnTwo,btnThree,btnFour,btnFive;
-    private Button proceed;
 
 
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consecutive_booking_summary);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         tinyDB=new TinyDB(getApplicationContext());
+        tinyDB.putString(Constant.HISTORYPAGE,"PRE");
 
-        mToken=tinyDB.getString(Constant.TOKEN);
+       // String mToken = tinyDB.getString(Constant.TOKEN);
         msubActivityId=tinyDB.getString(Constant.PREDEFINEDSUBACTIVITYID);
         selectedSlotIds=tinyDB.getString(Constant.CONSLOTID);
         mVendorId=tinyDB.getString(Constant.VENDORID);
@@ -117,11 +100,13 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
         vsessionDate=tinyDB.getString(Constant.CALENDERDATE);
         vsessionTime=tinyDB.getString("SlotbookingTime");
         vsessionCost=tinyDB.getString("SlotbookingCost");
+        tinyDB.putString(Constant.PAYMENTPAGESUBID,msubActivityId);
+        tinyDB.putString(Constant.PAYMENTPAGESLOTID,selectedSlotIds);
 
               try {
-                    final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                    final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.getDefault());
                     final Date dateObj = sdf.parse(vsessionTime );
-                    String timein12Format=new SimpleDateFormat("HH:mm").format(dateObj);
+                    String timein12Format=new SimpleDateFormat("HH:mm",Locale.getDefault()).format(dateObj);
                     Log.d("mcmcemciqc", String.valueOf(timein12Format));
                   sendTimeFormate=String.valueOf(timein12Format);
                   sendTimeFormate = sendTimeFormate.replace(".", "");
@@ -131,17 +116,17 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
                 }
 
 
-        RecyclerDateSlot = (RecyclerView)findViewById(R.id.RecyclerDateBooking);
-        offerRecycler=(RecyclerView)findViewById(R.id.RecyclerOffer);
-        mTotalDiscount=(TextView) findViewById(R.id.TotalDiscount);
+       // RecyclerView recyclerDateSlot = findViewById(R.id.RecyclerDateBooking);
+        offerRecycler=findViewById(R.id.RecyclerOffer);
+        mTotalDiscount= findViewById(R.id.TotalDiscount);
 
-        membershipText=(TextView) findViewById(R.id.membershipText);
+        //TextView membershipText = findViewById(R.id.membershipText);
 
-        noInternetLayout = (LinearLayout) findViewById(R.id.NoInternetLayout);
-        allViewLayout = (RelativeLayout) findViewById(R.id.allViewlayout);
-        preConsecLayout = (LinearLayout) findViewById(R.id.preConsecLayout);
+        noInternetLayout =  findViewById(R.id.NoInternetLayout);
+        allViewLayout =  findViewById(R.id.allViewlayout);
+      //  LinearLayout preConsecLayout =  findViewById(R.id.preConsecLayout);
 
-        proceed = (Button) findViewById(R.id.nBooking4);
+        Button proceed = findViewById(R.id.nBooking4);
         proceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -149,17 +134,17 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
             }
         });
 
-        mSessionBookedFor=(TextView) findViewById(R.id.SessionBookedFor);
-        mSessionDate=(TextView) findViewById(R.id.SessionDate);
-        mSessionTime=(TextView) findViewById(R.id.SessionTime);
-        mAddress=(TextView) findViewById(R.id.Address);
-        mbookCosts=(TextView) findViewById(R.id.bookCosts);
+        mSessionBookedFor=findViewById(R.id.SessionBookedFor);
+        mSessionDate= findViewById(R.id.SessionDate);
+        mSessionTime= findViewById(R.id.SessionTime);
+        mAddress=findViewById(R.id.Address);
+        mbookCosts= findViewById(R.id.bookCosts);
 
         try {
             Log.d("fhruifhruei1",vsessionDate);
-            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            Date date = (Date)formatter.parse(vsessionDate);
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy");
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Date date = formatter.parse(vsessionDate);
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
             newDates = sdf.format(date);
 
             Log.d("fhruifhruei",newDates);
@@ -181,15 +166,15 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
 
 
 
-        btnOne = (Button) findViewById(R.id.oneButton);
+        btnOne =  findViewById(R.id.oneButton);
         btnOne.setOnClickListener(this); // calling onClick() method
-        btnTwo = (Button) findViewById(R.id.twoButton);
+        btnTwo =  findViewById(R.id.twoButton);
         btnTwo.setOnClickListener(this);
-        btnThree = (Button) findViewById(R.id.threeButton);
+        btnThree =  findViewById(R.id.threeButton);
         btnThree.setOnClickListener(this);
-        btnFour = (Button) findViewById(R.id.fourButton);
+        btnFour =  findViewById(R.id.fourButton);
         btnFour.setOnClickListener(this);
-        btnFive = (Button) findViewById(R.id.fiveButton);
+        btnFive =  findViewById(R.id.fiveButton);
         btnFive.setOnClickListener(this);
 
 
@@ -219,7 +204,7 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
                             String expiryDate = jsonObject.getString("expiryDate");
                             String discount = jsonObject.getString("discount");
                             String category = jsonObject.getString("category");
-                            String type = jsonObject.getString("type");
+                         //   String type = jsonObject.getString("type");
                             Log.d("nfjfnjfr", String.valueOf(startDate));
                             Log.d("nfjfnjfr1", String.valueOf(expiryDate));
                             Integer discount1 = jsonObject.getInt("discount");
@@ -227,7 +212,7 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
                             Long timestamp10 = Long.parseLong(startDate);
                             Long timestamp20 = Long.parseLong(expiryDate);
                             try {
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
                                 Date netDate = (new Date(timestamp10));
                                 offerStart = sdf.format(netDate);
 
@@ -236,7 +221,7 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
                                 e.printStackTrace();
                             }
                             try {
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
                                 Date netDate = (new Date(timestamp20));
                                 offerEnd = sdf.format(netDate);
 
@@ -292,7 +277,7 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
 
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
+                    Button button=findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -304,13 +289,11 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                } else if (error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof TimeoutError) {
 
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
+                    Button button=findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -339,7 +322,7 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
 
             totalCost=Integer.valueOf(mbookCosts.getText().toString());
             Log.d("jfwiejfiwre", String.valueOf(totalCost));
-
+            tinyDB.putString(Constant.PAYMENTPERSONCOUNT,personCounts);
 
             final ProgressDialog mProgressDialog;
             mProgressDialog = new ProgressDialog(this);
@@ -354,6 +337,10 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
                 public void onResponse(String response) {
                     Log.d("fhhuiefh", response);
                     mProgressDialog.dismiss();
+                    try {
+                        JSONObject jsonObject=new JSONObject(response);
+                        String status=jsonObject.getString("status");
+                        if(status.equals("true")){
                     String sDate=mSessionDate.getText().toString();
 
                     if(!sDate.isEmpty()){
@@ -382,6 +369,12 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
 
                     Intent refresh = new Intent(ConsecutiveBookingSummary.this, PaymentActivity.class);
                     startActivity(refresh);
+                }else{
+                    Toast.makeText(ConsecutiveBookingSummary.this, "Please Select another slot", Toast.LENGTH_LONG).show();
+                }
+            } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
                 }
             }, new Response.ErrorListener() {
@@ -395,7 +388,7 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
                 }
             }) {
                 @Override
-                public byte[] getBody() throws AuthFailureError {
+                public byte[] getBody() {
 
                     HashMap<String, Object> hashMap = new HashMap<>();
 
@@ -427,16 +420,16 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
             request.setRetryPolicy(new RetryPolicy() {
                 @Override
                 public int getCurrentTimeout() {
-                    return 60000;
+                    return 200000;
                 }
 
                 @Override
                 public int getCurrentRetryCount() {
-                    return 60000;
+                    return 200000;
                 }
 
                 @Override
-                public void retry(VolleyError error) throws VolleyError {
+                public void retry(VolleyError error) {
 
                 }
             });
@@ -447,16 +440,107 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
 
 
     }
+    public void checkPersonCount() {
+
+        if(personCounts==null){
+            personCounts="1";
+        }
+
+
+        String URL = Constant.API + "/slot/validatePersonCount";
+        StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("feifjeije", response);
+                try {
+                    JSONObject jsonObject=new JSONObject(response);
+                    String status=jsonObject.getString("status");
+                    String errorMessage=jsonObject.getString("errorMessage");
+                    if(status.equals("true")){
+                        Log.d("feifjeije", response);
+                    }else {
+                        Toast toast = Toast.makeText(ConsecutiveBookingSummary.this, errorMessage, Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("ryeuiryweq", error.toString());
+
+
+            }
+        }) {
+            @Override
+            public byte[] getBody() {
+
+                HashMap<String, Object> hashMap = new HashMap<>();
+
+                Log.d("jfiojfero2",mVendorId);
+                Log.d("jfiojfero3",msubActivityId);
+                Log.d("jfiojfero4",personCounts);
+                Log.d("jfiojfero5",selectedSlotIds);
+                Log.d("jfiojfero6",vsessionDate);
+                hashMap.put("vendorId", mVendorId);
+                hashMap.put("subActivityId", msubActivityId);
+                hashMap.put("personCount", personCounts);
+                hashMap.put("slotId", selectedSlotIds);
+                hashMap.put("bookingType", "CONSECUTIVE");
+                hashMap.put("bookedForDate", vsessionDate);
+                hashMap.put("startTime", sendTimeFormate);
+
+
+                return new JSONObject(hashMap).toString().getBytes();
+
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+
+
+        };
+        request.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 200000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 200000;
+            }
+
+            @Override
+            public void retry(VolleyError error) {
+
+            }
+        });
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(request);
+
+
+
+
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
+            this.finish();
         }
-        this.finish();
+
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onClick(View view) {
 
@@ -464,6 +548,7 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
 
             case R.id.oneButton:
                 personCounts = btnOne.getText().toString();
+                checkPersonCount();
                 final int a1 = Integer.parseInt(vsessionCost);
                 int count1=Integer.parseInt(personCounts);
                 Integer AddingBookCost1=a1*count1;
@@ -491,6 +576,7 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
 
             case R.id.twoButton:
                 personCounts = btnTwo.getText().toString();
+                checkPersonCount();
                 final int a2 = Integer.parseInt(vsessionCost);
                 int count2=Integer.parseInt(personCounts);
                 Integer AddingBookCost2=a2*count2;
@@ -516,6 +602,7 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
 
             case R.id.threeButton:
                 personCounts = btnThree.getText().toString();
+                checkPersonCount();
                 final int a3 = Integer.parseInt(vsessionCost);
                 int count3=Integer.parseInt(personCounts);
                 Integer AddingBookCost3=a3*count3;
@@ -543,6 +630,7 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
 
             case R.id.fourButton:
                 personCounts = btnFour.getText().toString();
+                checkPersonCount();
                 final int a4 = Integer.parseInt(vsessionCost);
                 int count4=Integer.parseInt(personCounts);
                 Integer AddingBookCost4=a4*count4;
@@ -568,6 +656,7 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
 
             case R.id.fiveButton:
                 personCounts = btnFive.getText().toString();
+                checkPersonCount();
                 final int a5 = Integer.parseInt(vsessionCost);
                 int count5=Integer.parseInt(personCounts);
                 Integer AddingBookCost5=a5*count5;

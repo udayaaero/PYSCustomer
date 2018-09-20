@@ -1,6 +1,8 @@
 package com.coeuz.pyscustomer;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +14,6 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -28,22 +29,24 @@ import com.coeuz.pyscustomer.Requiredclass.Constant;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 public class UpdatePasswordActivity extends AppCompatActivity {
 
-    private Button mRecover;
     private EditText mMobile,mPassword;
     private String mobileNumber,mPass;
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_password);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mPassword=(EditText)findViewById(R.id.newPassword);
-        mMobile=(EditText)findViewById(R.id.mMobile);
-        mRecover=(Button)findViewById(R.id.recover);
+        mPassword=findViewById(R.id.newPassword);
+        mMobile=findViewById(R.id.mMobile);
+        Button mRecover = findViewById(R.id.recover);
 
         mRecover.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,12 +57,10 @@ public class UpdatePasswordActivity extends AppCompatActivity {
                 if (!mMobile.getText().toString().matches(MobilePattern)) {
                     mMobile.setError("Please enter valid input ");
                     mMobile.requestFocus();
-                    return;
                 }else
                 if (mPassword.getText().toString().length() < 6) {
                     mPassword.setError("Enter Valid password");
                     mPassword.requestFocus();
-                    return;
 
                 }else{
                 String URL = Constant.API+"/base/updatePassword?mobileNumber="+mobileNumber+"&pass="+mPass;
@@ -99,9 +100,7 @@ public class UpdatePasswordActivity extends AppCompatActivity {
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof NoConnectionError) {
-                            Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
-                        } else if (error instanceof TimeoutError) {
+                        }  else if (error instanceof TimeoutError) {
                             Toast.makeText(getApplicationContext(), "Connection TimeOut! Please check your internet connection.", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -119,7 +118,7 @@ public class UpdatePasswordActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void retry(VolleyError error) throws VolleyError {
+                    public void retry(VolleyError error) {
 
                     }
                 });
@@ -133,8 +132,10 @@ public class UpdatePasswordActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id=item.getItemId();
-        if(id==android.R.id.home){}
-        this.finish();
+        if(id==android.R.id.home){
+            this.finish();
+        }
+
         return super.onOptionsItemSelected(item);
     }
 }

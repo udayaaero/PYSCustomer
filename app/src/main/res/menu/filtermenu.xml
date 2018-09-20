@@ -6,5 +6,6 @@
     <item
         android:id="@+id/Apply"
         app:showAsAction="ifRoom"
-        android:title="Apply" />
+        android:title="Apply"
+        tools:ignore="HardcodedText"/>
 </menu>

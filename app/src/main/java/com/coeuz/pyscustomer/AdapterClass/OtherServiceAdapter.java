@@ -1,31 +1,21 @@
 package com.coeuz.pyscustomer.AdapterClass;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.coeuz.pyscustomer.OnItemClick;
 import com.coeuz.pyscustomer.R;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
-import com.coeuz.pyscustomer.SubActivity;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-
-/**
- * Created by Udayakumar on 19-11-2017.
- */
 
 public class OtherServiceAdapter extends RecyclerView.Adapter<OtherServiceAdapter.MyViewHolder> {
 
@@ -35,8 +25,8 @@ public class OtherServiceAdapter extends RecyclerView.Adapter<OtherServiceAdapte
     private int row_index=-1;
 
     private OnItemClick mCallback;
-    private ArrayList<String> serviceList=new ArrayList<>();
-    private ArrayList<String> subActivityIdList=new ArrayList<>();
+    private ArrayList<String> serviceList;
+    private ArrayList<String> subActivityIdList;
     private String subActivityId;
     private boolean isFirstRun=true;
 
@@ -58,13 +48,13 @@ public class OtherServiceAdapter extends RecyclerView.Adapter<OtherServiceAdapte
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         private TextView nameOfActivity;
-        private RelativeLayout layout;
+         RelativeLayout layout;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
-            nameOfActivity=(TextView)itemView.findViewById(R.id.nameofService);
-            layout=(RelativeLayout)itemView.findViewById(R.id.serviceLayout);
+            nameOfActivity=itemView.findViewById(R.id.nameofService);
+            layout=itemView.findViewById(R.id.serviceLayout);
 
         }
     }
@@ -73,12 +63,12 @@ public class OtherServiceAdapter extends RecyclerView.Adapter<OtherServiceAdapte
     public OtherServiceAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.other_service_adapter,parent,false);
 
-        MyViewHolder viewss = new MyViewHolder(view);
-        return viewss;
+        return new MyViewHolder(view);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public void onBindViewHolder(final OtherServiceAdapter.MyViewHolder holder, final int position) {
+    public void onBindViewHolder(final OtherServiceAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
 
 
 
@@ -88,6 +78,7 @@ public class OtherServiceAdapter extends RecyclerView.Adapter<OtherServiceAdapte
         Log.d("dfewrfew", String.valueOf(subActivityIdList));
         Log.d("dfewrfew1",subActivityId);
         holder.nameOfActivity.setOnClickListener(new View.OnClickListener() {
+            @SuppressWarnings("deprecation")
             @Override
             public void onClick(View view) {
                 if(row_index==position){
@@ -120,10 +111,12 @@ public class OtherServiceAdapter extends RecyclerView.Adapter<OtherServiceAdapte
                 holder.nameOfActivity.setBackgroundDrawable(ContextCompat.getDrawable(mcontext, R.drawable.button_service1) );
                 mCallback.onClick(subActivityIdList.get(position));
                 holder.nameOfActivity.setTextColor(Color.WHITE);
+                row_index=-1;
             } else {
                 holder.nameOfActivity.setBackground(ContextCompat.getDrawable(mcontext, R.drawable.button_service1));
                 mCallback.onClick(subActivityIdList.get(position));
                 holder.nameOfActivity.setTextColor(Color.WHITE);
+                row_index=-1;
             }
           /*  selectedSlotCost.add(slotModels.get(position).getBookingCost());
             selectedSlotId.add(slotModels.get(position).getSlotId());

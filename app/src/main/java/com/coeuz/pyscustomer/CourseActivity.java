@@ -1,5 +1,8 @@
 package com.coeuz.pyscustomer;
 
+import android.annotation.TargetApi;
+import android.content.Intent;
+import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,23 +16,19 @@ import android.view.MenuItem;
 import com.coeuz.pyscustomer.CourseFragment.ACTIVE2;
 import com.coeuz.pyscustomer.CourseFragment.COMPLETED2;
 import com.coeuz.pyscustomer.CourseFragment.NEARING2;
-import com.coeuz.pyscustomer.MembeshipFragment.ACTIVE1;
-import com.coeuz.pyscustomer.MembeshipFragment.COMPLETED1;
-import com.coeuz.pyscustomer.MembeshipFragment.NEARING1;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CourseActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
     String mToken;
     TinyDB mtinyTb;
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,18 +38,17 @@ public class CourseActivity extends AppCompatActivity {
         mToken=mtinyTb.getString(Constant.TOKEN);
 
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
 
-
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        ViewPager viewPager =  findViewById(R.id.viewpager);
 
         setupViewPager(viewPager);
 
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout =  findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
     }
 
@@ -65,7 +63,7 @@ public class CourseActivity extends AppCompatActivity {
         adapter.addFragment(fragment,"AVAILED");*/
         //adapter.addFragment(new AVAILED(), "Booking AVAILED");
         adapter.addFragment(new NEARING2(), "NEARING");
-        adapter.addFragment(new ACTIVE2(), "AVAILED");
+        adapter.addFragment(new ACTIVE2(), "ACTIVE");
         adapter.addFragment(new COMPLETED2(), "COMPLETED");
 
 
@@ -79,7 +77,7 @@ public class CourseActivity extends AppCompatActivity {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 
-        public ViewPagerAdapter(FragmentManager manager) {
+        ViewPagerAdapter(FragmentManager manager) {
             super(manager);
         }
 
@@ -93,7 +91,7 @@ public class CourseActivity extends AppCompatActivity {
             return mFragmentList.size();
         }
 
-        public void addFragment(Fragment fragment, String title) {
+        void addFragment(Fragment fragment, String title) {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
         }
@@ -111,8 +109,17 @@ public class CourseActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
+            Intent intent=new Intent(CourseActivity.this,MainActivity.class);
+            startActivity(intent);
+            this.finish();
         }
-        this.finish();
+
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onBackPressed() {
+        Intent intent=new Intent(CourseActivity.this,MainActivity.class);
+        startActivity(intent);
+        CourseActivity.this.finish();
     }
 }

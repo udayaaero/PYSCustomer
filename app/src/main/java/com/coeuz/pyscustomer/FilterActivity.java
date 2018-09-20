@@ -1,7 +1,9 @@
 package com.coeuz.pyscustomer;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
-import android.support.v4.widget.NestedScrollView;
+import android.os.Build;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,17 +12,13 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -30,76 +28,72 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.coeuz.pyscustomer.AdapterClass.AmenityAdapter;
 import com.coeuz.pyscustomer.AdapterClass.FilterAmenityAdapter;
-import com.coeuz.pyscustomer.AdapterClass.SubActivityAdapter;
 import com.coeuz.pyscustomer.ModelClass.AmenitiesModel;
-import com.coeuz.pyscustomer.ModelClass.SubActivityModel;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
-import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 public class FilterActivity extends AppCompatActivity {
 
 
-
-    private TinyDB mtinyDb;
     SeekBar customSeekBar;
 
     private ArrayList<AmenitiesModel> amenitiesModel;
     private FilterAmenityAdapter amenityAdapter;
-    private RecyclerView recyclerView;
 
-    private RadioButton radioMale,radioFemale,radioUnisex,radioLow,radioHigh;
-    private RadioButton amount1,amount2,amount3,amount4;
     private RadioGroup radioGroup1,radioGroup2,radioGroup3;
 
-    private String nGender,nRelavance,nRate,progressRate,filterValues;
+    private String nGender;
+    private String nRelavance;
+    private String progressRate;
+    private String filterValues;
     private String progressRates,amenities,fromAmount,toAmount;
     private TextView mprogressValues;
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filter);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mtinyDb=new TinyDB(getApplicationContext());
+       // TinyDB mtinyDb = new TinyDB(getApplicationContext());
 
 
-        mprogressValues = (TextView) findViewById(R.id.progressValue);
-        radioGroup1 = (RadioGroup)findViewById(R.id.radioGroup1);
-        radioMale=(RadioButton)findViewById(R.id.radioMale);
-        radioFemale=(RadioButton)findViewById(R.id.radioFemale);
-        radioUnisex=(RadioButton)findViewById(R.id.radioUnisex);
+        mprogressValues =  findViewById(R.id.progressValue);
+        radioGroup1 = findViewById(R.id.radioGroup1);
+      /*  RadioButton radioMale =  findViewById(R.id.radioMale);
+        RadioButton radioFemale =  findViewById(R.id.radioFemale);
+        RadioButton radioUnisex =  findViewById(R.id.radioUnisex);
+        RadioButton radioLow =  findViewById(R.id.radioLow);
+        RadioButton radioHigh =  findViewById(R.id.radioHigh);
+        RadioButton amount1 =  findViewById(R.id.amount1);
+        RadioButton amount2 =  findViewById(R.id.amount2);
+        RadioButton amount3 =  findViewById(R.id.amount3);
+        RadioButton amount4 =  findViewById(R.id.amount4);*/
 
-        radioGroup2 = (RadioGroup)findViewById(R.id.radioGroup2);
-        radioLow=(RadioButton)findViewById(R.id.radioLow);
-        radioHigh=(RadioButton)findViewById(R.id.radioHigh);
-
-        radioGroup3 = (RadioGroup)findViewById(R.id.radioGroup3);
-        amount1=(RadioButton)findViewById(R.id.amount1);
-        amount2=(RadioButton)findViewById(R.id.amount2);
-        amount3=(RadioButton)findViewById(R.id.amount3);
-        amount4=(RadioButton)findViewById(R.id.amount4);
+        radioGroup2 = findViewById(R.id.radioGroup2);
 
 
-        customSeekBar =(SeekBar)findViewById(R.id.simpleSeekBar);
+        radioGroup3 = findViewById(R.id.radioGroup3);
+
+
+
+        customSeekBar =findViewById(R.id.simpleSeekBar);
 
         amenitiesModel = new ArrayList<>();
         amenityAdapter = new FilterAmenityAdapter(this,amenitiesModel);
 
-        recyclerView = (RecyclerView) this.findViewById(R.id.recyclerList);
+        RecyclerView recyclerView =  this.findViewById(R.id.recyclerList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(amenityAdapter);
@@ -168,9 +162,7 @@ public class FilterActivity extends AppCompatActivity {
                 }  else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                } else if (error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof TimeoutError) {
+                }  else if (error instanceof TimeoutError) {
                     Toast.makeText(getApplicationContext(), "Connection TimeOut! Please check your internet connection.", Toast.LENGTH_SHORT).show();
 
                 }
@@ -205,7 +197,7 @@ public class FilterActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.Apply) {
 
-            List<Integer> amenitiesList = ((FilterAmenityAdapter) amenityAdapter)
+            List<Integer> amenitiesList = ( amenityAdapter)
                     .getStudentist();
             if(amenitiesList!=null){
                 filterValues=String.valueOf(amenitiesList);
@@ -221,9 +213,9 @@ public class FilterActivity extends AppCompatActivity {
             int selectedId3 = radioGroup3 .getCheckedRadioButtonId();
 
 
-            RadioButton radioButton1 = (RadioButton) findViewById(selectedId1);
-            RadioButton radioButton2 = (RadioButton) findViewById(selectedId2);
-            RadioButton radioButton3 = (RadioButton) findViewById(selectedId3);
+            RadioButton radioButton1 =  findViewById(selectedId1);
+            RadioButton radioButton2 = findViewById(selectedId2);
+            RadioButton radioButton3 = findViewById(selectedId3);
             if(radioButton1!=null){
             nGender=radioButton1.getText().toString();
                 filterValues=nGender;}
@@ -238,8 +230,8 @@ public class FilterActivity extends AppCompatActivity {
 
                 filterValues=nRelavance;}
             if(radioButton3!=null){
-            nRate=radioButton3.getText().toString();
-               String[] rate=nRate.split("-");
+                String nRate = radioButton3.getText().toString();
+               String[] rate= nRate.split("-");
                 fromAmount=rate[0];
                 fromAmount=fromAmount.trim();
                 toAmount=rate[1];
@@ -247,7 +239,7 @@ public class FilterActivity extends AppCompatActivity {
                 toAmount=toAmount.trim();
                 Log.d("oooiooo1",fromAmount);
                 Log.d("oooiooo",toAmount);
-                filterValues=nRate;}
+                filterValues= nRate;}
 
 
             if(progressRate!=null){

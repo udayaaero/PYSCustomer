@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginTop="5dp"
     android:background="@color/white"
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
@@ -11,7 +13,8 @@
         android:weightSum="2"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        tools:ignore="DisableBaselineAlignment,UselessParent">
         <LinearLayout
             android:gravity="center"
             android:layout_gravity="center"
@@ -22,6 +25,7 @@
             <TextView
                 android:id="@+id/typesOfmembership"
                 android:text="Types"
+                tools:ignore="HardcodedText"
                 android:textColor="@color/block"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -29,6 +33,7 @@
                 android:layout_marginTop="5dp"
                 android:id="@+id/Bookcost"
                 android:text="Booking Cost"
+                tools:ignore="HardcodedText"
                 android:textColor="@color/block"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -46,6 +51,7 @@
                    android:id="@+id/book"
                     android:background="@color/colorPrimary"
                     android:text="Book"
+                    tools:ignore="HardcodedText"
                     android:layout_width="wrap_content"
                     android:layout_height="35dp" />
 

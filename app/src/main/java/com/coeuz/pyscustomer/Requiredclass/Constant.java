@@ -20,6 +20,9 @@ public class Constant {
     public static final String INITIALLONG="initiallong";
 
     public static final String CUSTOMERNAME="customername";
+    public static final String USERID="UserId";
+    public static final String USEREMAIL="UserEmail";
+    public static final String USERMOBILE="UserMobile";
 
     public static final String VENDORNAME="vendorname";
     public static final String VENDORAREA="vendorarea";
@@ -37,10 +40,18 @@ public class Constant {
     public static final String MEMBERSUBACTIVITYID="memberSubActivityId";
     public static final String PREDEFINEDSUBACTIVITYID="predefinedSubActivityId";
     public static final String CONSECUTIVESUBACTIVITYID="consecutiveSubActivityId";
+
     public static final String PRESLOTID="preslotId";
     public static final String CONSLOTID="conslotId";
     public static final String MEMSLOTID="memslotId";
     public static final String COURSESLOTID="courseslotId";
+
+    public static final String PAYMENTPAGESUBID="paymentSubid";
+    public static final String PAYMENTPAGESLOTID="paymentSlotid";
+    public static final String PAYMENTSTARTTIME="paymentStartTime";
+    public static final String PAYMENTENDTIME="paymentEndTime";
+    public static final String PAYMENTPERSONCOUNT="paymentPersonCount";
+    public static final String PAYMENTPREDEFINEDDAYS="paymentPreDefinedDays";
 
     public static final String  PAYSDATE="paysdate";
     public static final String PAYEDATE="payedate";
@@ -48,4 +59,6 @@ public class Constant {
     public static final String PAYOFFER="payoffer";
     public static final String PAYSTIME="paystime";
     public static final String PAYETIME="payetime";
+    public static final String STATUS="status";
+    public static final String HISTORYPAGE="historypage";
 }

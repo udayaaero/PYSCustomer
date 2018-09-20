@@ -17,8 +17,9 @@ public class AboutPys extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
+            this.finish();
         }
-        this.finish();
+
         return super.onOptionsItemSelected(item);
     }
 }

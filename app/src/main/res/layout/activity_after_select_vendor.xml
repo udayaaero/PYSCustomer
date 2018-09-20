@@ -8,24 +8,24 @@
     android:fitsSystemWindows="true"
     android:background="@drawable/backgroundmain"
     android:layout_height="match_parent">
-
-
     <ScrollView
-
+        android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
     <ScrollView
+        android:scrollbars="none"
         android:id="@+id/allViewlayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:ignore="NestedScrolling,UselessParent">
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
 
             <RelativeLayout
@@ -38,7 +38,8 @@
                     android:fitsSystemWindows="true"
                     android:src="@drawable/aspa"
                     android:layout_width="match_parent"
-                    android:layout_height="180dp" />
+                    android:layout_height="180dp"
+                    tools:ignore="ContentDescription" />
 
                     <LinearLayout
                         android:layout_above="@+id/detailss"
@@ -51,7 +52,8 @@
                             android:text="Timings:"
                             android:textSize="14sp"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            tools:ignore="HardcodedText" />
 
                         <LinearLayout
                             android:layout_marginBottom="10dp"
@@ -64,7 +66,8 @@
                                 android:text="Open from"
                                 android:textSize="14sp"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                tools:ignore="HardcodedText" />
                             <TextView
                                 android:textColor="@color/white"
                                 android:layout_marginStart="5dp"
@@ -80,7 +83,8 @@
                                 android:text="to"
                                 android:textSize="14sp"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                tools:ignore="HardcodedText" />
                             <TextView
                                 android:textColor="@color/white"
                                 android:layout_marginStart="5dp"
@@ -95,12 +99,12 @@
                 <ImageView
                     android:id="@+id/offerDetails"
                     android:layout_above="@+id/detailss"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_marginTop="10dp"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:background="@drawable/offerss"
-                    />
+                    tools:ignore="ContentDescription" />
                 <LinearLayout
                     android:weightSum="2"
                     android:id="@+id/detailss"
@@ -108,7 +112,8 @@
                     android:layout_below="@+id/vendorImage"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false">
                 <LinearLayout
                     android:layout_weight="1.7"
                     android:orientation="vertical"
@@ -117,23 +122,23 @@
                     <TextView
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="5dp"
-                        android:layout_below="@+id/image"
                         android:id="@+id/NameOfVendor"
                         android:text="Name Of Vendor"
                         android:textStyle="bold"
                         android:textSize="15sp"
                         android:textColor="@color/colorPrimary"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="HardcodedText" />
                     <TextView
                         android:layout_marginBottom="5dp"
                         android:layout_marginStart="5dp"
-                        android:layout_below="@+id/NameOfVendor"
                         android:id="@+id/AdressOfVendor"
                         android:text="Adress Of Vendor"
                         android:textSize="12sp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="HardcodedText" />
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/mapview"
@@ -142,16 +147,19 @@
                     android:layout_weight="0.3"
                     android:orientation="vertical"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    tools:ignore="UseCompoundDrawables">
                     <ImageView
                         android:background="@drawable/ic_navigation_black_24dp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="ContentDescription" />
                     <TextView
                         android:textColor="@color/colorPrimary"
                         android:text="Map"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="HardcodedText" />
 
                 </LinearLayout>
                 </LinearLayout>
@@ -180,7 +188,8 @@
                             android:text="Gallery"
                             android:textSize="14sp"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            tools:ignore="HardcodedText,TooDeepLayout" />
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/galleryrecycle"
                             android:orientation="horizontal"
@@ -205,7 +214,8 @@
                     android:text="Service for you"
                     android:textSize="14sp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText" />
                 <android.support.v7.widget.RecyclerView
                     android:layout_below="@+id/ServiceForYou"
                     android:layout_marginBottom="5dp"
@@ -218,7 +228,10 @@
                     />
                 </RelativeLayout>
 
-
+<LinearLayout
+    android:id="@+id/calenderViewLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
                 <devs.mulham.horizontalcalendar.HorizontalCalendarView
                     android:foregroundGravity="left"
                     android:layout_gravity="left"
@@ -226,7 +239,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/colorPrimary"
-                    app:textColorSelected="#FFFF"/>
+                    app:textColorSelected="#FFFF"
+                    tools:ignore="RtlHardcoded" />
+</LinearLayout>
                 <RelativeLayout
 
                     android:layout_width="match_parent"
@@ -243,6 +258,7 @@
 
 
                 <android.support.v7.widget.CardView
+
                     android:layout_marginTop="10dp"
                 android:layout_below="@+id/RecyclerDateBooking"
                     android:layout_marginBottom="5dp"
@@ -261,7 +277,8 @@
                             android:layout_gravity="center"
                             android:background="@drawable/splashscreen"
                             android:layout_width="0dp"
-                            android:layout_height="60dp" />
+                            android:layout_height="60dp"
+                            tools:ignore="ContentDescription" />
                         <TextView
                             android:id="@+id/membershipText"
                             android:layout_weight="1.8"
@@ -270,7 +287,8 @@
                             android:textStyle="bold"
                             android:textColor="@color/colorPrimary"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            tools:ignore="HardcodedText" />
                         <LinearLayout
                             android:gravity="center"
                             android:layout_gravity="center"
@@ -281,13 +299,13 @@
                                 android:layout_marginStart="20dp"
                                 android:background="@drawable/ic_arrow_drop_down_black_24dp"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                tools:ignore="ContentDescription" />
                         </LinearLayout>
                     </LinearLayout>
                 </android.support.v7.widget.CardView>
                 </RelativeLayout>
-                <android.support.v7.widget.CardView
-                    android:layout_marginTop="10dp"
+                <LinearLayout
                     android:layout_marginBottom="5dp"
                     android:id="@+id/CourseBtn"
                     android:visibility="gone"
@@ -297,51 +315,134 @@
                         android:weightSum="3"
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:layout_weight="0.7"
-                            android:layout_gravity="center"
-                            android:background="@drawable/splashscreen"
-                            android:layout_width="0dp"
-                            android:layout_height="60dp" />
-                        <TextView
-                            android:id="@+id/courseText"
-                            android:layout_weight="1.8"
-                            android:layout_gravity="center"
-                            android:text="Course Available"
-                            android:textStyle="bold"
-                            android:textColor="@color/colorPrimary"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="DisableBaselineAlignment">
                         <LinearLayout
-                            android:gravity="center"
-                            android:layout_gravity="center"
-                            android:layout_weight="0.5"
-                            android:layout_width="wrap_content"
+                            android:padding="5dp"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
                             android:layout_height="wrap_content">
-                            <ImageView
-                                android:layout_marginStart="20dp"
-                                android:background="@drawable/ic_arrow_drop_down_black_24dp"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                        <Button
+                            android:textColor="@color/white"
+                            android:textAllCaps="false"
+                            android:id="@+id/allday"
+                            android:background="@drawable/coursebtnbg1"
+                            android:text="All days"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            tools:ignore="HardcodedText" />
                         </LinearLayout>
+                        <LinearLayout
+                            android:padding="5dp"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content">
+                        <Button
+                            android:textColor="@color/white"
+                            android:background="@drawable/coursebtnbg2"
+                            android:textAllCaps="false"
+                            android:id="@+id/weekday"
+                            android:text="Week days"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            tools:ignore="HardcodedText" />
+                        </LinearLayout>
+                            <LinearLayout
+                                android:padding="5dp"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content">
+                        <Button
+                            android:textColor="@color/white"
+                            android:background="@drawable/coursebtnbg2"
+                            android:textAllCaps="false"
+                            android:id="@+id/weekEnd"
+                            android:text="Week end"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            tools:ignore="HardcodedText" />
+                            </LinearLayout>
+
+
                     </LinearLayout>
-                </android.support.v7.widget.CardView>
+                </LinearLayout>
                 <RelativeLayout
                     android:id="@+id/memAndCourse"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                <android.support.v7.widget.RecyclerView
+                <LinearLayout
+                    android:layout_marginBottom="10dp"
                     android:visibility="gone"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginTop="5dp"
+                    android:id="@+id/noCourseData"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:textColor="@color/block"
+                        android:textStyle="bold"
+                        android:text="no data available"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:ignore="HardcodedText" />
+                </LinearLayout>
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/memberslayout"
+                    android:padding="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+               <android.support.v7.widget.CardView
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content">
+                <android.support.v7.widget.RecyclerView
+                    android:padding="5dp"
                     android:id="@+id/recycle_memberCourse"
                     android:scrollbars="none"
                     android:clipToPadding="false"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     />
+               </android.support.v7.widget.CardView>
+                </LinearLayout>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_marginTop="5dp"
+                    android:visibility="gone"
+                    android:id="@+id/RecommendedLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+             <LinearLayout
+                 android:background="@color/Ash"
+                 android:orientation="vertical"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/recommendedText"
+                    android:layout_marginStart="5dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:textSize="14dp"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="Recommended for you"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText,SpUsage" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recommendedRecycle"
+                android:orientation="horizontal"
+                app:reverseLayout="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </android.support.v7.widget.RecyclerView>
+             </LinearLayout>
+                </android.support.v7.widget.CardView>
                 </RelativeLayout>
                 <RelativeLayout
                     android:id="@+id/amenities"
@@ -365,7 +466,8 @@
                             android:text="Amenities"
                             android:textSize="14sp"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            tools:ignore="HardcodedText" />
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/amenitiesrecycle"
                             android:orientation="horizontal"
@@ -395,7 +497,8 @@
                         android:text="Statistics"
                         android:textSize="14sp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="HardcodedText" />
                     <LinearLayout
                         android:layout_marginBottom="5dp"
                         android:layout_marginTop="5dp"
@@ -424,7 +527,6 @@
 
     <LinearLayout
         android:layout_marginTop="10dp"
-        android:layout_below="@+id/chartLayout"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:visibility="gone"
@@ -443,7 +545,6 @@
         android:name="com.coeuz.pyscustomer.SubActivity"
         />
     <Button
-        android:layout_below="@+id/map"
         android:id="@+id/getDirection"
         android:padding="5dp"
         android:layout_marginTop="5dp"
@@ -455,11 +556,11 @@
         android:textStyle="bold"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="30dp" />
+        android:layout_height="30dp"
+        tools:ignore="HardcodedText" />
     <android.support.v7.widget.CardView
 
         android:layout_marginBottom="50dp"
-        android:layout_below="@+id/getDirection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     <LinearLayout
@@ -473,7 +574,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:drawablePadding="10dp"
-            android:drawableLeft="@drawable/location"
+            android:drawableStart="@drawable/location"
             android:id="@+id/mArea"
             android:textSize="14sp"
             android:layout_width="wrap_content"
@@ -487,7 +588,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:drawablePadding="10dp"
-            android:drawableLeft="@drawable/citylocation"
+            android:drawableStart="@drawable/citylocation"
             android:id="@+id/mCity"
             android:textSize="14sp"
             android:layout_width="wrap_content"
@@ -496,12 +597,13 @@
             android:layout_marginStart="30dp"
             android:background="#c0c0c0"
             android:layout_width="match_parent"
-            android:layout_height="2dp"/>
+            android:layout_height="2dp"
+            tools:ignore="TooManyViews" />
         <TextView
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:drawablePadding="10dp"
-            android:drawableLeft="@drawable/phone"
+            android:drawableStart="@drawable/phone"
             android:id="@+id/mMobile"
             android:textSize="14sp"
             android:layout_width="wrap_content"
@@ -515,7 +617,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:drawablePadding="10dp"
-            android:drawableLeft="@drawable/mail"
+            android:drawableStart="@drawable/mail"
             android:id="@+id/mEmails"
             android:textSize="14sp"
             android:layout_width="wrap_content"
@@ -556,16 +658,18 @@
             android:layout_marginBottom="20dp"
             android:background="@drawable/nointernetbg"
             android:layout_width="200dp"
-            android:layout_height="200dp">
+            android:layout_height="200dp"
+            tools:ignore="ContentDescription">
 
         </ImageView>
         <TextView
             android:textStyle="bold"
             android:textColor="#ffffff"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:text="No  Internet  Connection"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
         <Button
             android:id="@+id/TryAgain"
             android:layout_marginTop="30dp"
@@ -576,7 +680,8 @@
             android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
-            android:paddingLeft="20dp" />
+            android:paddingLeft="20dp"
+            tools:ignore="HardcodedText,RtlHardcoded" />
     </LinearLayout>
     <android.support.v7.widget.Toolbar
         android:layout_marginTop="23dp"

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="150dp"
     android:padding="8dp"
     android:layout_height="wrap_content">
@@ -8,7 +9,7 @@
     android:background="@color/white"
     android:id="@+id/SelectChard"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="210dp">
     <RelativeLayout
         android:padding="3dp"
         android:layout_width="match_parent"
@@ -18,25 +19,29 @@
             android:background="@drawable/gymslide"
             android:id="@+id/image"
             android:layout_width="match_parent"
-            android:layout_height="100dp" />
+            android:layout_height="100dp"
+            tools:ignore="ContentDescription" />
         <TextView
             android:layout_marginStart="5dp"
             android:layout_below="@+id/image"
             android:id="@+id/NameOfVendor"
             android:text="Name Of Vendor"
+            tools:ignore="HardcodedText"
             android:textStyle="bold"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:textColor="@color/colorPrimary"
             android:layout_width="wrap_content"
-            android:layout_height="20dp" />
+            android:layout_height="wrap_content" />
         <TextView
+            android:layout_marginTop="2dp"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="5dp"
             android:layout_marginStart="5dp"
             android:layout_below="@+id/NameOfVendor"
             android:id="@+id/AdressOfVendor"
             android:text="Adress Of Vendor"
-            android:textSize="11sp"
+            tools:ignore="HardcodedText"
+            android:textSize="12sp"
             android:layout_width="wrap_content"
             android:layout_height="65dp" />
 

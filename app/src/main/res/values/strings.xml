@@ -1,5 +1,5 @@
-<resources>
-    <string name="app_name">PYS</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="PrivateResource">PYS</string>
     <string name="app">PYS</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -95,6 +95,14 @@
     <string name="clicked_item">Clicked item : %1$s</string>
     <string name="long_clicked_item">Long clicked item : %1$s</string>
     <string name="server_client_id">141476679656-us52lonc468hbqjoh7k70gcjqq72i6oo.apps.googleusercontent.com</string>
+
+    <string name="Registration">Registration\nEndDate</string>
+
+    <string name="title_activity_confirmation">ConfirmationActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
+
 
     <!-- <string name="facebook_app_id">375708112935901</string>
     <string name="fb_login_protocol_scheme">fb375708112935901</string>-->

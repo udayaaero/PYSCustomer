@@ -1,24 +1,29 @@
 package com.coeuz.pyscustomer;
 
+import android.annotation.TargetApi;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
+
 import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -29,7 +34,6 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.coeuz.pyscustomer.AdapterClass.DateBookingAdapter;
 import com.coeuz.pyscustomer.AdapterClass.OfferAdapterBookSummary;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
@@ -41,9 +45,11 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 
 public class MembershipBookingSummary extends AppCompatActivity implements View.OnClickListener {
@@ -52,7 +58,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
     private RelativeLayout allViewLayout;
 
     RecyclerView offerRecycler;
-    private String offerStart,offerEnd,totalDiscount;
+    private String offerStart,offerEnd;
     ArrayList<String> offerStartList=new ArrayList<>();
     ArrayList<String> offerEndList=new ArrayList<>();
     ArrayList<String> offerTypeList=new ArrayList<>();
@@ -61,25 +67,31 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
     TextView mTotalDiscount;
     Integer sum=0;
     private TinyDB tinyDB;
-    private String  mToken,msubActivityId,mVendorId,selectedSlotIds,selectedDays,personCounts,days;
+    private String msubActivityId;
+    private String mVendorId;
+    private String selectedSlotIds;
+    private String personCounts;
     String vvendorName,vvendorArea,vsessionDate,vsessionTime,vsessionCost,newDates;
     String mBookingType,mMembershipType;
     TextView mSessionBookedFor,mSessionDate,mSessionTime,mAddress,mbookCosts,nMembershipType;
     private Button btnOne,btnTwo,btnThree,btnFour,btnFive;
     private  Integer totalCost;
-    private Button proceed;
 
+    DatePickerDialog datePickerDialog;
+    ImageView changedates;
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_membership_booking_summary);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         tinyDB=new TinyDB(getApplicationContext());
-
-        mToken=tinyDB.getString(Constant.TOKEN);
+        tinyDB.putString(Constant.HISTORYPAGE,"MEM");
+      //  String mToken = tinyDB.getString(Constant.TOKEN);
         msubActivityId=tinyDB.getString(Constant.MEMBERSUBACTIVITYID);
         selectedSlotIds=tinyDB.getString(Constant.MEMSLOTID);
         mVendorId=tinyDB.getString(Constant.VENDORID);
@@ -90,11 +102,15 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
         vsessionTime=tinyDB.getString("SlotbookingTime");
         vsessionCost=tinyDB.getString("SlotbookingCost");
         mMembershipType=tinyDB.getString("membershipType");
+        tinyDB.putString(Constant.PAYMENTPAGESUBID,msubActivityId);
+        tinyDB.putString(Constant.PAYMENTPAGESLOTID,selectedSlotIds);
 
 
-        noInternetLayout = (LinearLayout) findViewById(R.id.NoInternetLayout);
-        allViewLayout = (RelativeLayout) findViewById(R.id.allViewlayout);
-        proceed = (Button) findViewById(R.id.nBooking2);
+
+        changedates=findViewById(R.id.changedate);
+        noInternetLayout = findViewById(R.id.NoInternetLayout);
+        allViewLayout =findViewById(R.id.allViewlayout);
+        Button proceed =findViewById(R.id.nBooking2);
         proceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,34 +118,34 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
             }
         });
 
-        offerRecycler=(RecyclerView)findViewById(R.id.RecyclerOffer);
-        mTotalDiscount=(TextView) findViewById(R.id.TotalDiscount);
+        offerRecycler=findViewById(R.id.RecyclerOffer);
+        mTotalDiscount=findViewById(R.id.TotalDiscount);
 
-        mSessionBookedFor=(TextView) findViewById(R.id.SessionBookedFor);
-        mSessionDate=(TextView) findViewById(R.id.SessionDate);
-        mSessionTime=(TextView) findViewById(R.id.SessionTime);
-        mAddress=(TextView) findViewById(R.id.Address);
-        mbookCosts=(TextView) findViewById(R.id.bookCosts);
-        nMembershipType=(TextView) findViewById(R.id.MembershipType);
+        mSessionBookedFor=findViewById(R.id.SessionBookedFor);
+        mSessionDate=findViewById(R.id.SessionDate);
+        mSessionTime=findViewById(R.id.SessionTime);
+        mAddress= findViewById(R.id.Address);
+        mbookCosts=findViewById(R.id.bookCosts);
+        nMembershipType= findViewById(R.id.MembershipType);
         nMembershipType.setText(mMembershipType);
 
-        btnOne = (Button) findViewById(R.id.oneButton);
+        btnOne = findViewById(R.id.oneButton);
         btnOne.setOnClickListener(this); // calling onClick() method
-        btnTwo = (Button) findViewById(R.id.twoButton);
+        btnTwo =findViewById(R.id.twoButton);
         btnTwo.setOnClickListener(this);
-        btnThree = (Button) findViewById(R.id.threeButton);
+        btnThree =findViewById(R.id.threeButton);
         btnThree.setOnClickListener(this);
-        btnFour = (Button) findViewById(R.id.fourButton);
+        btnFour =findViewById(R.id.fourButton);
         btnFour.setOnClickListener(this);
-        btnFive = (Button) findViewById(R.id.fiveButton);
+        btnFive =findViewById(R.id.fiveButton);
         btnFive.setOnClickListener(this);
 
 
         try {
             Log.d("fhruifhruei1",vsessionDate);
-            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            Date date = (Date)formatter.parse(vsessionDate);
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy");
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Date date =formatter.parse(vsessionDate);
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
             newDates = sdf.format(date);
 
             Log.d("fhruifhruei",newDates);
@@ -145,6 +161,63 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
         mSessionTime.setText(vsessionTime);
         mAddress.setText(vvendorArea);
         mbookCosts.setText(vsessionCost);
+
+
+        changedates.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // calender class's instance and get current date , month and year from calender
+                final Calendar c = Calendar.getInstance();
+                int mYear = c.get(Calendar.YEAR); // current year
+                int mMonth = c.get(Calendar.MONTH); // current month
+                int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+                c.add(Calendar.DATE, 10);
+
+                // date picker dialog
+
+                datePickerDialog = new DatePickerDialog(MembershipBookingSummary.this,
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                // set day of month , month and year value in the edit text
+                           String  dpDate=(dayOfMonth + "/"
+                                        + (monthOfYear + 1) + "/" + year);
+                                try {
+                                    Log.d("fhruifhruei1",dpDate);
+                                    DateFormat formatter = new SimpleDateFormat("dd/MM/yy",Locale.getDefault());
+                                    Date date =formatter.parse(dpDate);
+                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
+                                    newDates = sdf.format(date);
+
+                                    Log.d("dpDate",newDates);
+
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                                mSessionDate.setText(newDates);
+                                try {
+
+                                   // DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
+                                    //Date date =formatter.parse(dpDate);
+                                  //  SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd",Locale.getDefault());
+                                    vsessionDate=dpDate;
+                                    Log.d("nfringfieri",vsessionDate);
+                                    } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }, mYear, mMonth, mDay);
+
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+                datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis());
+                datePickerDialog.show();
+            }
+        });
 
 
         offerStartList.clear();
@@ -172,7 +245,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
                             String expiryDate = jsonObject.getString("expiryDate");
                             String discount = jsonObject.getString("discount");
                             String category = jsonObject.getString("category");
-                            String type = jsonObject.getString("type");
+                          //  String type = jsonObject.getString("type");
                             Log.d("nfjfnjfr", String.valueOf(startDate));
                             Log.d("nfjfnjfr1", String.valueOf(expiryDate));
                             Integer discount1 = jsonObject.getInt("discount");
@@ -180,7 +253,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
                             Long timestamp10 = Long.parseLong(startDate);
                             Long timestamp20 = Long.parseLong(expiryDate);
                             try {
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
                                 Date netDate = (new Date(timestamp10));
                                 offerStart = sdf.format(netDate);
 
@@ -189,7 +262,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
                                 e.printStackTrace();
                             }
                             try {
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
                                 Date netDate = (new Date(timestamp20));
                                 offerEnd = sdf.format(netDate);
 
@@ -245,7 +318,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
 
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
+                    Button button=findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -257,13 +330,11 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                } else if (error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof TimeoutError) {
 
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
+                    Button button=findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -279,10 +350,6 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
 
 
 
-
-
-
-
     }
     public void memBookingSlot() {
 
@@ -292,7 +359,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
 
             totalCost=Integer.valueOf(mbookCosts.getText().toString());
             Log.d("jfwiejfiwre", String.valueOf(totalCost));
-
+        tinyDB.putString(Constant.PAYMENTPERSONCOUNT,personCounts);
 
             final ProgressDialog mProgressDialog;
             mProgressDialog = new ProgressDialog(this);
@@ -307,6 +374,10 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
                 public void onResponse(String response) {
                     Log.d("fhhuiefh", response);
                     mProgressDialog.dismiss();
+                    try {
+                        JSONObject jsonObject=new JSONObject(response);
+                        String status=jsonObject.getString("status");
+                        if(status.equals("true")){
 
 
                     String sDate=mSessionDate.getText().toString();
@@ -336,6 +407,12 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
                     //tinyDB.putString(Constant.CALENDERDATE,mCalenderdate);
                     Intent refresh = new Intent(MembershipBookingSummary.this, PaymentActivity.class);
                     startActivity(refresh);
+                        }else{
+                            Toast.makeText(MembershipBookingSummary.this, "Please Select another slot", Toast.LENGTH_LONG).show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
                 }
             }, new Response.ErrorListener() {
@@ -349,7 +426,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
                 }
             }) {
                 @Override
-                public byte[] getBody() throws AuthFailureError {
+                public byte[] getBody() {
 
                     HashMap<String, Object> hashMap = new HashMap<>();
 
@@ -389,7 +466,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
                 }
 
                 @Override
-                public void retry(VolleyError error) throws VolleyError {
+                public void retry(VolleyError error) {
 
                 }
             });
@@ -400,21 +477,112 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
 
 
     }
+    public void checkPersonCount() {
+
+        if(personCounts==null){
+            personCounts="1";
+        }
+
+
+        String URL = Constant.API + "/slot/validatePersonCount";
+        StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("feifjeije", response);
+                try {
+                    JSONObject jsonObject=new JSONObject(response);
+                    String status=jsonObject.getString("status");
+                    String errorMessage=jsonObject.getString("errorMessage");
+                    if(status.equals("true")){
+                        Log.d("feifjeije", response);
+                    }else {
+                        Toast toast = Toast.makeText(MembershipBookingSummary.this, errorMessage, Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("ryeuiryweq", error.toString());
+
+            }
+        }) {
+            @Override
+            public byte[] getBody() {
+
+                HashMap<String, Object> hashMap = new HashMap<>();
+
+                Log.d("1jfiojfero2",mVendorId);
+                Log.d("1jfiojfero3",msubActivityId);
+                Log.d("1jfiojfero4",personCounts);
+                Log.d("1jfiojfero5",selectedSlotIds);
+                Log.d("1jfiojfero6",vsessionDate);
+                hashMap.put("vendorId", mVendorId);
+                hashMap.put("subActivityId", msubActivityId);
+                hashMap.put("personCount", personCounts);
+                hashMap.put("slotId", selectedSlotIds);
+                hashMap.put("bookingType", "MEMBERSHIP");
+                hashMap.put("bookedForDate", vsessionDate);
+
+
+                return new JSONObject(hashMap).toString().getBytes();
+
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+
+
+        };
+        request.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 200000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 200000;
+            }
+
+            @Override
+            public void retry(VolleyError error) {
+
+            }
+        });
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(request);
+
+
+
+
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
+            this.finish();
         }
-        this.finish();
+
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onClick(View view) {
 
         switch (view.getId()){
             case R.id.oneButton:
                 personCounts = btnOne.getText().toString();
+                checkPersonCount();
                 final int a1 = Integer.parseInt(vsessionCost);
                 int count1=Integer.parseInt(personCounts);
                 Integer AddingBookCost1=a1*count1;
@@ -442,6 +610,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
 
             case R.id.twoButton:
                 personCounts = btnTwo.getText().toString();
+                checkPersonCount();
                 final int a2 = Integer.parseInt(vsessionCost);
                 int count2=Integer.parseInt(personCounts);
                 Integer AddingBookCost2=a2*count2;
@@ -467,6 +636,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
 
             case R.id.threeButton:
                 personCounts = btnThree.getText().toString();
+                checkPersonCount();
                 final int a3 = Integer.parseInt(vsessionCost);
                 int count3=Integer.parseInt(personCounts);
                 Integer AddingBookCost3=a3*count3;
@@ -494,6 +664,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
 
             case R.id.fourButton:
                 personCounts = btnFour.getText().toString();
+                checkPersonCount();
                 final int a4 = Integer.parseInt(vsessionCost);
                 int count4=Integer.parseInt(personCounts);
                 Integer AddingBookCost4=a4*count4;
@@ -519,6 +690,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
 
             case R.id.fiveButton:
                 personCounts = btnFive.getText().toString();
+                checkPersonCount();
                 final int a5 = Integer.parseInt(vsessionCost);
                 int count5=Integer.parseInt(personCounts);
                 Integer AddingBookCost5=a5*count5;

@@ -1,13 +1,13 @@
 package com.coeuz.pyscustomer;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -16,6 +16,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -24,29 +25,25 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.LocationServices;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 
-/**
- * Ahmet Ertugrul OZCAN
- * Cihazin konum bilgisini goruntuler
- */
+
+@SuppressLint("Registered")
 public class GpsTracker extends Service implements ConnectionCallbacks,
         OnConnectionFailedListener,
         LocationListener {
 
 
-    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    //private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private double currentLatitude;
     private double currentLongitude;
-    private String mcurrentLatitude,mcurrentLongitude;
+
     static final int REQUEST=1;
 
 
@@ -71,7 +68,7 @@ public class GpsTracker extends Service implements ConnectionCallbacks,
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
 
 
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60;
 
 
     protected LocationManager locationManager;
@@ -309,7 +306,7 @@ Log.d("fewuifhi", String.valueOf(location));
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
-                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
+                .setFastestInterval(1000); // 1 second, in milliseconds
     }
 
 
@@ -334,8 +331,8 @@ Log.d("fewuifhi", String.valueOf(location));
 
             currentLatitude = location.getLatitude();
             currentLongitude = location.getLongitude();
-            mcurrentLatitude= String.valueOf(currentLatitude);
-            mcurrentLongitude= String.valueOf(currentLongitude);
+          //  mcurrentLatitude= String.valueOf(currentLatitude);
+           // mcurrentLongitude= String.valueOf(currentLongitude);
             Log.d("hfuiewrhwuie34", String.valueOf(currentLongitude));
             Log.d("hfuiewrhwuie45", String.valueOf(currentLatitude));
             latitude = location.getLatitude();
@@ -349,15 +346,15 @@ Log.d("fewuifhi", String.valueOf(location));
     public void onConnectionSuspended(int i) {}
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
     }
     @Override
     public void onLocationChanged(Location location) {
         currentLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
 
-        mcurrentLatitude= String.valueOf(currentLatitude);
-        mcurrentLongitude= String.valueOf(currentLongitude);
+       // mcurrentLatitude= String.valueOf(currentLatitude);
+      //  mcurrentLongitude= String.valueOf(currentLongitude);
         latitude = location.getLatitude();
         longitude = location.getLongitude();
         Log.d("hfuiewrhwuie", String.valueOf(currentLatitude));

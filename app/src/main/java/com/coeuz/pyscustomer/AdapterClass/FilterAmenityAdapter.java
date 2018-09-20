@@ -1,27 +1,23 @@
 package com.coeuz.pyscustomer.AdapterClass;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import com.coeuz.pyscustomer.FilterActivity;
 import com.coeuz.pyscustomer.ModelClass.AmenitiesModel;
-import com.coeuz.pyscustomer.ModelClass.SubActivityModel;
 import com.coeuz.pyscustomer.R;
 
 import java.util.ArrayList;
 
-/**
- * Created by vjy on 17-Apr-18.
- */
+
 
 public class FilterAmenityAdapter  extends RecyclerView.Adapter<FilterAmenityAdapter.MyViewHolder> {
 
@@ -30,7 +26,7 @@ public class FilterAmenityAdapter  extends RecyclerView.Adapter<FilterAmenityAda
 
     private ArrayList<AmenitiesModel> amenityModels;
 
-    ArrayList<Integer> selectedStrings = new ArrayList<Integer>();
+    private ArrayList<Integer> selectedStrings = new ArrayList<>();
 
     public FilterAmenityAdapter(FilterActivity filterActivity, ArrayList<AmenitiesModel> amenitiesModel) {
        this.mcontext=filterActivity;
@@ -45,8 +41,8 @@ public class FilterAmenityAdapter  extends RecyclerView.Adapter<FilterAmenityAda
         public MyViewHolder(View itemView) {
             super(itemView);
 
-            mtext=(TextView)itemView.findViewById(R.id.checkedtext);
-            checkbox = (CheckBox) itemView.findViewById(R.id.checkbox);
+            mtext=itemView.findViewById(R.id.checkedtext);
+            checkbox =  itemView.findViewById(R.id.checkbox);
 
 
 
@@ -61,12 +57,11 @@ public class FilterAmenityAdapter  extends RecyclerView.Adapter<FilterAmenityAda
     public FilterAmenityAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.filter_amenities_adapter,parent,false);
 
-        FilterAmenityAdapter.MyViewHolder viewss = new FilterAmenityAdapter.MyViewHolder(view);
-        return viewss;
+        return new MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final FilterAmenityAdapter.MyViewHolder holder, final int position) {
+    public void onBindViewHolder(final FilterAmenityAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
 
 
         holder.mtext.setText(amenityModels.get(position).getAmenityType());

@@ -1,7 +1,9 @@
 package com.coeuz.pyscustomer;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,12 +15,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -34,39 +34,37 @@ import com.coeuz.pyscustomer.Requiredclass.Constant;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 
 public class ForgotPassordActivity extends AppCompatActivity {
 
-    private TextView cancel;
+
     private EditText mEmails;
     private EditText mOtp,mMobile;
-    private Button mSubmit;
     private String iMobile,iOTP;
 
-    private Button mRecover;
-    private String MobileNimber,mEmail;
+    private String mEmail;
     private LinearLayout mForgotLayout,mSubmitLayout;
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_passord);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        mEmails=(EditText)findViewById(R.id.Emails1);
-        mOtp=(EditText)findViewById(R.id.otp);
-        mMobile=(EditText)findViewById(R.id.mobile);
-        mSubmit=(Button)findViewById(R.id.Submit);
+        mEmails=findViewById(R.id.Emails1);
+        mOtp=findViewById(R.id.otp);
+        mMobile=findViewById(R.id.mobile);
+        Button mSubmit =findViewById(R.id.Submit);
       /*  mback=(Button)findViewById(R.id.back);*/
-        mForgotLayout=(LinearLayout)findViewById(R.id.forgotLayout);
-        mSubmitLayout=(LinearLayout)findViewById(R.id.submitLayout);
+        mForgotLayout=findViewById(R.id.forgotLayout);
+        mSubmitLayout=findViewById(R.id.submitLayout);
 
-        mRecover=(Button)findViewById(R.id.recover);
+        Button mRecover =  findViewById(R.id.recover);
         mRecover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,7 +78,6 @@ public class ForgotPassordActivity extends AppCompatActivity {
                 if (!mEmails.getText().toString().trim().matches(emailPattern)&&!mEmails.getText().toString().matches(MobilePattern)) {
                     mEmails.setError("Please enter valid input ");
                     mEmails.requestFocus();
-                    return;
                 }
                 else{
 
@@ -121,8 +118,6 @@ public class ForgotPassordActivity extends AppCompatActivity {
                             } else if (error instanceof ParseError) {
                                 Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                            } else if (error instanceof NoConnectionError) {
-                                Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                             } else if (error instanceof TimeoutError) {
                                 Toast.makeText(getApplicationContext(), "Connection TimeOut! Please check your internet connection.", Toast.LENGTH_SHORT).show();
                             }
@@ -141,7 +136,7 @@ public class ForgotPassordActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void retry(VolleyError error) throws VolleyError {
+                        public void retry(VolleyError error) {
 
                         }
                     });
@@ -175,7 +170,6 @@ public class ForgotPassordActivity extends AppCompatActivity {
                 if (!mMobile.getText().toString().matches(MobilePattern)) {
                     mMobile.setError("Please enter valid input ");
                     mMobile.requestFocus();
-                    return;
                 } else {
                     String URL = Constant.API+"/base/user/verifyOTP?mobileNumber="+iMobile+"&otp="+iOTP;
                     StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -207,8 +201,6 @@ public class ForgotPassordActivity extends AppCompatActivity {
                             } else if (error instanceof ParseError) {
                                 Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                            } else if (error instanceof NoConnectionError) {
-                                Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                             } else if (error instanceof TimeoutError) {
                                 Toast.makeText(getApplicationContext(), "Connection TimeOut! Please check your internet connection.", Toast.LENGTH_SHORT).show();
                             }
@@ -227,7 +219,7 @@ public class ForgotPassordActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void retry(VolleyError error) throws VolleyError {
+                        public void retry(VolleyError error) {
 
                         }
                     });
@@ -245,6 +237,7 @@ public class ForgotPassordActivity extends AppCompatActivity {
     }
 });*/
         }
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         View view = getCurrentFocus();
@@ -254,15 +247,17 @@ public class ForgotPassordActivity extends AppCompatActivity {
             float x = ev.getRawX() + view.getLeft() - scrcoords[0];
             float y = ev.getRawY() + view.getTop() - scrcoords[1];
             if (x < view.getLeft() || x > view.getRight() || y < view.getTop() || y > view.getBottom())
-                ((InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow((this.getWindow().getDecorView().getApplicationWindowToken()), 0);
+                ((InputMethodManager) Objects.requireNonNull(this.getSystemService(Context.INPUT_METHOD_SERVICE))).hideSoftInputFromWindow((this.getWindow().getDecorView().getApplicationWindowToken()), 0);
         }
         return super.dispatchTouchEvent(ev);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id=item.getItemId();
-        if(id==android.R.id.home){}
-        this.finish();
+        if(id==android.R.id.home){
+            this.finish();
+        }
+
         return super.onOptionsItemSelected(item);
     }
 }

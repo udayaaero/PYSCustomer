@@ -1,12 +1,10 @@
 package com.coeuz.pyscustomer;
 
 
-import android.app.Activity;
-import android.app.AlertDialog;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 
 import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,38 +12,25 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.graphics.Bitmap;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Handler;
+import android.os.Build;
 import android.support.annotation.NonNull;
-
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-
 import android.os.Bundle;
-
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
-
 import android.view.MenuItem;
 import android.view.View;
-
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
 import com.android.volley.NetworkResponse;
-import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -57,43 +42,26 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import com.coeuz.pyscustomer.Requiredclass.ConnectionDetector;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
-import com.coeuz.pyscustomer.Requiredclass.InternetMessageActivity;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookAuthorizationException;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 
-import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
-import com.facebook.Profile;
-import com.facebook.ProfileTracker;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.Api;
-import com.google.android.gms.common.api.ApiException;
+
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.tasks.Task;
 
+import com.onesignal.OneSignal;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -101,28 +69,22 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-
-import static com.coeuz.pyscustomer.Requiredclass.Constant.TOKEN;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
 
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
-    private View mProgressView;
+    String  muserId, mcustomerName, mmobileNumber, memailId;
 
     Context context;
-    private final static int MY_PERMISSION_REQUEST_lOCATION = 1;
-    TinyDB tinyDB;
+    private TinyDB tinyDB;
     SharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPrefs";
-    private Handler mHandler = new Handler();
-    String locatonValues, mToken, lTokens;
-    ConnectionDetector cd;
+    String  mToken;
     LoginButton faceBookLoginbtn;
     CallbackManager callbackManager;
 
@@ -134,18 +96,31 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     private LinearLayout noInternetLayout;
     private LinearLayout allViewLayout;
+    private String onsignalUserId;
 
 
+    @SuppressWarnings("deprecation")
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
+        OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
+            @Override
+            public void idsAvailable(String userId, String registrationId) {
+                onsignalUserId=userId;
+                Log.d("debug", "User:" + userId);
+                if (registrationId != null)
+                    Log.d("debug", "registrationId:" + registrationId);
+
+            }
+        });
         setContentView(R.layout.activity_login);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         tinyDB = new TinyDB(getApplicationContext());
-        btnSignIn = (SignInButton) findViewById(R.id.GoogleLoginbtn);
+        btnSignIn = findViewById(R.id.GoogleLoginbtn);
         initializeGPlusSetting();
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,10 +136,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             }
         });*/
         printKeyHash(getApplicationContext());
-        noInternetLayout = (LinearLayout) findViewById(R.id.NoInternetLayout);
-        allViewLayout = (LinearLayout) findViewById(R.id.email_login_form);
+        noInternetLayout =findViewById(R.id.NoInternetLayout);
+        allViewLayout =findViewById(R.id.email_login_form);
 
-        faceBookLoginbtn = (LoginButton) findViewById(R.id.FacebookLoginbtn);
+        faceBookLoginbtn = findViewById(R.id.FacebookLoginbtn);
         faceBookLoginbtn.setReadPermissions("public_profile", "email", "user_friends");
 
     /*    faceBookLoginbtn.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -225,7 +200,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 editor.putString(Email, UserPassword);*/
 
                 editor.clear();
-                editor.commit();
+                editor.apply();
                 Intent intent=new Intent(getApplicationContext(),SlotPages.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
@@ -245,15 +220,15 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
             }
         });
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mEmailView = findViewById(R.id.email);
 
-        mProgressView = findViewById(R.id.login_progress);
+       // View mProgressView = findViewById(R.id.login_progress);
 
-        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView = findViewById(R.id.password);
 
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        TextView memail_Forgot_button = (TextView) findViewById(R.id.email_Forgot_button);
+        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
+        TextView memail_Forgot_button = findViewById(R.id.email_Forgot_button);
         memail_Forgot_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -262,7 +237,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             }
         });
 
-        TextView SignUp_button = (TextView) findViewById(R.id.SignUp);
+        TextView SignUp_button = findViewById(R.id.SignUp);
         SignUp_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -278,7 +253,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             public void onClick(View view) {
                 try {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(Objects.requireNonNull(getCurrentFocus()).getWindowToken(), 0);
+                    }
                 } catch (Exception e) {
                     // TODO: handle exception
                 }
@@ -287,6 +264,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         });
     }
 
+    @SuppressWarnings("deprecation")
     private void initializeGPlusSetting() {
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -347,15 +325,28 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             focusView.requestFocus();
         } else {
 
-            String URL = Constant.APIONE + "/user/getCurrentUser";
+            String URL = Constant.APIONE +"/user/getCurrentUser";
             StringRequest request = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
 
                 @Override
                 public void onResponse(String response) {
+                    Log.d("fnruingior",response);
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        muserId = jsonObject.getString("userId");
+                        mcustomerName = jsonObject.getString("customerName");
+                        mmobileNumber = jsonObject.getString("mobileNumber");
+                        memailId = jsonObject.getString("emailId");
+                        tinyDB.putString(Constant.CUSTOMERNAME, mcustomerName);
+                        tinyDB.putString(Constant.USERID, muserId);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
                     SharedPreferences.Editor editor = sharedpreferences.edit();
                     editor.clear();
-                    editor.commit();
+                    editor.apply();
                     Intent intent=new Intent(getApplicationContext(),PaymentActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
@@ -376,7 +367,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     if (error instanceof NetworkError) {
                         noInternetLayout.setVisibility(View.VISIBLE);
                         allViewLayout.setVisibility(View.GONE);
-                        Button button = (Button) findViewById(R.id.TryAgain);
+                        Button button =  findViewById(R.id.TryAgain);
                         button.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -389,12 +380,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     } else if (error instanceof ParseError) {
                         Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                    } else if (error instanceof NoConnectionError) {
-                        Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
-                    } else if (error instanceof TimeoutError) {
+                    }  else if (error instanceof TimeoutError) {
                         noInternetLayout.setVisibility(View.VISIBLE);
                         allViewLayout.setVisibility(View.GONE);
-                        Button button = (Button) findViewById(R.id.TryAgain);
+                        Button button =  findViewById(R.id.TryAgain);
                         button.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -424,7 +413,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
 
                 @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
+                public Map<String, String> getHeaders() {
                     Map<String, String> headers = new HashMap<>();
 
                     String credentials = emails + ':' + passwords;
@@ -433,6 +422,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     String auth = "Basic "
                             + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
                     headers.put("Authorization", auth);
+                    headers.put("X-Notify-Token", onsignalUserId);
+                    Log.d("jfiwejetr", onsignalUserId);
                     Log.d("jfiwej", String.valueOf(headers.get("x-auth-token")));
                     return headers;
 
@@ -441,7 +432,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             };
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
             requestQueue.add(request);
-
 
         }
     }
@@ -470,13 +460,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 editor.putString(Email, UserPassword);*/
 
                     editor.clear();
-                    editor.commit();
+                    editor.apply();
                     Intent intent = new Intent(getApplicationContext(), SlotPages.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     finish();
-                    Log.d("iortrewutrt3", acct.getEmail());
+
                 }
+                assert acct != null;
                 Log.d("iortrewutrt4", acct.getEmail());
 
             }
@@ -505,9 +496,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
 
-    private void handleGPlusSignInResult(GoogleSignInResult result) {
-
-        String hfrewi = String.valueOf(result.getStatus());
+   /* private void handleGPlusSignInResult(GoogleSignInResult result) {
 
         if (result.isSuccess()) {
 
@@ -526,16 +515,16 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 if (idTokenString != null) {
                     Log.d("riueeire", idTokenString);
                 }
-                 /* mToken=idTokenString.getAccessToken().getToken();
+                 *//* mToken=idTokenString.getAccessToken().getToken();
                 tinyDB.putString(TOKEN,mToken);
-                Log.d("fuiwrfuwiew",mToken);*/
+                Log.d("fuiwrfuwiew",mToken);*//*
                 //getCurrentUser();
 
                 SharedPreferences.Editor editor = sharedpreferences.edit();
 
-                  /*     editor.putString(Name, UserName);
+                  *//*     editor.putString(Name, UserName);
 
-                editor.putString(Email, UserPassword);*/
+                editor.putString(Email, UserPassword);*//*
 
                 editor.clear();
                 editor.commit();
@@ -543,23 +532,23 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 finish();
-              /*  mHandler.postDelayed(new Runnable() {
+              *//*  mHandler.postDelayed(new Runnable() {
                 public void run() {
                     mEmailView.setText("");
                     mPasswordView.setText("");
                     mPasswordView.clearFocus();
                 }
-            }, 1000);*/
+            }, 1000);*//*
             }
         }
 
 
     }
-
-    private boolean isEmailValid(String email) {
+*/
+   /* private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.contains("@");
-    }
+    }*/
 
     private boolean isPasswordValid(String password) {
         //checkSelfPermissionTODO: Replace this with your own logic
@@ -576,12 +565,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
+            this.finish();
         }
-        this.finish();
+
         return super.onOptionsItemSelected(item);
     }
 
-    public static String printKeyHash(Context context) {
+    @SuppressLint("PackageManagerGetSignatures")
+    public static void printKeyHash(Context context) {
 
 
         PackageInfo packageInfo;
@@ -612,10 +603,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             Log.e("Exception", e.toString());
         }
         Log.d("ewrt43t", key);
-        return key;
     }
 
-    public void disconnectFromFacebook() {
+   /* public void disconnectFromFacebook() {
 
         if (AccessToken.getCurrentAccessToken() == null) {
             Log.d("jriotjio3", "greuthn4uire");
@@ -631,7 +621,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
             }
         }).executeAsync();
-    }
+    }*/
 
 
 }

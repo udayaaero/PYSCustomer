@@ -3,9 +3,7 @@ package com.coeuz.pyscustomer.ModelClass;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by vjy on 18-Mar-18.
- */
+
 
 public class SubActivityModel {@SerializedName("vendorId")
 @Expose
@@ -122,6 +120,13 @@ private Integer vendorId;
         this.vendorName=vendorName;
         this.area=area;
         this.vendorId=vendorId;
+    }
+
+    public SubActivityModel(String vendorName, String area, Integer vendorId, String subActivityId) {
+        this.vendorName=vendorName;
+        this.area=area;
+        this.vendorId=vendorId;
+        this.subActivityId=subActivityId;
     }
 
 

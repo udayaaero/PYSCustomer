@@ -1,20 +1,257 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.coeuz.pyscustomer.NotificationActivitys">
 
-    <Button
-        android:onClick="buttonClick"
-        android:text="click"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <Button
-        android:onClick="tenCount"
-        android:text="ten"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <LinearLayout
+
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="DisableBaselineAlignment">
+        <LinearLayout
+            android:layout_weight="0.6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:textStyle="bold"
+                android:background="@drawable/circlemanimg"
+                android:gravity="start"
+                android:textSize="14sp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+        <LinearLayout
+            android:padding="2dp"
+            android:orientation="vertical"
+            android:layout_weight="1.6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="UselessParent">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:textStyle="bold"
+                    android:textColor="@color/block"
+                    android:gravity="start"
+                    android:textSize="14sp"
+                    android:text="your booking is Successful "
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText" />
+            </LinearLayout>
+        </LinearLayout>
+                <LinearLayout
+                    android:padding="2dp"
+                    android:orientation="vertical"
+                    android:layout_weight="0.8"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                <TextView
+                    android:layout_gravity="end"
+                    android:textStyle="bold"
+                    android:textColor="@color/block"
+                    android:gravity="end"
+                    android:textSize="14sp"
+                    android:text="18-june-2018 "
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText" />
+                <TextView
+                    android:layout_gravity="end"
+                    android:textStyle="bold"
+                    android:textColor="@color/block"
+                    android:gravity="end"
+                    android:textSize="14sp"
+                    android:text="05.30pm "
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText" />
+
+        </LinearLayout>
+
+</LinearLayout>
+    <LinearLayout
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/Ash"
+        android:layout_width="match_parent"
+        android:layout_height="2dp">
+    </LinearLayout>
+    <LinearLayout
+
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="DisableBaselineAlignment">
+        <LinearLayout
+            android:layout_weight="0.6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:textStyle="bold"
+                android:background="@drawable/circlemanimg"
+                android:gravity="start"
+                android:textSize="14sp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+        <LinearLayout
+            android:padding="2dp"
+            android:orientation="vertical"
+            android:layout_weight="1.6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="UselessParent">
+
+                <TextView
+                    android:id="@+id/textView1"
+                    android:textStyle="bold"
+                    android:textColor="@color/block"
+                    android:gravity="start"
+                    android:textSize="14sp"
+                    android:text="Get ready for your booking"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:padding="2dp"
+            android:orientation="vertical"
+            android:layout_weight="0.8"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_gravity="end"
+                android:textStyle="bold"
+                android:textColor="@color/block"
+                android:gravity="end"
+                android:textSize="14sp"
+                android:text="19-june-2018 "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="HardcodedText" />
+            <TextView
+                android:layout_gravity="end"
+                android:textStyle="bold"
+                android:textColor="@color/block"
+                android:gravity="end"
+                android:textSize="14sp"
+                android:text="12.30pm "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="HardcodedText" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/Ash"
+        android:layout_width="match_parent"
+        android:layout_height="2dp">
+    </LinearLayout>
+    <LinearLayout
+
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="DisableBaselineAlignment">
+        <LinearLayout
+            android:layout_weight="0.6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:textStyle="bold"
+                android:background="@drawable/circlemanimg"
+                android:gravity="start"
+                android:textSize="14sp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+        <LinearLayout
+            android:padding="2dp"
+            android:orientation="vertical"
+            android:layout_weight="1.6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="UselessParent">
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/block"
+                    android:gravity="start"
+                    android:textSize="14sp"
+                    android:text="Thanks for your feedback"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:padding="2dp"
+            android:orientation="vertical"
+            android:layout_weight="0.8"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_gravity="end"
+                android:textStyle="bold"
+                android:textColor="@color/block"
+                android:gravity="end"
+                android:textSize="14sp"
+                android:text="21-june-2018 "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="HardcodedText" />
+            <TextView
+                android:layout_gravity="end"
+                android:textStyle="bold"
+                android:textColor="@color/block"
+                android:gravity="end"
+                android:textSize="14sp"
+                android:text="10.30am "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="HardcodedText" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 </LinearLayout>

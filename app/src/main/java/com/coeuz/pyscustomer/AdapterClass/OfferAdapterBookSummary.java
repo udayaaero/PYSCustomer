@@ -20,11 +20,9 @@ public class OfferAdapterBookSummary extends RecyclerView.Adapter<OfferAdapterBo
 
     public Context mcontext;
 
-    //private ArrayList<OfferModel> offerModel;
-    ArrayList<String> mofferStartList=new ArrayList<>();
-    ArrayList<String> mofferEndList=new ArrayList<>();
-    ArrayList<String> mofferTypeList=new ArrayList<>();
-    ArrayList<String> mofferBenefits=new ArrayList<>();
+
+    private ArrayList<String> mofferTypeList;
+    private ArrayList<String> mofferBenefits;
 
 
 
@@ -44,8 +42,8 @@ public class OfferAdapterBookSummary extends RecyclerView.Adapter<OfferAdapterBo
         public MyViewHolder(View itemView) {
             super(itemView);
 
-            mofferCategorytype=(TextView)itemView.findViewById(R.id.offerCategorytype);
-            mBenefits=(TextView)itemView.findViewById(R.id.benefits);
+            mofferCategorytype=itemView.findViewById(R.id.offerCategorytype);
+            mBenefits=itemView.findViewById(R.id.benefits);
 
         }
     }
@@ -54,8 +52,7 @@ public class OfferAdapterBookSummary extends RecyclerView.Adapter<OfferAdapterBo
     public OfferAdapterBookSummary.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.offer_book_summary,parent,false);
 
-        MyViewHolder viewss = new MyViewHolder(view);
-        return viewss;
+        return new MyViewHolder(view);
     }
 
     @Override

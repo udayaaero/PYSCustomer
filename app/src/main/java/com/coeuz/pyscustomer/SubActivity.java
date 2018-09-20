@@ -1,15 +1,15 @@
 package com.coeuz.pyscustomer;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,9 +28,7 @@ import android.widget.RelativeLayout;
 
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -45,20 +43,15 @@ import com.coeuz.pyscustomer.ModelClass.SubActivityModel;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
-import com.google.gson.Gson;
 import com.pnikosis.materialishprogress.ProgressWheel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URI;
-import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.Objects;
 
 public class SubActivity extends AppCompatActivity {
 
@@ -68,7 +61,6 @@ public class SubActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ProgressBar mprogressBar;
 
-    private android.widget.SearchView searchView;
     private boolean itShouldLoadMore = true;
    private ArrayList<SubActivityModel> subActivityModels;
     private SubActivityAdapter subactivityAdapter;
@@ -76,8 +68,6 @@ public class SubActivity extends AppCompatActivity {
     int mOffset=0;
     int mLimit=5;
     int temp=5;
-    String mvendorId;
-    String mPositons,mSubActivityId;
 
     ArrayList<String> nSubActivityIdList=new ArrayList<>();
     ArrayList<String> nVendorIdList=new ArrayList<>();
@@ -88,7 +78,7 @@ public class SubActivity extends AppCompatActivity {
     double latitude;
     double longitude;
     String searchLat,searchLong;
-    String URL1,URL2;
+
     private String filterVales,mGender,mRelavance,mfromAmount,mtoAmount,mprogressRate,mamenitiesList;
     Intent intent;
     RelativeLayout noValuesLayout;
@@ -96,13 +86,15 @@ public class SubActivity extends AppCompatActivity {
     private RelativeLayout allViewLayout;
 
     private String searchText;
+    double textSearchlon,textSearchlat;
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sub);
 
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mtinyDb=new TinyDB(getApplicationContext());
@@ -110,11 +102,11 @@ public class SubActivity extends AppCompatActivity {
         nSubActivityIdList=mtinyDb.getListString(Constant.SubActivityIdList);
         nVendorIdList=mtinyDb.getListString(Constant.VendorIdList);
 
-        noValuesLayout=(RelativeLayout) findViewById(R.id.noValuesLayout);
+        noValuesLayout=findViewById(R.id.noValuesLayout);
         noValuesLayout.setVisibility(View.GONE);
 
-        noInternetLayout = (LinearLayout) findViewById(R.id.NoInternetLayout);
-        allViewLayout = (RelativeLayout) findViewById(R.id.allViewlayout);
+        noInternetLayout = findViewById(R.id.NoInternetLayout);
+        allViewLayout = findViewById(R.id.allViewlayout);
 
         searchLat=mtinyDb.getString(Constant.LATITUDE);
         searchLong=mtinyDb.getString(Constant.LONGITUDE);
@@ -123,10 +115,9 @@ public class SubActivity extends AppCompatActivity {
         filterVales=intent.getStringExtra("FilterValues");
 
 
-
-
         msubActivityName=mtinyDb.getString("activityName");
         msubActivityId=mtinyDb.getString("activityId");
+        Log.d("gjeruigre",msubActivityId);
         this.setTitle(msubActivityName);
  /*   bundle=getIntent().getExtras();
         if (bundle != null) {
@@ -140,13 +131,13 @@ public class SubActivity extends AppCompatActivity {
         Log.d("ertrefvg", String.valueOf(latitude));
         Log.d("frterter", String.valueOf(longitude));
 
-        mprogressBar=(ProgressBar)findViewById(R.id.progressbar100);
+        mprogressBar=findViewById(R.id.progressbar100);
         mprogressBar.setVisibility(View.VISIBLE);
 
         subActivityModels = new ArrayList<>();
         subactivityAdapter = new SubActivityAdapter(SubActivity.this,subActivityModels);
 
-        recyclerView = (RecyclerView) this.findViewById(R.id.RecyclerHistoryList);
+        recyclerView = this.findViewById(R.id.RecyclerHistoryList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(subactivityAdapter);
@@ -214,23 +205,23 @@ public class SubActivity extends AppCompatActivity {
             mprogressRate=intent.getStringExtra("progressRate");
             mamenitiesList=intent.getStringExtra("amenitiesList");
             if( mGender != null  && !mGender.isEmpty()){
-                mGender=mGender;
+                Log.d("iftrue", "seem to be true");
             }else{mGender="";}
             if( mRelavance != null  && !mRelavance.isEmpty()){
-                mRelavance=mRelavance;
+                Log.d("iftrue", "seem to be true");
             }else{mRelavance="";}
 
             if( mfromAmount != null  && !mfromAmount.isEmpty()){
-                mfromAmount=mfromAmount;
+                Log.d("iftrue", "seem to be true");
             }else{mfromAmount="0";}
             if( mtoAmount != null  && !mtoAmount.isEmpty()){
-                mtoAmount=mtoAmount;
+                Log.d("iftrue", "seem to be true");
             }else{mtoAmount="0";}
             if( mprogressRate != null  && !mprogressRate.isEmpty()){
-                mprogressRate=mprogressRate;
+                Log.d("iftrue", "seem to be true");
             }else{mprogressRate="0";}
             if( mamenitiesList != null  && !mamenitiesList.isEmpty()){
-                mamenitiesList=mamenitiesList;
+                Log.d("iftrue", "seem to be true");
             }else{mamenitiesList="0";}
 
 
@@ -288,7 +279,7 @@ public class SubActivity extends AppCompatActivity {
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button=findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -300,12 +291,10 @@ public class SubActivity extends AppCompatActivity {
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof NoConnectionError) {
-                            Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
-                        } else if (error instanceof TimeoutError) {
+                        }  else if (error instanceof TimeoutError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button=findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -377,7 +366,7 @@ public class SubActivity extends AppCompatActivity {
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button=findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -389,12 +378,10 @@ public class SubActivity extends AppCompatActivity {
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof NoConnectionError) {
-                            Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                         } else if (error instanceof TimeoutError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button=findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -467,7 +454,7 @@ public class SubActivity extends AppCompatActivity {
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button=findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -479,12 +466,10 @@ public class SubActivity extends AppCompatActivity {
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof NoConnectionError) {
-                            Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
-                        } else if (error instanceof TimeoutError) {
+                        }  else if (error instanceof TimeoutError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button=findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -541,13 +526,14 @@ public class SubActivity extends AppCompatActivity {
 
                         Log.d("jfiwjfio1", String.valueOf(error));
 
+
                         itShouldLoadMore = true;
                         mprogressBar.setVisibility(View.GONE);
 
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button=findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -559,12 +545,10 @@ public class SubActivity extends AppCompatActivity {
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof NoConnectionError) {
-                            Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
-                        } else if (error instanceof TimeoutError) {
+                        }  else if (error instanceof TimeoutError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button=findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -644,7 +628,7 @@ public class SubActivity extends AppCompatActivity {
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button=findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -656,12 +640,10 @@ public class SubActivity extends AppCompatActivity {
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof NoConnectionError) {
-                            Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                         } else if (error instanceof TimeoutError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button=findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -730,7 +712,7 @@ public class SubActivity extends AppCompatActivity {
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button=findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -742,12 +724,10 @@ public class SubActivity extends AppCompatActivity {
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof NoConnectionError) {
-                            Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                         } else if (error instanceof TimeoutError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button=findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -772,7 +752,7 @@ public class SubActivity extends AppCompatActivity {
                 double mSearchLong = Double.parseDouble(searchLong);
                 String URL = Constant.API + "/general/getVendorsByActivityAndSubActivity?subActivityId=" + msubActivityId + "&offset=" + mOffset + "&limit=" + mLimit + "&lat=" + mSearchLat + "&long=" + mSearchLong + "&distance=5";
                 itShouldLoadMore = false;
-                final ProgressWheel progressWheel = (ProgressWheel) this.findViewById(R.id.progress_wheel);
+                final ProgressWheel progressWheel = this.findViewById(R.id.progress_wheel);
                 progressWheel.setVisibility(View.VISIBLE);
 
                 StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
@@ -789,7 +769,6 @@ public class SubActivity extends AppCompatActivity {
                             if (jsonArray.length() == 0) {
                                 Toast.makeText(SubActivity.this, "Your search is over", Toast.LENGTH_SHORT).show();
                             } else {
-                                Gson gson = new Gson();
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     String vendorName = jsonObject.getString("vendorName");
@@ -818,7 +797,7 @@ public class SubActivity extends AppCompatActivity {
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button=findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -830,12 +809,10 @@ public class SubActivity extends AppCompatActivity {
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof NoConnectionError) {
-                            Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                         } else if (error instanceof TimeoutError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button=findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -856,7 +833,7 @@ public class SubActivity extends AppCompatActivity {
                 itShouldLoadMore = false; // lock this until volley completes processing
 
                 // progressWheel is just a loading spinner, please see the content_main.xml
-                final ProgressWheel progressWheel = (ProgressWheel) this.findViewById(R.id.progress_wheel);
+                final ProgressWheel progressWheel =this.findViewById(R.id.progress_wheel);
                 progressWheel.setVisibility(View.VISIBLE);
 
                 StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
@@ -875,7 +852,7 @@ public class SubActivity extends AppCompatActivity {
                             if (jsonArray.length() == 0) {
                                 Toast.makeText(SubActivity.this, "Your search is over", Toast.LENGTH_SHORT).show();
                             } else {
-                                Gson gson = new Gson();
+
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     String vendorName = jsonObject.getString("vendorName");
@@ -903,7 +880,7 @@ public class SubActivity extends AppCompatActivity {
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button=findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -915,12 +892,10 @@ public class SubActivity extends AppCompatActivity {
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof NoConnectionError) {
-                            Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                         } else if (error instanceof TimeoutError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=(Button)findViewById(R.id.TryAgain);
+                            Button button=findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -964,6 +939,7 @@ public class SubActivity extends AppCompatActivity {
                     JSONArray jsonArray = new JSONArray(response);
                     Log.d("mierefmier1", String.valueOf(jsonArray));
                     if (jsonArray.length() == 0) {
+                        Log.d("mierefmier1", String.valueOf(jsonArray));
                        // noValuesLayout.setVisibility(View.VISIBLE);
                               /*  Toast toast = Toast.makeText(SubActivity.this, "No Values3", Toast.LENGTH_LONG);
                                 toast.setGravity(Gravity.CENTER, 0, 0);
@@ -977,8 +953,11 @@ public class SubActivity extends AppCompatActivity {
                             String vendorName = jsonObject.getString("vendorName");
                             Integer vendorId = jsonObject.getInt("vendorId");
                             String area = jsonObject.getString("area");
-                            String activityId = jsonObject.getString("activityId");
-                            mtinyDb.putString("activityId",activityId);
+                          //  String activityId = jsonObject.getString("activityId");
+                            String subActivityId = jsonObject.getString("subActivityId");
+                            Log.d("gbjieguir",subActivityId);
+                            mtinyDb.putString("activityId",subActivityId);
+
 
                             Log.d("iiiiiii1", vendorName);
 
@@ -1003,7 +982,7 @@ public class SubActivity extends AppCompatActivity {
                 if (error instanceof NetworkError) {
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
+                    Button button=findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -1015,12 +994,10 @@ public class SubActivity extends AppCompatActivity {
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                } else if (error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof TimeoutError) {
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
+                    Button button=findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -1054,7 +1031,7 @@ public class SubActivity extends AppCompatActivity {
         inflater.inflate(R.menu.submenu, menu);
         MenuItem item=menu.findItem(R.id.search);
 
-        searchView = (android.widget.SearchView) item.getActionView();
+        android.widget.SearchView searchView = (android.widget.SearchView) item.getActionView();
         searchView.setFocusable(false);
         searchView.setActivated(true);
         searchView.setQueryHint("Type your search word here");
@@ -1116,102 +1093,115 @@ public class SubActivity extends AppCompatActivity {
     }
     protected void searchMethods(String text){
         Log.d("fhewuhui",text);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(subactivityAdapter);
-        String URL = Constant.API + "/general/searchIndividualOrChain?searchText="+text+"&limit=5&offset=0";
-        itShouldLoadMore = false;
-        StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.d("ngietgierg", String.valueOf(response));
-                mprogressBar.setVisibility(View.GONE);
-               itShouldLoadMore = true;
-                try {
-                    JSONArray jsonArray = new JSONArray(response);
-                    Log.d("ngietgierg1", String.valueOf(jsonArray));
-                    if (jsonArray.length() == 0) {
-                        noValuesLayout.setVisibility(View.VISIBLE);
+        if(text.equals("")){
+            noValuesLayout.setVisibility(View.GONE);
+            firstLoadData();
+        }else {
+            recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setAdapter(subactivityAdapter);
+            if (searchLat != null && !searchLat.isEmpty()) {
+
+                textSearchlat = Double.parseDouble(searchLat);
+                textSearchlon = Double.parseDouble(searchLong);}
+                else{
+                textSearchlat=latitude;
+                textSearchlon=longitude;
+            }
+            String URL = Constant.API + "/general/searchIndividualOrChain?searchText=" + text + "&limit=5&offset=0&subActivityId="+msubActivityId+"&lat="+textSearchlat+"&long="+textSearchlon+"&distance=5";
+            itShouldLoadMore = false;
+            StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.d("ngietgierg", String.valueOf(response));
+                    mprogressBar.setVisibility(View.GONE);
+                    itShouldLoadMore = true;
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+                        Log.d("ngietgierg1", String.valueOf(jsonArray));
+                        if (jsonArray.length() == 0) {
+                            noValuesLayout.setVisibility(View.VISIBLE);
                               /*  Toast toast = Toast.makeText(SubActivity.this, "No Values3", Toast.LENGTH_LONG);
                                 toast.setGravity(Gravity.CENTER, 0, 0);
                                 toast.show();*/
-                    } else {
-                        Log.d("ngietgierg2", String.valueOf(jsonArray.length()));
-                        noValuesLayout.setVisibility(View.GONE);
-                        for (int k = 0; k < jsonArray.length(); k++) {
-                            Log.d("ngietgierg10", "run1");
-                            JSONObject jsonObject = jsonArray.getJSONObject(k);
+                        } else {
+                            Log.d("ngietgierg2", String.valueOf(jsonArray.length()));
+                            noValuesLayout.setVisibility(View.GONE);
+                            for (int k = 0; k < jsonArray.length(); k++) {
+                                Log.d("ngietgierg10", "run1");
+                                JSONObject jsonObject = jsonArray.getJSONObject(k);
 
-                            String vendorName = jsonObject.getString("vendorName");
-                            Integer vendorId = jsonObject.getInt("vendorId");
-                            String area = jsonObject.getString("area");
-                            String activityId = jsonObject.getString("activityId");
-                            mtinyDb.putString("activityId",activityId);
-
-
-                            Log.d("ngietgierg3", String.valueOf(jsonObject.length()));
-                            Log.d("ngietgierg4", String.valueOf(jsonObject));
-
-                            Log.d("ngietgierg11", "run2");
-
-                            Log.d("vuinreru43", vendorName);
-                            Log.d("dfneinfe3", String.valueOf(vendorId));
+                                String vendorName = jsonObject.getString("vendorName");
+                                Integer vendorId = jsonObject.getInt("vendorId");
+                                String area = jsonObject.getString("area");
+                                String subActivityId = jsonObject.getString("subActivityId");
+                                Log.d("gbjieguir", subActivityId);
+                                mtinyDb.putString("activityId", subActivityId);
 
 
-                            subActivityModels.add(new SubActivityModel(vendorName, area,vendorId));
-                            subactivityAdapter.notifyDataSetChanged();
+                                Log.d("ngietgierg3", String.valueOf(jsonObject.length()));
+                                Log.d("ngietgierg4", String.valueOf(jsonObject));
 
+                                Log.d("ngietgierg11", "run2");
+
+                                Log.d("vuinreru43", vendorName);
+                                Log.d("dfneinfe3", String.valueOf(vendorId));
+
+
+                                subActivityModels.add(new SubActivityModel(vendorName, area, vendorId));
+                                subactivityAdapter.notifyDataSetChanged();
+
+                            }
+                            Log.d("ngietgierg12", "run3");
                         }
-                        Log.d("ngietgierg12", "run3");
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.d("ngietgierg14", String.valueOf(e));
+                        Log.d("ngietgierg13", "run4");
                     }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.d("ngietgierg14", String.valueOf(e));
-                    Log.d("ngietgierg13", "run4");
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("ncncrrfuir", String.valueOf(error));
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("ncncrrfuir", String.valueOf(error));
 
-                itShouldLoadMore = true;
-               mprogressBar.setVisibility(View.GONE);
+                    itShouldLoadMore = true;
+                    mprogressBar.setVisibility(View.GONE);
 
-                if (error instanceof NetworkError) {
-                    noInternetLayout.setVisibility(View.VISIBLE);
-                    allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            recreate();
-                        }});
-                } else if (error instanceof ServerError) {
+                    if (error instanceof NetworkError) {
+                        noInternetLayout.setVisibility(View.VISIBLE);
+                        allViewLayout.setVisibility(View.GONE);
+                        Button button =  findViewById(R.id.TryAgain);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                recreate();
+                            }
+                        });
+                    } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
-                } else if (error instanceof ParseError) {
-                    Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
+                        Log.d("heuiwirhu1", String.valueOf(error));
+                    } else if (error instanceof ParseError) {
+                        Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                } else if (error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof TimeoutError) {
-                    noInternetLayout.setVisibility(View.VISIBLE);
-                    allViewLayout.setVisibility(View.GONE);
-                    Button button=(Button)findViewById(R.id.TryAgain);
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            recreate();
-                        }});
+                    } else if (error instanceof TimeoutError) {
+                        noInternetLayout.setVisibility(View.VISIBLE);
+                        allViewLayout.setVisibility(View.GONE);
+                        Button button =  findViewById(R.id.TryAgain);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                recreate();
+                            }
+                        });
 
+                    }
                 }
-            }
-        });
-        RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-        requestQueue1.add(request1);
+            });
+            RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
+            requestQueue1.add(request1);
 
-
+        }
         }
 }

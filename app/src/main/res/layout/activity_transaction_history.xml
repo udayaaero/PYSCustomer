@@ -12,7 +12,7 @@
         android:visibility="gone"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:indeterminateDrawable="@drawable/my_progress_indeterminate"
+        android:indeterminateDrawable="@drawable/circleimage"
         android:layout_height="100dp"
         android:layout_width="100dp">
     </ProgressBar>

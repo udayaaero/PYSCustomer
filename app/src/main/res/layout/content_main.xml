@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,6 +14,8 @@
     android:overScrollMode="never"
     android:orientation="vertical"
     android:fillViewport="true"
+    android:layout_above="@+id/rememberlayout"
+    android:id="@+id/nestedScrollview"
     android:background="@drawable/backgroundmain"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/app_bar_main">
@@ -21,11 +29,11 @@
     <RelativeLayout
         android:descendantFocusability="blocksDescendants"
        android:id="@+id/allViewlayout"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="40dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        >
+        tools:ignore="UselessParent">
 
     <RelativeLayout
         android:id="@+id/shedowimage"
@@ -51,7 +59,7 @@
         android:visibility="gone"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:indeterminateDrawable="@drawable/my_progress_indeterminate"
+        android:indeterminateDrawable="@drawable/circleimage"
         android:layout_height="100dp"
         android:layout_width="100dp">
     </ProgressBar>
@@ -68,7 +76,8 @@
             android:layout_marginTop="10dp"
             android:text="Select your categories"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
         <android.support.v7.widget.RecyclerView
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
@@ -76,31 +85,35 @@
             android:scrollbars="none"
             android:clipToPadding="false"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             />
         <LinearLayout
+            android:id="@+id/viewMore"
             android:padding="5dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         <LinearLayout
-            android:id="@+id/viewMore"
+
             android:gravity="center"
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            tools:ignore="UseCompoundDrawables,UselessParent">
         <ImageView
             android:gravity="center"
             android:layout_gravity="center"
             android:src="@drawable/morecategories"
             android:layout_width="15dp"
-            android:layout_height="15dp" />
+            android:layout_height="15dp"
+            tools:ignore="ContentDescription" />
         <TextView
          android:layout_marginStart="10dp"
             android:background="@color/white"
             android:gravity="center"
             android:layout_gravity="center"
             android:text="View More Categories"
+            tools:ignore="HardcodedText"
             android:id="@+id/viewMoreText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -134,6 +147,7 @@
             </LinearLayout>
         </ViewFlipper>-->
         <LinearLayout
+            android:id="@+id/nearyouLayouts"
             android:padding="5dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -143,27 +157,31 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                tools:ignore="UselessParent">
                 <LinearLayout
                     android:layout_marginTop="2dp"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    tools:ignore="UseCompoundDrawables">
                     <ImageView
                         android:layout_marginStart="5dp"
                         android:gravity="center"
                         android:layout_gravity="center"
                         android:src="@drawable/near_you_icon"
                         android:layout_width="20dp"
-                        android:layout_height="20dp" />
+                        android:layout_height="20dp"
+                        tools:ignore="ContentDescription" />
                 <TextView
                     android:layout_marginStart="5dp"
                     android:textStyle="bold"
                     android:textColor="@color/white"
-                    android:textSize="14dp"
+                    android:textSize="14sp"
                     android:gravity="center"
                     android:layout_gravity="center"
                     android:text="Service Near you"
+                    tools:ignore="HardcodedText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 </LinearLayout>
@@ -177,11 +195,29 @@
             </LinearLayout>
         </LinearLayout>
 
-
-
     </LinearLayout>
+    </RelativeLayout>
+    </RelativeLayout>
+</android.support.v4.widget.NestedScrollView>
+
+    <RelativeLayout
+        android:visibility="gone"
+       android:id="@+id/rememberlayout"
+        android:background="@color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <android.support.v7.widget.RecyclerView
+            android:fillViewport="true"
+            android:id="@+id/BookingRememberRecycle"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </android.support.v7.widget.RecyclerView>
 
     </RelativeLayout>
+
+
         <LinearLayout
             android:visibility="gone"
             android:id="@+id/NoInternetLayout"
@@ -194,14 +230,16 @@
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/nointernetbg"
                 android:layout_width="200dp"
-                android:layout_height="200dp">
+                android:layout_height="200dp"
+                tools:ignore="ContentDescription">
 
             </ImageView>
             <TextView
                 android:textStyle="bold"
                 android:textColor="#ffffff"
-                android:textSize="18dp"
+                android:textSize="18sp"
                 android:text="No  Internet  Connection"
+                tools:ignore="HardcodedText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <Button
@@ -211,6 +249,7 @@
                 android:paddingEnd="30dp"
                 android:background="@color/colorPrimaryDark"
                 android:text="Try Again"
+                tools:ignore="HardcodedText,RtlHardcoded"
                 android:textColor="@color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="35dp"
@@ -218,5 +257,5 @@
         </LinearLayout>
 
 
-    </RelativeLayout>
-</android.support.v4.widget.NestedScrollView>
+
+</RelativeLayout>

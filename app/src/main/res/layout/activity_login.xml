@@ -2,11 +2,10 @@
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:facebook="https://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/lightyellow"
+    android:background="@drawable/backgroundmain"
 
     android:fillViewport="true"
     android:focusable="true"
@@ -17,7 +16,7 @@
     <RelativeLayout
 
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <ProgressBar
             android:id="@+id/login_progress"
@@ -45,14 +44,14 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColorHint="@color/white"
+                android:textColorHint="@color/block"
                 app:hintTextAppearance="@style/TextLabel">
 
                 <AutoCompleteTextView
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/white"
+                    android:backgroundTint="@android:color/black"
                     android:drawablePadding="5dp"
                     android:drawableStart="@drawable/ic_person_white_24dp"
                     android:hint="Email/MobileNumber"
@@ -60,24 +59,25 @@
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:textColor="@color/white"
+                    android:textColor="@color/block"
 
-                    android:textColorHint="@color/white" />
+                    android:textColorHint="@color/white"
+                    tools:ignore="HardcodedText,UnusedAttribute" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColorHint="@color/white"
+                android:textColorHint="@color/block"
                 app:hintTextAppearance="@style/TextLabel"
                 app:passwordToggleEnabled="true"
-                app:passwordToggleTint="@color/white">
+                app:passwordToggleTint="@color/block">
 
                 <EditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/white"
+                    android:backgroundTint="@android:color/black"
                     android:drawablePadding="5dp"
                     android:drawableStart="@drawable/ic_lock_black_24dp"
                     android:hint="@string/prompt_password"
@@ -87,7 +87,8 @@
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/block"
+                    tools:ignore="UnusedAttribute" />
             </android.support.design.widget.TextInputLayout>
 
             <Button
@@ -116,7 +117,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/action_register"
-                    android:textColor="@color/white"
+                    android:textColor="@color/block"
                     android:textStyle="bold" />
 
                 <TextView
@@ -128,7 +129,8 @@
                     android:gravity="center"
                     android:text="SignUp!"
                     android:textColor="@color/colorPrimary"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:ignore="HardcodedText" />
             </LinearLayout>
 
             <LinearLayout
@@ -139,7 +141,8 @@
                 android:orientation="horizontal"
                 android:paddingEnd="4dp"
                 android:paddingStart="4dp"
-                android:weightSum="2">
+                android:weightSum="2"
+                tools:ignore="DisableBaselineAlignment">
 
 
                 <LinearLayout
@@ -177,7 +180,8 @@
                         android:id="@+id/GoogleLoginbtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"></com.google.android.gms.common.SignInButton>
+                        android:layout_gravity="end">
+                    </com.google.android.gms.common.SignInButton>
                 </LinearLayout>
             </LinearLayout>
 
@@ -198,7 +202,8 @@
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:layout_marginBottom="20dp"
-                android:background="@drawable/nointernetbg">
+                android:background="@drawable/nointernetbg"
+                tools:ignore="ContentDescription">
 
             </ImageView>
 
@@ -207,8 +212,9 @@
                 android:layout_height="wrap_content"
                 android:text="No  Internet  Connection"
                 android:textColor="#ffffff"
-                android:textSize="18dp"
-                android:textStyle="bold" />
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
 
             <Button
                 android:id="@+id/TryAgain"
@@ -220,7 +226,8 @@
                 android:paddingLeft="20dp"
                 android:paddingStart="30dp"
                 android:text="Try Again"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                tools:ignore="HardcodedText,RtlHardcoded" />
         </LinearLayout>
 
 

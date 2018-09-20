@@ -1,6 +1,8 @@
 package com.coeuz.pyscustomer.AdapterClass;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -11,14 +13,10 @@ import android.widget.ImageView;
 import com.coeuz.pyscustomer.R;
 
 
-/**
- * Created by vjy on 26-Jan-18.
- */
 
 public class ViewPagerAdapter extends PagerAdapter {
 
     private Context context;
-    private LayoutInflater layoutInflater;
     private Integer[] images={R.drawable.gym,R.drawable.zumba,R.drawable.yoga
             ,R.drawable.aerobics,R.drawable.haircoloring};
     public ViewPagerAdapter(Context context) {
@@ -31,15 +29,17 @@ public class ViewPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public boolean isViewFromObject(View view, Object object) {
+    public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view==object;
     }
 
+    @NonNull
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-        layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view=layoutInflater.inflate(R.layout.viewpageradapter,null);
-        ImageView imageView=(ImageView)view.findViewById(R.id.SlideimageView);
+    public Object instantiateItem(@NonNull ViewGroup container, int position) {
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        assert layoutInflater != null;
+        @SuppressLint("InflateParams") View view= layoutInflater.inflate(R.layout.viewpageradapter,null);
+        ImageView imageView=view.findViewById(R.id.SlideimageView);
         imageView.setImageResource(images[position]);
 
         ViewPager vp=(ViewPager)container;
@@ -48,7 +48,7 @@ public class ViewPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         ViewPager vp=(ViewPager)container;
         View view=(View)object;
         vp.removeView(view);

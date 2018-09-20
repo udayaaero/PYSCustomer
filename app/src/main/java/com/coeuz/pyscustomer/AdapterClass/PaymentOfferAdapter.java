@@ -1,5 +1,6 @@
 package com.coeuz.pyscustomer.AdapterClass;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,19 +12,13 @@ import com.coeuz.pyscustomer.R;
 
 import java.util.ArrayList;
 
-/**
- * Created by Udayakumar on 19-11-2017.
- */
 
 public class PaymentOfferAdapter extends RecyclerView.Adapter<PaymentOfferAdapter.MyViewHolder> {
 
     public Context mcontext;
 
-    //private ArrayList<OfferModel> offerModel;
-    ArrayList<String> mofferStartList=new ArrayList<>();
-    ArrayList<String> mofferEndList=new ArrayList<>();
-    ArrayList<String> mofferTypeList=new ArrayList<>();
-    ArrayList<String> mofferBenefits=new ArrayList<>();
+    private ArrayList<String> mofferTypeList;
+    private ArrayList<String> mofferBenefits;
 
 
 
@@ -35,14 +30,14 @@ public class PaymentOfferAdapter extends RecyclerView.Adapter<PaymentOfferAdapte
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private TextView offerFrom,offerTo,mofferCategorytype,mBenefits;
+         TextView offerFrom,offerTo,mofferCategorytype,mBenefits;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            offerFrom=(TextView)itemView.findViewById(R.id.offerfrom);
-            offerTo=(TextView)itemView.findViewById(R.id.offerto);
-            mofferCategorytype=(TextView)itemView.findViewById(R.id.type);
-            mBenefits=(TextView)itemView.findViewById(R.id.benefits);
+            offerFrom=itemView.findViewById(R.id.offerfrom);
+            offerTo=itemView.findViewById(R.id.offerto);
+            mofferCategorytype=itemView.findViewById(R.id.type);
+            mBenefits=itemView.findViewById(R.id.benefits);
 
         }
     }
@@ -51,10 +46,10 @@ public class PaymentOfferAdapter extends RecyclerView.Adapter<PaymentOfferAdapte
     public PaymentOfferAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.payment_offer_layout,parent,false);
 
-        MyViewHolder viewss = new MyViewHolder(view);
-        return viewss;
+        return new MyViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final PaymentOfferAdapter.MyViewHolder holder, final int position) {
 

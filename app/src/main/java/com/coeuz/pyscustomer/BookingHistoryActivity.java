@@ -1,6 +1,9 @@
 package com.coeuz.pyscustomer;
 
 
+import android.content.Intent;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -8,51 +11,29 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
-import com.android.volley.ParseError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.coeuz.pyscustomer.BookingHistoryFragment.AVAILED;
 import com.coeuz.pyscustomer.BookingHistoryFragment.NEARING;
-import com.coeuz.pyscustomer.Requiredclass.Constant;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
+
 
 public class BookingHistoryActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
 
-    private ProgressBar mprogressBar;
-    RecyclerView mRecyclerView;
 
-    String mToken,mAdminName;
+    String mToken;
 
     String userName;
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,20 +51,17 @@ public class BookingHistoryActivity extends AppCompatActivity {
         }
 
 
-
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
 
-
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
 
         setupViewPager(viewPager);
 
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
     }
 
@@ -95,9 +73,9 @@ public class BookingHistoryActivity extends AppCompatActivity {
 
         Fragment fragment = new AVAILED();
         fragment.setArguments(bundle1);
-        adapter.addFragment(fragment,"AVAILED");
+        adapter.addFragment(fragment,"Future");
         //adapter.addFragment(new AVAILED(), "Booking AVAILED");
-        adapter.addFragment(new NEARING(), "NEARING");
+        adapter.addFragment(new NEARING(), "History");
 
         viewPager.setAdapter(adapter);
     }
@@ -106,7 +84,7 @@ public class BookingHistoryActivity extends AppCompatActivity {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 
-        public ViewPagerAdapter(FragmentManager manager) {
+        ViewPagerAdapter(FragmentManager manager) {
             super(manager);
         }
 
@@ -120,7 +98,7 @@ public class BookingHistoryActivity extends AppCompatActivity {
             return mFragmentList.size();
         }
 
-        public void addFragment(Fragment fragment, String title) {
+        void addFragment(Fragment fragment, String title) {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
         }
@@ -139,6 +117,8 @@ public class BookingHistoryActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id=item.getItemId();
         if(id==android.R.id.home){
+            Intent intent=new Intent(BookingHistoryActivity.this,MainActivity.class);
+            startActivity(intent);
             this.finish();
         }
 
@@ -155,7 +135,11 @@ public class BookingHistoryActivity extends AppCompatActivity {
         return true;
     }
 */
-
-
+    @Override
+    public void onBackPressed() {
+        Intent intent=new Intent(BookingHistoryActivity.this,MainActivity.class);
+        startActivity(intent);
+        BookingHistoryActivity.this.finish();
+    }
 
 }

@@ -7,53 +7,56 @@
         <item
             android:id="@+id/Home"
             android:icon="@drawable/ic_home_black_24dp"
-            android:title="Home" />
+            android:title="Home"
+            tools:ignore="HardcodedText" />
 
         <item
             android:id="@+id/Settings"
             android:icon="@drawable/ic_settings_black_24dp"
-            android:title="Account" />
+            android:title="Account"
+            tools:ignore="HardcodedText"/>
         <item
             android:id="@+id/BookingHistory"
             android:icon="@drawable/ic_chrome_reader_mode_black_24dp"
-            android:title="Booking History" />
-        <item
-            android:id="@+id/TransactionHistory"
-            android:icon="@drawable/ic_featured_play_list_black_24dp"
-            android:title="Transaction History" />
+            android:title="Booking History"
+            tools:ignore="HardcodedText"/>
 
         <item
             android:id="@+id/Notifications"
             android:icon="@drawable/ic_notifications_none_black_24dp"
-            android:title="Notification" />
+            android:title="Notification"
+            tools:ignore="HardcodedText"/>
         <item
             android:id="@+id/Memberships"
             android:icon="@drawable/ic_card_membership_black_24dp"
-            android:title="Membership" />
+            android:title="Membership"
+            tools:ignore="HardcodedText"/>
         <item
             android:id="@+id/Course"
             android:icon="@drawable/ic_add_shopping_cart_black_24dp"
-            android:title="Course" />
+            android:title="Course"
+            tools:ignore="HardcodedText"/>
         <item
             android:id="@+id/LogOut"
             android:icon="@drawable/ic_input_black_24dp"
-            android:title="LogOut" />
+            android:title="LogOut"
+            tools:ignore="HardcodedText"/>
 
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Communicate"
+        tools:ignore="HardcodedText">
         <menu>
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="Share"
+                tools:ignore="HardcodedText"/>
+
         </menu>
     </item>
-    <item android:title="Information">
+    <item android:title="Information"
+        tools:ignore="HardcodedText">
         <menu>
             <item
                 android:id="@+id/AboutUs"

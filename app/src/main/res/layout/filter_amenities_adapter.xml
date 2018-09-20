@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
 android:layout_height="wrap_content"
 android:clickable="true"
 android:focusable="true"
 android:gravity="left"
-android:orientation="vertical" >
+android:orientation="vertical"
+    tools:ignore="RtlHardcoded">
 
 <LinearLayout
     android:weightSum="2"
@@ -14,7 +16,8 @@ android:orientation="vertical" >
     android:clickable="true"
     android:focusable="true"
     android:gravity="left"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    tools:ignore="RtlHardcoded,UselessParent">
 
 
     <TextView
@@ -27,7 +30,8 @@ android:orientation="vertical" >
         android:paddingTop="5dp"
         android:singleLine="false"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_weight="1.8" />
+        android:layout_weight="1.8"
+        tools:ignore="RtlHardcoded,RtlSymmetry" />
 
     <CheckBox
         android:id="@+id/checkbox"

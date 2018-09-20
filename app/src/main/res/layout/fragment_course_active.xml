@@ -1,404 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/backgroundmain"
     xmlns:wheel="http://schemas.android.com/apk/res-auto">
 
-        <RelativeLayout
-            android:visibility="gone"
-            android:id="@+id/noValuesLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:background="@drawable/novalues"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:layout_marginTop="10dp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:text="No Values"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </RelativeLayout>
     <RelativeLayout
-        android:padding="5dp"
         android:id="@+id/allViewlayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
         <ProgressBar
+            android:id="@+id/progressbar100"
             android:visibility="gone"
-            android:id="@+id/progressbar400"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            android:indeterminateDrawable="@drawable/my_progress_indeterminate"
+            android:indeterminateDrawable="@drawable/circleimage"
             android:layout_height="100dp"
             android:layout_width="100dp">
         </ProgressBar>
-  <android.support.v7.widget.CardView
 
-      android:id="@+id/firstView"
-      android:layout_marginTop="10dp"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content">
-  <LinearLayout
-      android:layout_marginBottom="10dp"
-      android:layout_marginTop="10dp"
-      android:orientation="vertical"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content">
-      <LinearLayout
-          android:weightSum="2"
-          android:orientation="horizontal"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content">
-          <LinearLayout
-              android:layout_gravity="center"
-              android:layout_weight="0.6"
-              android:layout_width="0dp"
-              android:layout_height="wrap_content">
-              <ImageView
-                  android:background="@drawable/course"
-                  android:layout_width="100dp"
-                  android:layout_height="100dp" />
-          </LinearLayout>
-
-          <LinearLayout
-              android:gravity="center"
-              android:layout_weight="1.4"
-              android:layout_gravity="center"
-              android:padding="5dp"
-              android:orientation="vertical"
-              android:layout_width="0dp"
-              android:layout_height="wrap_content">
-              <LinearLayout
-                  android:padding="5dp"
-                  android:weightSum="2"
-                  android:orientation="horizontal"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content">
-                  <TextView
-                      android:text="slotReccurence"
-                      android:layout_weight="1"
-                      android:layout_width="0dp"
-                      android:layout_height="wrap_content" />
-                  <TextView
-                      android:id="@+id/slotReccurence"
-                      android:layout_weight="1"
-                      android:layout_width="0dp"
-                      android:layout_height="wrap_content" />
-              </LinearLayout>
-
-
-              <LinearLayout
-                  android:padding="5dp"
-                  android:weightSum="2"
-                  android:orientation="horizontal"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content">
-                  <TextView
-                      android:text="StartDate"
-                      android:layout_weight="1"
-                      android:layout_width="0dp"
-                      android:layout_height="wrap_content" />
-                  <TextView
-                      android:id="@+id/CourseStartDate"
-                      android:layout_weight="1"
-                      android:layout_width="0dp"
-                      android:layout_height="wrap_content" />
-              </LinearLayout>
-              <LinearLayout
-                  android:padding="5dp"
-                  android:weightSum="2"
-                  android:orientation="horizontal"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content">
-                  <TextView
-                      android:text="EndDate"
-                      android:layout_weight="1"
-                      android:layout_width="0dp"
-                      android:layout_height="wrap_content" />
-                  <TextView
-                      android:id="@+id/CourseEndDate"
-                      android:layout_weight="1"
-                      android:layout_width="0dp"
-                      android:layout_height="wrap_content" />
-              </LinearLayout>
-              <LinearLayout
-                  android:padding="5dp"
-                  android:weightSum="2"
-                  android:orientation="horizontal"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content">
-                  <TextView
-                      android:text="StartTime"
-                      android:layout_weight="1"
-                      android:layout_width="0dp"
-                      android:layout_height="wrap_content" />
-                  <TextView
-                      android:id="@+id/slotStartTime"
-                      android:layout_weight="1"
-                      android:layout_width="0dp"
-                      android:layout_height="wrap_content" />
-              </LinearLayout>
-              <LinearLayout
-                  android:padding="5dp"
-                  android:weightSum="2"
-                  android:orientation="horizontal"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content">
-                  <TextView
-                      android:text="EndTime"
-                      android:layout_weight="1"
-                      android:layout_width="0dp"
-                      android:layout_height="wrap_content" />
-                  <TextView
-                      android:id="@+id/slotEndTime"
-                      android:layout_weight="1"
-                      android:layout_width="0dp"
-                      android:layout_height="wrap_content" />
-              </LinearLayout>
-
-          </LinearLayout>
-      </LinearLayout>
-
-      <Button
-          android:id="@+id/getMoreDetails"
-          android:textAllCaps="false"
-          android:padding="5dp"
-          android:background="@drawable/backbutton"
-          android:textColor="@color/white"
-          android:text="Get more details"
-          android:layout_gravity="center"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content" />
-  </LinearLayout>
-
-  </android.support.v7.widget.CardView>
-        <android.support.v7.widget.CardView
-            android:visibility="gone"
-            android:id="@+id/SecondView"
-            android:layout_below="@+id/firstView"
-            android:layout_marginTop="10dp"
+        <android.support.v7.widget.RecyclerView
+            android:padding="10dp"
+            android:id="@+id/RecyclerHistoryList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    android:padding="5dp"
-                    android:weightSum="2"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:text="vendorName"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/vendorName"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-                <LinearLayout
-                    android:padding="5dp"
-                    android:weightSum="2"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:text="ActivityType"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/ActivityType"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
+        </android.support.v7.widget.RecyclerView>
+        <com.pnikosis.materialishprogress.ProgressWheel
 
-                <LinearLayout
-                    android:padding="5dp"
-                    android:weightSum="2"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:text="bookingStatus"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/bookingStatus"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
+            android:id="@+id/progress_wheel"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="gone"
+            wheel:matProg_barColor="@color/colorPrimary"
+            wheel:matProg_progressIndeterminate="true"
+            />
+    </RelativeLayout>
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/noValuesLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-
-                <LinearLayout
-                    android:padding="5dp"
-                    android:weightSum="2"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:text="personCount"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/personCount"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-                <LinearLayout
-                    android:padding="5dp"
-                    android:weightSum="2"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:text="slotReccurence"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/slotReccurence1"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-                <LinearLayout
-                    android:padding="5dp"
-                    android:weightSum="2"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:text="bookingtimeStamp"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/bookingtimeStamp"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-                <LinearLayout
-                    android:padding="5dp"
-                    android:weightSum="2"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:text="bookedforDate"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/bookedforDate"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-                <LinearLayout
-                    android:padding="5dp"
-                    android:weightSum="2"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:text="CourseStartDate"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/CourseStartDate1"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-                <LinearLayout
-                    android:padding="5dp"
-                    android:weightSum="2"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:text="CourseEndDate"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/CourseEndDate1"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-                <LinearLayout
-                    android:padding="5dp"
-                    android:weightSum="2"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:text="slotStartTime"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/slotStartTime1"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-                <LinearLayout
-                    android:padding="5dp"
-                    android:weightSum="2"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:text="slotEndTime"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/slotEndTime1"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-                <Button
-                    android:id="@+id/backBtn"
-                    android:textAllCaps="false"
-                    android:padding="5dp"
-                    android:background="@drawable/backbutton"
-                    android:textColor="@color/white"
-                    android:text="Back"
-                    android:layout_gravity="center"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
+        <ImageView
+            android:background="@drawable/novalues"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="ContentDescription" />
+        <TextView
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:text="No Values"
+            tools:ignore="HardcodedText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </RelativeLayout>
     <LinearLayout
         android:visibility="gone"
@@ -412,13 +75,15 @@
             android:layout_marginBottom="20dp"
             android:background="@drawable/nointernetbg"
             android:layout_width="200dp"
-            android:layout_height="200dp">
+            android:layout_height="200dp"
+            tools:ignore="ContentDescription">
 
         </ImageView>
         <TextView
             android:textStyle="bold"
             android:textColor="#ffffff"
-            android:textSize="18dp"
+            android:textSize="18sp"
+            tools:ignore="HardcodedText"
             android:text="No  Internet  Connection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -429,11 +94,12 @@
             android:paddingEnd="30dp"
             android:background="@color/colorPrimaryDark"
             android:text="Try Again"
+            tools:ignore="HardcodedText,RtlHardcoded"
             android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
             android:paddingLeft="20dp" />
     </LinearLayout>
 
-
 </RelativeLayout>
+

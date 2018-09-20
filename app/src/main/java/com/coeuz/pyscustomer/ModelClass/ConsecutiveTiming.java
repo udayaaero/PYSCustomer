@@ -3,10 +3,6 @@ package com.coeuz.pyscustomer.ModelClass;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by vjy on 06-Jul-18.
- */
-
 public class ConsecutiveTiming {
 
     @SerializedName("count")
