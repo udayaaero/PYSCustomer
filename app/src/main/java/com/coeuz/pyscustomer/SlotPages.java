@@ -37,6 +37,7 @@ import com.android.volley.toolbox.Volley;
 import com.coeuz.pyscustomer.AdapterClass.OfferAdapterBookSummary;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 
 
 import org.apache.commons.lang3.time.DateUtils;
@@ -66,7 +67,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
     private String days;
 
 
-    private RadioButton mweekDays,mWeekEnd,mNextSevendays,mNextThirtyDays;
+    private RadioButton mfivedays,mtwodays,mNextSevendays,mNextThirtyDays;
 
     private TinyDB tinyDB;
 
@@ -75,7 +76,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
     private RelativeLayout allViewLayout;
 
 
-    private  Integer totalCost;
+    private  Integer firstCost,totalCost;
 
 
     String mBookingType;
@@ -99,6 +100,9 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
     Integer sum=0;
     private Button btnOne,btnTwo,btnThree,btnFour,btnFive;
     Date date11;
+    private LinearLayout goOffer;
+    private Button proceed;
+    private String mpersonCount;
 
 
     @SuppressLint("SetTextI18n")
@@ -114,6 +118,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
         tinyDB=new TinyDB(getApplicationContext());
         tinyDB.putString(Constant.HISTORYPAGE,"PRE");
        // String mToken = tinyDB.getString(Constant.TOKEN);
+        mpersonCount=tinyDB.getString(Constant.PERSONCOUNT);
         msubActivityId=tinyDB.getString(Constant.PREDEFINEDSUBACTIVITYID);
         selectedSlotIds=tinyDB.getString(Constant.PRESLOTID);
         String mVendorId = tinyDB.getString(Constant.VENDORID);
@@ -126,12 +131,13 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
         vsessionCost=tinyDB.getString("SlotbookingCost");
         tinyDB.putString(Constant.PAYMENTPAGESUBID,msubActivityId);
         tinyDB.putString(Constant.PAYMENTPAGESLOTID,selectedSlotIds);
+        personCounts="1";
+        days="0";
 
         try {
             final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.getDefault());
             final Date dateObj = sdf.parse(vsessionStartTime);
             String timein12Format=new SimpleDateFormat("hh:mmaa",Locale.getDefault()).format(dateObj);
-            Log.d("fnuifreui45", String.valueOf(timein12Format));
             newvsessionStartTime=String.valueOf(timein12Format);
             newvsessionStartTime = newvsessionStartTime.replace(".", "");
         } catch (final ParseException e) {
@@ -141,7 +147,6 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
             final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.getDefault());
             final Date dateObj = sdf.parse(vsessionEndTime );
             String timein12Format=new SimpleDateFormat("hh:mmaa",Locale.getDefault()).format(dateObj);
-            Log.d("fnuifreui45", String.valueOf(timein12Format));
             newvsessionEndTime=String.valueOf(timein12Format);
             newvsessionEndTime = newvsessionEndTime.replace(".", "");
         } catch (final ParseException e) {
@@ -153,7 +158,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
 
         offerRecycler=findViewById(R.id.RecyclerOffer);
         mTotalDiscount=findViewById(R.id.TotalDiscount);
-        Button proceed = findViewById(R.id.nBooking1);
+         proceed = findViewById(R.id.nBookings1);
         proceed.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -174,16 +179,14 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
         mSessionEndTime=findViewById(R.id.SessionEndTime);
         mAddress=findViewById(R.id.Address);
         mbookCosts= findViewById(R.id.bookCosts);
+        goOffer=findViewById(R.id.goOffer);
 
         try {
-            Log.d("fhruifhruei1",vsessionDate);
+
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             Date date = formatter.parse(vsessionDate);
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
             newDates = sdf.format(date);
-
-            Log.d("fhruifhruei",newDates);
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -201,13 +204,13 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
         text.setText("வணக்கம்");*/
 
 
-        mweekDays= findViewById(R.id.weekDays);
-        mWeekEnd= findViewById(R.id.weekEnds);
+        mfivedays= findViewById(R.id.fivedays);
+        mtwodays= findViewById(R.id.twoDays);
         mNextSevendays= findViewById(R.id.nextseven);
         mNextThirtyDays= findViewById(R.id.nextthirty);
 
-        mweekDays.setOnClickListener(this);
-        mWeekEnd.setOnClickListener(this);
+        mfivedays.setOnClickListener(this);
+        mtwodays.setOnClickListener(this);
         mNextSevendays.setOnClickListener(this);
         mNextThirtyDays.setOnClickListener(this);
 
@@ -223,6 +226,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
         btnFour.setOnClickListener(this);
         btnFive = findViewById(R.id.fiveButton);
         btnFive.setOnClickListener(this);
+        goOffer.setOnClickListener(this);
 
 
 
@@ -236,13 +240,13 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
         StringRequest request3 = new StringRequest(Request.Method.GET, URL3, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("trwtyfewfe", String.valueOf(response));
+
 
                 try {
 
                     JSONArray jsonArray = new JSONArray(response);
                     if (jsonArray.length() == 0) {
-                        Log.d("trwty", String.valueOf(response));
+
 
                     } else {
                         for (int i = 0; i < jsonArray.length(); i++) {
@@ -252,8 +256,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                             String discount = jsonObject.getString("discount");
                             String category = jsonObject.getString("category");
                           //  String type = jsonObject.getString("type");
-                            Log.d("nfjfnjfr", String.valueOf(startDate));
-                            Log.d("nfjfnjfr1", String.valueOf(expiryDate));
+
                             Integer discount1 = jsonObject.getInt("discount");
 
                             Long timestamp10 = Long.parseLong(startDate);
@@ -283,30 +286,25 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                             offerBenefits.add(discount);
                          int s=0;
                          s+=discount1;
-                         Log.d("fjeifj", String.valueOf(s));
-                            Log.d("fjeriujre123", String.valueOf(offerBenefits));
-                            Log.d("fjeriujre1234", String.valueOf(offerDiscount));
-                            Log.d("fjeriujre", String.valueOf(offerBenefits));
+
 
 
                             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(SlotPages.this);
                             offerRecycler.setLayoutManager(layoutManager);
                             RecyclerView.Adapter adapter = new OfferAdapterBookSummary(getApplicationContext(),offerTypeList,offerBenefits);
                             offerRecycler.setAdapter(adapter);
-                            Log.d("fjeriujrefewrfw3", String.valueOf(offerDiscount));
+
 
 
 
                         }
-                        Log.d("dewfewfwfew", String.valueOf(offerBenefits));
-                        Log.d("fjeriujrefewrfw34", String.valueOf(offerDiscount));
+
 
 
                                 for(int j = 0; j < offerDiscount.size(); j++){
                                 if(offerDiscount.get(j)!=null){
                                 sum += offerDiscount.get(j);}}
 
-                            Log.d("fjwiofio", String.valueOf(sum));
                             mTotalDiscount.setText(String.valueOf(sum));
 
                     }
@@ -318,7 +316,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("yreuie", String.valueOf(error));
+
 
                 if (error instanceof NetworkError) {
 
@@ -332,7 +330,6 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                         }});
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -350,9 +347,7 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                 }
             }
         });
-        RequestQueue requestQueue3 = Volley.newRequestQueue(getApplicationContext());
-        requestQueue3.add(request3);
-
+        VolleySingleton.getInstance(SlotPages.this).addToRequestQueue(request3);
 
     }
 
@@ -363,32 +358,12 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
                 personCounts="1";
             }
         tinyDB.putString(Constant.PAYMENTPERSONCOUNT,personCounts);
-                 totalCost=Integer.valueOf(mbookCosts.getText().toString());
-                Log.d("jfwiejfiwre", String.valueOf(totalCost));
-                     days="0";
-                       if(mweekDays.isSelected()){
-                           days="5";
-                           totalCost=totalCost*5;
-                           Log.d("jfierj", days);
-                       }
-                       if(mWeekEnd.isSelected()){
-                        days="2";
-                           totalCost=totalCost*2;
-                           Log.d("jfierj", days);
-                         }
+                 firstCost=Integer.valueOf(mbookCosts.getText().toString());
 
-                        if(mNextSevendays.isSelected()){
-                        days="7";
-                            totalCost=totalCost*7;
-                            Log.d("jfierj", days);
-                         }
-                          if(mNextThirtyDays.isSelected()){
-                            days="30";
-                              totalCost=totalCost*30;
-                              Log.d("jfierj", days);
-                           }
+            totalCost=firstCost;
 
-if(days!=null){
+
+if(!days.equals("0")){
             tinyDB.putString(Constant.PAYMENTPREDEFINEDDAYS,days);}
 
             final ProgressDialog mProgressDialog;
@@ -398,12 +373,13 @@ if(days!=null){
             mProgressDialog.setCancelable(false);
             mProgressDialog.show();
 
+
                 String URL = Constant.API + "/slot/validateSlotBooking";
                 StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         mProgressDialog.dismiss();
-                        Log.d("cdsfsfwe", response);
+
                         try {
                             JSONObject jsonObject=new JSONObject(response);
                             String status=jsonObject.getString("status");
@@ -416,7 +392,7 @@ if(days!=null){
                         }
                         String eDate=mSessionDateEnd.getText().toString();
                         if(!eDate.isEmpty()){
-                            Log.d("nenioer",eDate);
+
                             tinyDB.putString(Constant.PAYEDATE,eDate);
                         }else{
                             tinyDB.putString(Constant.PAYEDATE,"");
@@ -425,6 +401,7 @@ if(days!=null){
 
                         if(!tCost.isEmpty()){
                             tinyDB.putString(Constant.PAYCOST, String.valueOf(totalCost));
+
                         }
                         String offer= mTotalDiscount.getText().toString();
                         if(!offer.isEmpty()){
@@ -452,10 +429,10 @@ if(days!=null){
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("vfdvdfdsv", error.toString());
+
 
                         mProgressDialog.dismiss();
-                      //  Log.d("ewqdadsfewr", String.valueOf(error.networkResponse.statusCode));
+
                         Toast.makeText(SlotPages.this, "Please try again", Toast.LENGTH_SHORT).show();
 
                     }
@@ -465,26 +442,19 @@ if(days!=null){
 
                         HashMap<String, Object> hashMap = new HashMap<>();
 
-
-                        Log.d("fewfew2",msubActivityId);
-                        Log.d("fewfew3",personCounts);
-                        Log.d("fewfew4",selectedSlotIds);
-                        Log.d("fewfew5",vsessionDate);
-                        Log.d("fewfew6",days);
-                      //  hashMap.put("vendorId", mVendorId);
                         hashMap.put("subActivityId", msubActivityId);
                         hashMap.put("personCount", personCounts);
                         hashMap.put("slotId", selectedSlotIds);
                         hashMap.put("bookingType", "PRE_DEFINED_SLOT");
                         hashMap.put("bookedForDate", vsessionDate);
-                        if(days.equals("0")) {
+                        if(days.equals("1")) {
                             hashMap.put("type", "single");
-                            Log.d("jfiojfero1","hewruithui");
+
                         }
                         else{
                             hashMap.put("type", "continous");
                             hashMap.put("days", days);
-                            Log.d("jfiojfero","hewruithui");
+
                         }
 
                         return new JSONObject(hashMap).toString().getBytes();
@@ -514,8 +484,7 @@ if(days!=null){
 
                     }
                 });
-                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                requestQueue.add(request);
+        VolleySingleton.getInstance(SlotPages.this).addToRequestQueue(request);
 
 
 
@@ -529,32 +498,31 @@ if(days!=null){
             personCounts="1";
         }
         tinyDB.putString(Constant.PAYMENTPERSONCOUNT,personCounts);
-        totalCost=Integer.valueOf(mbookCosts.getText().toString());
-        Log.d("jfwiejfiwre", String.valueOf(totalCost));
-        days="0";
-        if(mweekDays.isSelected()){
+        firstCost=Integer.valueOf(mbookCosts.getText().toString());
+
+        if(mfivedays.isSelected()){
             days="5";
-            totalCost=totalCost*5;
-            Log.d("jfierj", days);
+            totalCost=firstCost*5*(Integer.valueOf(days)+1);
+
         }
-        if(mWeekEnd.isSelected()){
+        if(mtwodays.isSelected()){
             days="2";
-            totalCost=totalCost*2;
-            Log.d("jfierj", days);
+            totalCost=firstCost*2*(Integer.valueOf(days)+1);
+
         }
 
         if(mNextSevendays.isSelected()){
             days="7";
-            totalCost=totalCost*7;
-            Log.d("jfierj", days);
+            totalCost=firstCost*7*(Integer.valueOf(days)+1);
+
         }
         if(mNextThirtyDays.isSelected()){
             days="30";
-            totalCost=totalCost*30;
-            Log.d("jfierj", days);
+            totalCost=firstCost*30*(Integer.valueOf(days)+1);
+
         }
 
-        if(days!=null){
+        if(!days.equals("0")){
             tinyDB.putString(Constant.PAYMENTPREDEFINEDDAYS,days);}
 
 
@@ -564,13 +532,13 @@ if(days!=null){
             @Override
             public void onResponse(String response) {
 
-                Log.d("feifjeije", response);
+
                 try {
                     JSONObject jsonObject=new JSONObject(response);
                     String status=jsonObject.getString("status");
                     String errorMessage=jsonObject.getString("errorMessage");
                     if(status.equals("true")){
-                        Log.d("feifjeije", response);
+
                     }else {
                         Toast toast = Toast.makeText(SlotPages.this, errorMessage, Toast.LENGTH_SHORT);
                         toast.setGravity(Gravity.CENTER, 0, 0);
@@ -585,7 +553,6 @@ if(days!=null){
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("fioerjfierj", error.toString());
 
             }
         }) {
@@ -595,25 +562,17 @@ if(days!=null){
                 HashMap<String, Object> hashMap = new HashMap<>();
 
 
-                Log.d("fewfew2",msubActivityId);
-                Log.d("fewfew3",personCounts);
-                Log.d("fewfew4",selectedSlotIds);
-                Log.d("fewfew5",vsessionDate);
-                Log.d("fewfew6",days);
-
                 hashMap.put("subActivityId", msubActivityId);
                 hashMap.put("personCount", personCounts);
                 hashMap.put("slotId", selectedSlotIds);
                 hashMap.put("bookingType", "PRE_DEFINED_SLOT");
                 hashMap.put("bookedForDate", vsessionDate);
-                if(days.equals("0")) {
+                if(days.equals("1")) {
                     hashMap.put("type", "single");
-                    Log.d("jfiojfero1","hewruithui");
                 }
                 else{
                     hashMap.put("type", "continous");
                     hashMap.put("days", days);
-                    Log.d("jfiojfero",days);
                 }
 
                 return new JSONObject(hashMap).toString().getBytes();
@@ -643,8 +602,7 @@ if(days!=null){
 
             }
         });
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        requestQueue.add(request);
+        VolleySingleton.getInstance(SlotPages.this).addToRequestQueue(request);
 
 
 
@@ -666,18 +624,23 @@ if(days!=null){
     public void onClick(View view) {
 
         switch (view.getId()){
-            case R.id.weekDays:
-                if(mweekDays.isSelected()){
-
+            case R.id.fivedays:
+                if(mfivedays.isSelected()){
+                    proceed.setEnabled(true);
+                    proceed.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                     mSessionDateEnd.setText("");
-                    mweekDays.setSelected(false);
-                    mweekDays.setChecked(false);
+                    mfivedays.setSelected(false);
+                    mfivedays.setChecked(false);
+                    final int a4 = Integer.parseInt(vsessionCost);
+                    int count4=Integer.parseInt(personCounts);
+                    days="0";
+                    Integer AddingBookCost4=(a4*count4)*(Integer.valueOf(days)+1);
+                    mbookCosts.setText(String.valueOf(AddingBookCost4));
                 }else{
                     //String startDate=mSessionDate.getText().toString();
                     SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
                     try {
                         date11 = format1.parse(vsessionDate);
-                        Log.d("nfuinfr", String.valueOf(date11));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -689,28 +652,34 @@ if(days!=null){
                     mSessionDateEnd.setText(" - "+dateTime);
 
 
-                    mweekDays.setSelected(true);
-                    mweekDays.setChecked(true);
-                    mWeekEnd.setSelected(false);
-                    mWeekEnd.setChecked(false);
+                    mfivedays.setSelected(true);
+                    mfivedays.setChecked(true);
+                    mtwodays.setSelected(false);
+                    mtwodays.setChecked(false);
                     mNextSevendays.setSelected(false);
                     mNextSevendays.setChecked(false);
                     mNextThirtyDays.setSelected(false);
                     mNextThirtyDays.setChecked(false);
+                    nextDaysAvailable();
                 }
                 break;
-            case R.id.weekEnds:
-            if(mWeekEnd.isSelected()){
+            case R.id.twoDays:
+            if(mtwodays.isSelected()){
                 mSessionDateEnd.setText("");
-                mWeekEnd.setSelected(false);
-                mWeekEnd.setChecked(false);
-
+                mtwodays.setSelected(false);
+                mtwodays.setChecked(false);
+                proceed.setEnabled(true);
+                proceed.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                final int a4 = Integer.parseInt(vsessionCost);
+                int count4=Integer.parseInt(personCounts);
+                days="0";
+                Integer AddingBookCost4=(a4*count4)*(Integer.valueOf(days)+1);
+                mbookCosts.setText(String.valueOf(AddingBookCost4));
             }else{
               //  String startDate=mSessionDate.getText().toString();
                 SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
                 try {
                     date11 = format1.parse(vsessionDate);
-                    Log.d("nfuinfr", String.valueOf(date11));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -721,27 +690,34 @@ if(days!=null){
 
                 mSessionDateEnd.setText(" - "+dateTime);
 
-                mWeekEnd.setSelected(true);
-                mWeekEnd.setChecked(true);
-                mweekDays.setSelected(false);
-                mweekDays.setChecked(false);
+                mtwodays.setSelected(true);
+                mtwodays.setChecked(true);
+                mfivedays.setSelected(false);
+                mfivedays.setChecked(false);
                 mNextSevendays.setSelected(false);
                 mNextSevendays.setChecked(false);
                 mNextThirtyDays.setSelected(false);
                 mNextThirtyDays.setChecked(false);
+                nextDaysAvailable();
             }
                 break;
             case R.id.nextseven:
                 if(mNextSevendays.isSelected()){
+                    proceed.setEnabled(true);
+                    proceed.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                     mSessionDateEnd.setText("");
                     mNextSevendays.setSelected(false);
                     mNextSevendays.setChecked(false);
+                    final int a4 = Integer.parseInt(vsessionCost);
+                    int count4=Integer.parseInt(personCounts);
+                    days="0";
+                    Integer AddingBookCost4=(a4*count4)*(Integer.valueOf(days)+1);
+                    mbookCosts.setText(String.valueOf(AddingBookCost4));
                 }else{
 
                     SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
                     try {
                         date11 = format1.parse(vsessionDate);
-                        Log.d("nfuinfr", String.valueOf(date11));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -754,25 +730,32 @@ if(days!=null){
 
                     mNextSevendays.setSelected(true);
                     mNextSevendays.setChecked(true);
-                    mweekDays.setSelected(false);
-                    mweekDays.setChecked(false);
-                    mWeekEnd.setSelected(false);
-                    mWeekEnd.setChecked(false);
+                    mfivedays.setSelected(false);
+                    mfivedays.setChecked(false);
+                    mtwodays.setSelected(false);
+                    mtwodays.setChecked(false);
                     mNextThirtyDays.setSelected(false);
                     mNextThirtyDays.setChecked(false);
+                    nextDaysAvailable();
                 }
                 break;
             case R.id.nextthirty:
                 if(mNextThirtyDays.isSelected()){
+                    proceed.setEnabled(true);
+                    proceed.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                     mSessionDateEnd.setText("");
                     mNextThirtyDays.setSelected(false);
                     mNextThirtyDays.setChecked(false);
+                    final int a4 = Integer.parseInt(vsessionCost);
+                    int count4=Integer.parseInt(personCounts);
+                    days="0";
+                    Integer AddingBookCost4=(a4*count4)*(Integer.valueOf(days)+1);
+                    mbookCosts.setText(String.valueOf(AddingBookCost4));
                 }else{
                    // String startDate=mSessionDate.getText().toString();
                     SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
                     try {
                         date11 = format1.parse(vsessionDate);
-                        Log.d("nfuinfr", String.valueOf(date11));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -787,10 +770,11 @@ if(days!=null){
                     mNextThirtyDays.setChecked(true);
                     mNextSevendays.setSelected(false);
                     mNextSevendays.setChecked(false);
-                    mweekDays.setSelected(false);
-                    mweekDays.setChecked(false);
-                    mWeekEnd.setSelected(false);
-                    mWeekEnd.setChecked(false);
+                    mfivedays.setSelected(false);
+                    mfivedays.setChecked(false);
+                    mtwodays.setSelected(false);
+                    mtwodays.setChecked(false);
+                    nextDaysAvailable();
 
                 }
                 break;
@@ -799,7 +783,7 @@ if(days!=null){
                 checkPersonCount();
                 final int a1 = Integer.parseInt(vsessionCost);
                     int count1=Integer.parseInt(personCounts);
-                    Integer AddingBookCost1=a1*count1;
+                    Integer AddingBookCost1=a1*count1*(Integer.valueOf(days)+1);
                     mbookCosts.setText(String.valueOf(AddingBookCost1));
                 final int sdk1 = android.os.Build.VERSION.SDK_INT;
                 if(sdk1 < android.os.Build.VERSION_CODES.JELLY_BEAN) {
@@ -827,7 +811,7 @@ if(days!=null){
                 checkPersonCount();
                 final int a2 = Integer.parseInt(vsessionCost);
                 int count2=Integer.parseInt(personCounts);
-                Integer AddingBookCost2=a2*count2;
+                Integer AddingBookCost2=a2*count2*(Integer.valueOf(days)+1);
                 mbookCosts.setText(String.valueOf(AddingBookCost2));
                 final int sdk2 = android.os.Build.VERSION.SDK_INT;
                 if(sdk2 < android.os.Build.VERSION_CODES.JELLY_BEAN) {
@@ -853,7 +837,7 @@ if(days!=null){
                 checkPersonCount();
                 final int a3 = Integer.parseInt(vsessionCost);
                 int count3=Integer.parseInt(personCounts);
-                Integer AddingBookCost3=a3*count3;
+                Integer AddingBookCost3=a3*count3*(Integer.valueOf(days)+1);
                 mbookCosts.setText(String.valueOf(AddingBookCost3));
 
                 final int sdk3 = android.os.Build.VERSION.SDK_INT;
@@ -881,7 +865,7 @@ if(days!=null){
                 checkPersonCount();
                 final int a4 = Integer.parseInt(vsessionCost);
                 int count4=Integer.parseInt(personCounts);
-                Integer AddingBookCost4=a4*count4;
+                Integer AddingBookCost4=a4*count4*(Integer.valueOf(days)+1);
                 mbookCosts.setText(String.valueOf(AddingBookCost4));
                 final int sdk4 = android.os.Build.VERSION.SDK_INT;
                 if(sdk4 < android.os.Build.VERSION_CODES.JELLY_BEAN) {
@@ -907,7 +891,7 @@ if(days!=null){
                 checkPersonCount();
                 final int a5 = Integer.parseInt(vsessionCost);
                 int count5=Integer.parseInt(personCounts);
-                Integer AddingBookCost5=a5*count5;
+                Integer AddingBookCost5=a5*count5*(Integer.valueOf(days)+1);
                 mbookCosts.setText(String.valueOf(AddingBookCost5));
 
                 final int sdk5 = android.os.Build.VERSION.SDK_INT;
@@ -929,8 +913,138 @@ if(days!=null){
 
                 break;
 
+            case R.id.goOffer:
+             Intent intent=new Intent(SlotPages.this,ApplyOffer.class);
+             startActivity(intent);
+                break;
+
 
         }
 
+    }
+    public void nextDaysAvailable(){
+        {
+
+
+            if(personCounts==null){
+                personCounts="1";
+            }
+            tinyDB.putString(Constant.PAYMENTPERSONCOUNT,personCounts);
+            firstCost=Integer.valueOf(mbookCosts.getText().toString());
+
+
+            if(mfivedays.isSelected()){
+                days="5";
+                totalCost=firstCost*5*(Integer.valueOf(days)+1);
+            }
+            if(mtwodays.isSelected()){
+                days="2";
+                totalCost=firstCost*2*(Integer.valueOf(days)+1);
+            }
+
+            if(mNextSevendays.isSelected()){
+                days="7";
+                totalCost=firstCost*7*(Integer.valueOf(days)+1);
+            }
+            if(mNextThirtyDays.isSelected()){
+                days="30";
+                totalCost=firstCost*30*(Integer.valueOf(days)+1);
+            }
+
+            if(!days.equals("0")){
+
+                tinyDB.putString(Constant.PAYMENTPREDEFINEDDAYS,days);}
+            final int a4 = Integer.parseInt(vsessionCost);
+            int count4=Integer.parseInt(personCounts);
+
+            Integer AddingBookCost4=a4*count4*(Integer.valueOf(days)+1);
+            mbookCosts.setText(String.valueOf(AddingBookCost4));
+
+
+
+            String URL = Constant.API + "/slot/validateSlotBooking";
+            StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+
+                    try {
+                        JSONObject jsonObject=new JSONObject(response);
+                        String status=jsonObject.getString("status");
+                        if(status.equals("true")){
+                            proceed.setEnabled(true);
+                            proceed.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
+
+                        }else{
+                            proceed.setEnabled(false);
+                            proceed.setBackgroundColor(getResources().getColor(R.color.Ash));
+                            Toast.makeText(SlotPages.this, "Please Select another slot", Toast.LENGTH_LONG).show();
+
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+
+                    Toast.makeText(SlotPages.this, "Please try again", Toast.LENGTH_SHORT).show();
+
+                }
+            }) {
+                @Override
+                public byte[] getBody() {
+
+                    HashMap<String, Object> hashMap = new HashMap<>();
+
+                    hashMap.put("subActivityId", msubActivityId);
+                    hashMap.put("personCount", personCounts);
+                    hashMap.put("slotId", selectedSlotIds);
+                    hashMap.put("bookingType", "PRE_DEFINED_SLOT");
+                    hashMap.put("bookedForDate", vsessionDate);
+                    if(days.equals("1")) {
+                        hashMap.put("type", "single");
+                       }
+                    else{
+                        hashMap.put("type", "continous");
+                        hashMap.put("days", days);
+                    }
+
+                    return new JSONObject(hashMap).toString().getBytes();
+
+                }
+
+                @Override
+                public String getBodyContentType() {
+                    return "application/json";
+                }
+
+
+            };
+            request.setRetryPolicy(new RetryPolicy() {
+                @Override
+                public int getCurrentTimeout() {
+                    return 200000;
+                }
+
+                @Override
+                public int getCurrentRetryCount() {
+                    return 200000;
+                }
+
+                @Override
+                public void retry(VolleyError error) {
+
+                }
+            });
+            VolleySingleton.getInstance(SlotPages.this).addToRequestQueue(request);
+
+        }
     }
 }

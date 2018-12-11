@@ -47,7 +47,7 @@ public class BookingHistoryActivity extends AppCompatActivity {
         if (extras != null) {
             userName = extras.getString("jfiwo");
             if(userName!=null){
-                Log.d("frgre",userName);}
+         }
         }
 
 

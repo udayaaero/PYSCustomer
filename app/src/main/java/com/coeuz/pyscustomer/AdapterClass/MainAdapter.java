@@ -3,6 +3,7 @@ package com.coeuz.pyscustomer.AdapterClass;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,9 +13,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.coeuz.pyscustomer.R;
+import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
 import com.coeuz.pyscustomer.SubActivity;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 
@@ -25,49 +28,21 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
 
 
     private ArrayList<Integer> ImageList=new ArrayList<>();
+    private ArrayList<Bitmap> subActivityImageList1=new ArrayList<>();
+    HashMap<String,Bitmap> subActivityImageHashMap1 = new HashMap<>();
 
     private ArrayList<String> subActivityIdList1;
     private ArrayList<String> subActivityTypeList1;
 
 
 
-    public MainAdapter(Context applicationContext, ArrayList<String> subActivityList, ArrayList<String> subActivityIdList) {
-
+    public MainAdapter(Context applicationContext, ArrayList<String> subActivityList, ArrayList<String> subActivityIdList, ArrayList<Bitmap> subActivityImageList, HashMap<String, Bitmap> subActivityImageHashMap) {
         mcontext=applicationContext;
         subActivityTypeList1=subActivityList;
         subActivityIdList1=subActivityIdList;
+        subActivityImageList1=subActivityImageList;
         mtinyDb=new TinyDB(mcontext);
-        ImageList.add(R.drawable.gym_);
-        ImageList.add(R.drawable.saloon_);
-        ImageList.add(R.drawable.spa1_);
-        ImageList.add(R.drawable.dance_);
-        ImageList.add(R.drawable.music);
-        ImageList.add(R.drawable.zumba_);
-        ImageList.add(R.drawable.zumba_);
-        ImageList.add(R.drawable.swimming_);
-        ImageList.add(R.drawable.badminton_);
-        ImageList.add(R.drawable.zumba_);
-        ImageList.add(R.drawable.cricket_);
-        ImageList.add(R.drawable.football);
-
-        for (int i = 0; i <9; i++) {
-            ImageList.add(R.drawable.saloon_);
-        }
-        for (int i = 0; i <11 ; i++) {
-            ImageList.add(R.drawable.saloon_);
-        }
-        ImageList.add(R.drawable.dance_);
-        ImageList.add(R.drawable.volleyball_);
-
-        for (int i = 0; i <subActivityTypeList1.size() ; i++) {
-            ImageList.add(R.drawable.dance_);
-        }
-        for (int i = 0; i <subActivityTypeList1.size() ; i++) {
-            ArrayList<Integer> numberList = new ArrayList<>();
-            numberList.add(i++);
-        }
-
-
+        subActivityImageHashMap1=subActivityImageHashMap;
     }
 
 
@@ -93,8 +68,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(final MainAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
 
+        String id=subActivityIdList1.get(position);
+        Bitmap value = subActivityImageHashMap1.get(id);
 
-        holder.image.setImageResource(ImageList.get(position));
+        holder.image.setImageBitmap(value);
         holder.nameOfActivity.setText(subActivityTypeList1.get(position));
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,9 +79,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
                 String clickedItem = String.valueOf(position);
                 String subActivityName=subActivityTypeList1.get(position);
                 String subActivityId=subActivityIdList1.get(position);
+                mtinyDb.putString(Constant.SUBACTIVITYNAME,subActivityName);
                 mtinyDb.putString("activityName",subActivityName);
                 mtinyDb.putString("activityId",subActivityId);
-                Log.d("vsuifhr",subActivityId);
+
 
 
                 Intent intent=new Intent(mcontext, SubActivity.class);

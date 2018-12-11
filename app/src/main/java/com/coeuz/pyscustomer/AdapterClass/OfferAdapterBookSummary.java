@@ -32,7 +32,7 @@ public class OfferAdapterBookSummary extends RecyclerView.Adapter<OfferAdapterBo
 
         this.mofferTypeList=offerTypeList;
         this.mofferBenefits=offerBenefits;
-        Log.d("fjeriujre1", String.valueOf(offerBenefits));
+
     }
 
 

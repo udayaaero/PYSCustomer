@@ -24,6 +24,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,7 +64,7 @@ public class ProfileActivity extends AppCompatActivity {
         StringRequest request = new StringRequest(Request.Method.GET, URL1, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("mvefn", String.valueOf(response));
+
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     //muserId = jsonObject.getString("userId");
@@ -83,13 +84,10 @@ public class ProfileActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("miremio", String.valueOf(error));
+
 
                 if (error instanceof NetworkError) {
                     Toast.makeText(getApplicationContext(), "Cannot connect to Internet...Please check your connection!", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof ServerError) {
-
-                    Log.d("heuiwirhu1", String.valueOf(error));
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -108,8 +106,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             }
         };
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        requestQueue.add(request);
+        VolleySingleton.getInstance(ProfileActivity.this).addToRequestQueue(request);
 
         mConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,7 +122,7 @@ public class ProfileActivity extends AppCompatActivity {
                 StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("fnrineio", String.valueOf(response));
+
                         Toast.makeText(getApplicationContext(), "Your Profile is Updated", Toast.LENGTH_LONG).show();
 
                           /*  Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
@@ -139,8 +136,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("ppppppppppp123", String.valueOf(error));
-                        Log.d("fjds", String.valueOf(error.networkResponse.statusCode));
+
 
                         if (error instanceof NetworkError) {
                             Toast.makeText(getApplicationContext(), "Cannot connect to Internet...Please check your connection!", Toast.LENGTH_SHORT).show();
@@ -182,8 +178,7 @@ public class ProfileActivity extends AppCompatActivity {
                         return headers;
                     }
                 };
-                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                requestQueue.add(request);
+                VolleySingleton.getInstance(ProfileActivity.this).addToRequestQueue(request);
             }
 
 

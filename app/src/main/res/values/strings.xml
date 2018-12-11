@@ -13,12 +13,12 @@
     payment options.It have a flexible membership and course</string>
     <string name="About_us_contact">Reach out to us on 72000 08383 and contactus@coeuz.com</string>
 
-
     <string name="facebook_app_id">2160878337493796</string>
     <string name="fb_login_protocol_scheme">fb2160878337493796</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
+    <string name="MapDirection">Navigation</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_register">Forgot Password</string>
@@ -76,7 +76,7 @@
         <item>@color/dot_dark_screen4</item>
     </array>
     <string name="Forgot_Your_Password">Forgot Your\n Password?</string>
-    <string name="Forgot_Your_Password_Message">We just need your registered email or mobile number\n to send your password reset</string>
+    <string name="Forgot_Your_Password_Message">Please enter your registered email or mobile number\n to send your password reset</string>
 
 
     <string name="pin_content_desc">PIN input field</string>
@@ -101,7 +101,10 @@
     <string name="title_activity_confirmation">ConfirmationActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-
+    <string name="Enteroffercode">Enter Offer Code</string>
+    <string name="AvailableOffer">AVAILABLE OFFERS</string>
+    <string name="NoInternetConnection">No Internet Connection</string>
+    <string name="PleaseTurnOn">Please enable your internet connection</string>
 
 
     <!-- <string name="facebook_app_id">375708112935901</string>

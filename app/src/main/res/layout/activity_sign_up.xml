@@ -15,10 +15,8 @@
         android:id="@+id/allViewlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         android:scrollbars="none"
-        tools:ignore="UselessParent"
-        >
+        tools:ignore="UselessParent">
         <LinearLayout
             android:padding="16dp"
             android:layout_width="match_parent"
@@ -70,6 +68,7 @@
                             android:singleLine="true"
                             android:hint="Mobile number"
                             android:inputType="phone"
+                            android:digits="0123456789"
                             android:maxLength="10"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -90,9 +89,9 @@
                             tools:ignore="HardcodedText,TextFields" />
                     </android.support.design.widget.TextInputLayout>
 
-
                     <android.support.design.widget.TextInputLayout
                         android:textColorHint="#070508"
+                        app:passwordToggleEnabled="true"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" >
                         <EditText

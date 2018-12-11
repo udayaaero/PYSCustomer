@@ -25,10 +25,10 @@
         <item name="windowNoTitle">true</item>
         <item name="colorPrimaryDark">@android:color/transparent</item>
         <item name="colorPrimary">@android:color/transparent</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <!--   <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+           <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
+     <item name="android:windowBackground">@android:color/transparent</item>-->
      <!--   <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
@@ -40,5 +40,19 @@
         <item name="colorAccent">@color/colorAccent</item>&ndash;&gt;-->
 
 
+    </style>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
+        <item name="android:actionMenuTextAppearance">@style/MyMenuTextAppearance</item>
+        <item name="android:titleTextAppearance">@style/Toolbar.TitleText</item>
+        <item name="android:titleTextStyle">@style/Toolbar.TitleText</item>
+    </style>
+    <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">@dimen/dimen_11sp</item>
     </style>
 </resources>

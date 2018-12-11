@@ -5,8 +5,8 @@ package com.coeuz.pyscustomer.Requiredclass;
  */
 
 public class Constant {
-    public static final String API="http://13.126.119.71:8081/service";
-    public static final String APIONE="http://13.126.119.71:8081/api/service";
+    public static final String API="http://13.233.187.128:8081/service";
+    public static final String APIONE="http://13.233.187.128:8081/api/service";
     public static final String VENDORID="vendorid";
     public static final String TIP="tips";
     public static final String TOKEN="token";
@@ -18,6 +18,7 @@ public class Constant {
     public static final String INITIALLOCATION="initialLocation";
     public static final String INITIALLAT="initiallat";
     public static final String INITIALLONG="initiallong";
+    public static final String SUBACTIVITYNAME="subActivityName";
 
     public static final String CUSTOMERNAME="customername";
     public static final String USERID="UserId";
@@ -61,4 +62,7 @@ public class Constant {
     public static final String PAYETIME="payetime";
     public static final String STATUS="status";
     public static final String HISTORYPAGE="historypage";
+    public static final String BACKGROUNDIMAGE="backGroundImage";
+    public static final String FIRSTTIME="firstTime";
+    public static final String PERSONCOUNT="personCount";
 }

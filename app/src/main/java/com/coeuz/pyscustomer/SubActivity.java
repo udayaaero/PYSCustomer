@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -31,18 +32,17 @@ import android.widget.Toast;
 import com.android.volley.NetworkError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.coeuz.pyscustomer.AdapterClass.SubActivityAdapter;
 import com.coeuz.pyscustomer.ModelClass.SubActivityModel;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 import com.pnikosis.materialishprogress.ProgressWheel;
 
 import org.json.JSONArray;
@@ -81,7 +81,7 @@ public class SubActivity extends AppCompatActivity {
 
     private String filterVales,mGender,mRelavance,mfromAmount,mtoAmount,mprogressRate,mamenitiesList;
     Intent intent;
-    RelativeLayout noValuesLayout;
+
     private LinearLayout noInternetLayout;
     private RelativeLayout allViewLayout;
 
@@ -102,8 +102,7 @@ public class SubActivity extends AppCompatActivity {
         nSubActivityIdList=mtinyDb.getListString(Constant.SubActivityIdList);
         nVendorIdList=mtinyDb.getListString(Constant.VendorIdList);
 
-        noValuesLayout=findViewById(R.id.noValuesLayout);
-        noValuesLayout.setVisibility(View.GONE);
+
 
         noInternetLayout = findViewById(R.id.NoInternetLayout);
         allViewLayout = findViewById(R.id.allViewlayout);
@@ -117,7 +116,6 @@ public class SubActivity extends AppCompatActivity {
 
         msubActivityName=mtinyDb.getString("activityName");
         msubActivityId=mtinyDb.getString("activityId");
-        Log.d("gjeruigre",msubActivityId);
         this.setTitle(msubActivityName);
  /*   bundle=getIntent().getExtras();
         if (bundle != null) {
@@ -127,9 +125,12 @@ public class SubActivity extends AppCompatActivity {
         }*/
 
        locationManager=(LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        getLocation();
-        Log.d("ertrefvg", String.valueOf(latitude));
-        Log.d("frterter", String.valueOf(longitude));
+       // getLocation();
+
+
+        latitude= Double.parseDouble(mtinyDb.getString(Constant.INITIALLAT));
+        longitude=Double.parseDouble( mtinyDb.getString(Constant.INITIALLONG));
+
 
         mprogressBar=findViewById(R.id.progressbar100);
         mprogressBar.setVisibility(View.VISIBLE);
@@ -160,7 +161,7 @@ public class SubActivity extends AppCompatActivity {
 
 
                             if(searchText!=null){
-                                Log.d("endjweni",searchText);
+
                                 searchLoadMore();
                             }else{
                                 loadMore();
@@ -185,17 +186,15 @@ public class SubActivity extends AppCompatActivity {
             if(location !=null){
                 latitude=location.getLatitude();
                 longitude=location.getLongitude();
-                Log.d("uiwefhweui", String.valueOf(latitude));
-                Log.d("uiwefhweui1", String.valueOf(longitude));
+
             }
         }
     }
     private void firstLoadData() {
+
         subActivityModels.clear();
         if ( filterVales != null  && !filterVales.isEmpty()&&!filterVales.equals("[]")) {
 
-
-            Log.d("wwwwwww1","wwwwwwwww1");
 
 
             mGender=intent.getStringExtra("nGender");
@@ -203,32 +202,31 @@ public class SubActivity extends AppCompatActivity {
             mfromAmount=intent.getStringExtra("fromAmount");
             mtoAmount=intent.getStringExtra("toAmount");
             mprogressRate=intent.getStringExtra("progressRate");
-            mamenitiesList=intent.getStringExtra("amenitiesList");
-            if( mGender != null  && !mGender.isEmpty()){
-                Log.d("iftrue", "seem to be true");
+             mamenitiesList=intent.getStringExtra("amenitiesList");
+         /*   if( mGender != null  && !mGender.isEmpty()){
+
             }else{mGender="";}
             if( mRelavance != null  && !mRelavance.isEmpty()){
-                Log.d("iftrue", "seem to be true");
+
             }else{mRelavance="";}
 
             if( mfromAmount != null  && !mfromAmount.isEmpty()){
-                Log.d("iftrue", "seem to be true");
+
             }else{mfromAmount="0";}
             if( mtoAmount != null  && !mtoAmount.isEmpty()){
-                Log.d("iftrue", "seem to be true");
+
             }else{mtoAmount="0";}
             if( mprogressRate != null  && !mprogressRate.isEmpty()){
-                Log.d("iftrue", "seem to be true");
+
             }else{mprogressRate="0";}
             if( mamenitiesList != null  && !mamenitiesList.isEmpty()){
-                Log.d("iftrue", "seem to be true");
-            }else{mamenitiesList="0";}
+
+            }else{mamenitiesList="0";}*/
 
 
 
             if (searchLat != null && !searchLat.isEmpty()) {
-                Log.d("jfiwejf", searchLat);
-                Log.d("jfiwejf1", searchLong);
+
                 double mSearchLat = Double.parseDouble(searchLat);
                 double mSearchLong = Double.parseDouble(searchLong);
                 String URL = Constant.API +"/user/getVendorsByFilters?amenityId="+mamenitiesList+"&cost="+mprogressRate+"&fromCost="+mfromAmount+"&tocost="+mtoAmount+"&order="+mRelavance+"&lat="+mSearchLat+"&long="+mSearchLong+"&offset=0&limit=5&gender="+mGender+"&subActivityId="+msubActivityId;
@@ -237,16 +235,16 @@ public class SubActivity extends AppCompatActivity {
                 StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("hgerithjiow", String.valueOf(response));
+
                         mprogressBar.setVisibility(View.GONE);
                         itShouldLoadMore = true;
                         try {
                             JSONArray jsonArray = new JSONArray(response);
                             if (jsonArray.length() == 0) {
-                                noValuesLayout.setVisibility(View.VISIBLE);
-                               /* Toast toast = Toast.makeText(SubActivity.this, "No Values1", Toast.LENGTH_LONG);
-                                toast.setGravity(Gravity.CENTER, 0, 0);
-                                toast.show();*/
+
+                                View view = getLayoutInflater().inflate(R.layout.no_values, allViewLayout,false);
+                                view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                                allViewLayout.addView(view);
                             } else {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -254,11 +252,10 @@ public class SubActivity extends AppCompatActivity {
                                     String vendorName = jsonObject.getString("vendorName");
                                     Integer vendorId = jsonObject.getInt("vendorId");
                                     String area = jsonObject.getString("area");
-                                    String amenities = jsonObject.getString("amenities");
-                                    Log.d("ncwiwnfiri", amenities);
-                                    Log.d("ncwiwnfiri1", vendorName);
+                                    String vendorShopImage = jsonObject.getString("vendorShopImage");
 
-                                    subActivityModels.add(new SubActivityModel(vendorName, area,vendorId));
+
+                                    subActivityModels.add(new SubActivityModel(vendorName, area,vendorId,vendorShopImage));
                                     subactivityAdapter.notifyDataSetChanged();
 
                                 }
@@ -271,7 +268,7 @@ public class SubActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("frwgtw", String.valueOf(error));
+
 
                         itShouldLoadMore = true;
                         mprogressBar.setVisibility(View.GONE);
@@ -279,59 +276,63 @@ public class SubActivity extends AppCompatActivity {
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=findViewById(R.id.TryAgain);
+                            Button button = findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     recreate();
-                                }});
+                                }
+                            });
                         } else if (error instanceof ServerError) {
 
-                            Log.d("heuiwirhu1", String.valueOf(error));
+                            View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            allViewLayout.addView(view);
+                            Button button =view.findViewById(R.id.SomethingTryAgain1);
+                            button.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    recreate();
+                                }
+                            });
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
                         }  else if (error instanceof TimeoutError) {
-                            noInternetLayout.setVisibility(View.VISIBLE);
-                            allViewLayout.setVisibility(View.GONE);
-                            Button button=findViewById(R.id.TryAgain);
+
+                            View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            allViewLayout.addView(view);
+                            Button button =view.findViewById(R.id.SomethingTryAgain1);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     recreate();
-                                }});
-
+                                }
+                            });
                         }
+
                     }
                 }) ;
-                RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-                requestQueue1.add(request1);
+                VolleySingleton.getInstance(SubActivity.this).addToRequestQueue(request1);
             } else {
 
                 String URL = Constant.API +"/user/getVendorsByFilters?amenityId="+mamenitiesList+"&cost="+mprogressRate+"&fromCost="+mfromAmount+"&tocost="+mtoAmount+"&order="+mRelavance+"&lat="+latitude+"&long="+longitude+"&offset=0&limit=5&gender="+mGender+"&subActivityId="+msubActivityId;
 
-              Log.d("fjwiof","fjwiu");
-                Log.d("rrrrr1",mGender);
-                Log.d("rrrrr2",mRelavance);
-                Log.d("rrrrr3",mfromAmount);
-                Log.d("rrrrr4",mtoAmount);
-                Log.d("rrrrr5",mprogressRate);
-                Log.d("rrrrr6",mamenitiesList);
                 itShouldLoadMore = false;
-                Log.d("jfiwjfio", URL);
+
                 StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("ureuerjure", String.valueOf(response));
+
                         mprogressBar.setVisibility(View.GONE);
                         itShouldLoadMore = true;
                         try {
                             JSONArray jsonArray = new JSONArray(response);
                             if (jsonArray.length() == 0) {
-                                noValuesLayout.setVisibility(View.VISIBLE);
-                              /*  Toast toast = Toast.makeText(SubActivity.this, "No Values2", Toast.LENGTH_LONG);
-                                toast.setGravity(Gravity.CENTER, 0, 0);
-                                toast.show();*/
+                                View view = getLayoutInflater().inflate(R.layout.no_values, allViewLayout,false);
+                                view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                                allViewLayout.addView(view);
                             } else {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -339,11 +340,10 @@ public class SubActivity extends AppCompatActivity {
                                     String vendorName = jsonObject.getString("vendorName");
                                     Integer vendorId = jsonObject.getInt("vendorId");
                                     String area = jsonObject.getString("area");
-                                    String amenities = jsonObject.getString("amenities");
-                                    Log.d("ncwiwnfiri", amenities);
-                                    Log.d("ncwiwnfiri1", vendorName);
+                                    String vendorShopImage = jsonObject.getString("vendorShopImage");
 
-                                    subActivityModels.add(new SubActivityModel(vendorName, area,vendorId));
+
+                                    subActivityModels.add(new SubActivityModel(vendorName, area,vendorId,vendorShopImage));
                                     subactivityAdapter.notifyDataSetChanged();
 
                                 }
@@ -357,7 +357,6 @@ public class SubActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        Log.d("hfdiu", String.valueOf(error));
 
 
                         itShouldLoadMore = true;
@@ -366,33 +365,44 @@ public class SubActivity extends AppCompatActivity {
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=findViewById(R.id.TryAgain);
+                            Button button = findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     recreate();
-                                }});
+                                }
+                            });
                         } else if (error instanceof ServerError) {
 
-                            Log.d("heuiwirhu1", String.valueOf(error));
+                            View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            allViewLayout.addView(view);
+                            Button button =view.findViewById(R.id.SomethingTryAgain1);
+                            button.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    recreate();
+                                }
+                            });
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof TimeoutError) {
-                            noInternetLayout.setVisibility(View.VISIBLE);
-                            allViewLayout.setVisibility(View.GONE);
-                            Button button=findViewById(R.id.TryAgain);
+                        }  else if (error instanceof TimeoutError) {
+
+                            View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            allViewLayout.addView(view);
+                            Button button =view.findViewById(R.id.SomethingTryAgain1);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     recreate();
-                                }});
-
+                                }
+                            });
                         }
                     }
                 });
-                RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-                requestQueue1.add(request1);
+                VolleySingleton.getInstance(SubActivity.this).addToRequestQueue(request1);
 
             }
 
@@ -401,10 +411,9 @@ public class SubActivity extends AppCompatActivity {
 
 
         } else {
-            Log.d("wwwwwww2","wwwwwwwww2");
+
             if (searchLat != null && !searchLat.isEmpty()) {
-                Log.d("jfiwejf", searchLat);
-                Log.d("jfiwejf1", searchLong);
+
                 double mSearchLat = Double.parseDouble(searchLat);
                 double mSearchLong = Double.parseDouble(searchLong);
                 String URL = Constant.API + "/general/getVendorsByActivityAndSubActivity?subActivityId=" + msubActivityId + "&offset=0&limit=5&lat=" + mSearchLat + "&long=" + mSearchLong + "&distance=5";
@@ -412,16 +421,15 @@ public class SubActivity extends AppCompatActivity {
                 StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("hgerithjiow", String.valueOf(response));
+
                         mprogressBar.setVisibility(View.GONE);
                         itShouldLoadMore = true;
                         try {
                             JSONArray jsonArray = new JSONArray(response);
                             if (jsonArray.length() == 0) {
-                                noValuesLayout.setVisibility(View.VISIBLE);
-                              /*  Toast toast = Toast.makeText(SubActivity.this, "No Values3", Toast.LENGTH_LONG);
-                                toast.setGravity(Gravity.CENTER, 0, 0);
-                                toast.show();*/
+                                View view = getLayoutInflater().inflate(R.layout.no_values, allViewLayout,false);
+                                view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                                allViewLayout.addView(view);
                             } else {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -429,11 +437,10 @@ public class SubActivity extends AppCompatActivity {
                                     String vendorName = jsonObject.getString("vendorName");
                                     Integer vendorId = jsonObject.getInt("vendorId");
                                     String area = jsonObject.getString("area");
-                                    String amenities = jsonObject.getString("amenities");
-                                    Log.d("ncwiwnfiri", amenities);
-                                    Log.d("ncwiwnfiri1", vendorName);
+                                    String vendorShopImage = jsonObject.getString("vendorShopImage");
 
-                                    subActivityModels.add(new SubActivityModel(vendorName, area,vendorId));
+
+                                    subActivityModels.add(new SubActivityModel(vendorName, area,vendorId,vendorShopImage));
                                     subactivityAdapter.notifyDataSetChanged();
 
                                 }
@@ -446,7 +453,7 @@ public class SubActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("frwgtw", String.valueOf(error));
+
 
                         itShouldLoadMore = true;
                         mprogressBar.setVisibility(View.GONE);
@@ -454,52 +461,62 @@ public class SubActivity extends AppCompatActivity {
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=findViewById(R.id.TryAgain);
+                            Button button = findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     recreate();
-                                }});
+                                }
+                            });
                         } else if (error instanceof ServerError) {
 
-                            Log.d("heuiwirhu1", String.valueOf(error));
+                            View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            allViewLayout.addView(view);
+                            Button button =view.findViewById(R.id.SomethingTryAgain1);
+                            button.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    recreate();
+                                }
+                            });
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
                         }  else if (error instanceof TimeoutError) {
-                            noInternetLayout.setVisibility(View.VISIBLE);
-                            allViewLayout.setVisibility(View.GONE);
-                            Button button=findViewById(R.id.TryAgain);
+
+                            View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            allViewLayout.addView(view);
+                            Button button =view.findViewById(R.id.SomethingTryAgain1);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     recreate();
-                                }});
-
+                                }
+                            });
                         }
                     }
                 });
-                RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-                requestQueue1.add(request1);
+                VolleySingleton.getInstance(SubActivity.this).addToRequestQueue(request1);
             } else {
 
 
                 String URL = Constant.API + "/general/getVendorsByActivityAndSubActivity?subActivityId=" + msubActivityId + "&offset=0&limit=5&lat=" + latitude + "&long=" + longitude + "&distance=5";
                 itShouldLoadMore = false;
-                Log.d("jfiwjfio", URL);
+
                 StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("hgerithjiow", String.valueOf(response));
+
                         mprogressBar.setVisibility(View.GONE);
                         itShouldLoadMore = true;
                         try {
                             JSONArray jsonArray = new JSONArray(response);
                             if (jsonArray.length() == 0) {
-                                noValuesLayout.setVisibility(View.VISIBLE);
-                               /* Toast toast = Toast.makeText(SubActivity.this, "No Values4", Toast.LENGTH_LONG);
-                                toast.setGravity(Gravity.CENTER, 0, 0);
-                                toast.show();*/
+                                View view = getLayoutInflater().inflate(R.layout.no_values, allViewLayout,false);
+                                view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                                allViewLayout.addView(view);
                             } else {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -507,10 +524,9 @@ public class SubActivity extends AppCompatActivity {
                                     String vendorName = jsonObject.getString("vendorName");
                                     Integer vendorId = jsonObject.getInt("vendorId");
                                     String area = jsonObject.getString("area");
-                                    String amenities = jsonObject.getString("amenities");
-                                    Log.d("ncwiwnfiri", amenities);
-                                    Log.d("ncwiwnfiri1", vendorName);
-                                    subActivityModels.add(new SubActivityModel(vendorName, area,vendorId));
+                                    String vendorShopImage = jsonObject.getString("vendorShopImage");
+
+                                    subActivityModels.add(new SubActivityModel(vendorName, area,vendorId,vendorShopImage));
                                     subactivityAdapter.notifyDataSetChanged();
 
                                 }
@@ -524,41 +540,49 @@ public class SubActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        Log.d("jfiwjfio1", String.valueOf(error));
-
-
                         itShouldLoadMore = true;
                         mprogressBar.setVisibility(View.GONE);
-
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=findViewById(R.id.TryAgain);
+                            Button button = findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     recreate();
-                                }});
+                                }
+                            });
                         } else if (error instanceof ServerError) {
 
-                            Log.d("heuiwirhu1", String.valueOf(error));
+                            View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            allViewLayout.addView(view);
+                            Button button =view.findViewById(R.id.SomethingTryAgain1);
+                            button.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    recreate();
+                                }
+                            });
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
                         }  else if (error instanceof TimeoutError) {
-                            noInternetLayout.setVisibility(View.VISIBLE);
-                            allViewLayout.setVisibility(View.GONE);
-                            Button button=findViewById(R.id.TryAgain);
+
+                            View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            allViewLayout.addView(view);
+                            Button button =view.findViewById(R.id.SomethingTryAgain1);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     recreate();
-                                }});
+                                }
+                            });
                         }
                     }
                 });
-                RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-                requestQueue1.add(request1);
+                VolleySingleton.getInstance(SubActivity.this).addToRequestQueue(request1);
 
             }
         }
@@ -577,8 +601,7 @@ public class SubActivity extends AppCompatActivity {
 
 
             if (searchLat != null && !searchLat.isEmpty()) {
-                Log.d("jfiwejf", searchLat);
-                Log.d("jfiwejf1", searchLong);
+
                 double mSearchLat = Double.parseDouble(searchLat);
                 double mSearchLong = Double.parseDouble(searchLong);
                 String URL = Constant.API + "/user/getVendorsByFilters?amenityId=" + mamenitiesList + "&cost=" + mprogressRate + "&fromCost=" + mfromAmount + "&tocost=" + mtoAmount + "&order=" + mRelavance + "&lat=" + mSearchLat + "&long=" + mSearchLong + "&offset=" + mOffset + "&limit=" + mLimit + "&gender=" + mGender+"&subActivityId="+msubActivityId;
@@ -587,7 +610,7 @@ public class SubActivity extends AppCompatActivity {
                 StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("hgerithjiow", String.valueOf(response));
+
                         mprogressBar.setVisibility(View.GONE);
                         itShouldLoadMore = true;
                         try {
@@ -603,11 +626,10 @@ public class SubActivity extends AppCompatActivity {
                                     String vendorName = jsonObject.getString("vendorName");
                                     Integer vendorId = jsonObject.getInt("vendorId");
                                     String area = jsonObject.getString("area");
-                                    String amenities = jsonObject.getString("amenities");
-                                    Log.d("ncwiwnfiri", amenities);
-                                    Log.d("ncwiwnfiri1", vendorName);
+                                    String vendorShopImage = jsonObject.getString("vendorShopImage");
 
-                                    subActivityModels.add(new SubActivityModel(vendorName, area,vendorId));
+
+                                    subActivityModels.add(new SubActivityModel(vendorName, area,vendorId,vendorShopImage));
                                     subactivityAdapter.notifyDataSetChanged();
 
                                 }
@@ -620,7 +642,6 @@ public class SubActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("frwgtw", String.valueOf(error));
 
                         itShouldLoadMore = true;
                         mprogressBar.setVisibility(View.GONE);
@@ -628,48 +649,54 @@ public class SubActivity extends AppCompatActivity {
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=findViewById(R.id.TryAgain);
+                            Button button = findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     recreate();
-                                }});
+                                }
+                            });
                         } else if (error instanceof ServerError) {
 
-                            Log.d("heuiwirhu1", String.valueOf(error));
+                            View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            allViewLayout.addView(view);
+                            Button button =view.findViewById(R.id.SomethingTryAgain1);
+                            button.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    recreate();
+                                }
+                            });
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof TimeoutError) {
-                            noInternetLayout.setVisibility(View.VISIBLE);
-                            allViewLayout.setVisibility(View.GONE);
-                            Button button=findViewById(R.id.TryAgain);
+                        }  else if (error instanceof TimeoutError) {
+
+                            View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            allViewLayout.addView(view);
+                            Button button =view.findViewById(R.id.SomethingTryAgain1);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     recreate();
-                                }});
+                                }
+                            });
                         }
                     }
                 });
-                RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-                requestQueue1.add(request1);
+                VolleySingleton.getInstance(SubActivity.this).addToRequestQueue(request1);
             } else {
 
                 String URL = Constant.API + "/user/getVendorsByFilters?amenityId=" + mamenitiesList + "&cost=" + mprogressRate + "&fromCost=" + mfromAmount + "&tocost=" + mtoAmount + "&order=" + mRelavance + "&lat=" + latitude + "&long=" + longitude + "&offset=" + mOffset + "&limit=" + mLimit + "&gender=" + mGender+"&subActivityId="+msubActivityId;
-                Log.d("fjwiof", "fjwiu");
-                Log.d("rrrrr1", mGender);
-                Log.d("rrrrr2", mRelavance);
-                Log.d("rrrrr3", mfromAmount);
-                Log.d("rrrrr4", mtoAmount);
-                Log.d("rrrrr5", mprogressRate);
-                Log.d("rrrrr6", mamenitiesList);
+
                 itShouldLoadMore = false;
-                Log.d("jfiwjfio", URL);
+
                 StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("ureuerjure", String.valueOf(response));
+
                         mprogressBar.setVisibility(View.GONE);
                         itShouldLoadMore = true;
                         try {
@@ -685,11 +712,10 @@ public class SubActivity extends AppCompatActivity {
                                     String vendorName = jsonObject.getString("vendorName");
                                     Integer vendorId = jsonObject.getInt("vendorId");
                                     String area = jsonObject.getString("area");
-                                    String amenities = jsonObject.getString("amenities");
-                                    Log.d("ncwiwnfiri", amenities);
-                                    Log.d("ncwiwnfiri1", vendorName);
+                                    String vendorShopImage = jsonObject.getString("vendorShopImage");
 
-                                    subActivityModels.add(new SubActivityModel(vendorName, area,vendorId));
+
+                                    subActivityModels.add(new SubActivityModel(vendorName, area,vendorId,vendorShopImage));
                                     subactivityAdapter.notifyDataSetChanged();
 
                                 }
@@ -703,8 +729,7 @@ public class SubActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        Log.d("hfdiu", String.valueOf(error));
-                        Log.d("hfdiu1", String.valueOf(error.networkResponse.statusCode));
+
 
                         itShouldLoadMore = true;
                         mprogressBar.setVisibility(View.GONE);
@@ -712,33 +737,44 @@ public class SubActivity extends AppCompatActivity {
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=findViewById(R.id.TryAgain);
+                            Button button = findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     recreate();
-                                }});
+                                }
+                            });
                         } else if (error instanceof ServerError) {
 
-                            Log.d("heuiwirhu1", String.valueOf(error));
+                            View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            allViewLayout.addView(view);
+                            Button button =view.findViewById(R.id.SomethingTryAgain1);
+                            button.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    recreate();
+                                }
+                            });
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof TimeoutError) {
-                            noInternetLayout.setVisibility(View.VISIBLE);
-                            allViewLayout.setVisibility(View.GONE);
-                            Button button=findViewById(R.id.TryAgain);
+                        }  else if (error instanceof TimeoutError) {
+
+                            View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            allViewLayout.addView(view);
+                            Button button =view.findViewById(R.id.SomethingTryAgain1);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     recreate();
-                                }});
-
+                                }
+                            });
                         }
                     }
                 });
-                RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-                requestQueue1.add(request1);
+                VolleySingleton.getInstance(SubActivity.this).addToRequestQueue(request1);
 
             }
 
@@ -746,8 +782,7 @@ public class SubActivity extends AppCompatActivity {
         } else {
 
             if (searchLat != null && !searchLat.isEmpty()) {
-                Log.d("jfiwejf", searchLat);
-                Log.d("jfiwejf1", searchLat);
+
                 double mSearchLat = Double.parseDouble(searchLat);
                 double mSearchLong = Double.parseDouble(searchLong);
                 String URL = Constant.API + "/general/getVendorsByActivityAndSubActivity?subActivityId=" + msubActivityId + "&offset=" + mOffset + "&limit=" + mLimit + "&lat=" + mSearchLat + "&long=" + mSearchLong + "&distance=5";
@@ -758,7 +793,7 @@ public class SubActivity extends AppCompatActivity {
                 StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("hgerithjiow", String.valueOf(response));
+
 
                         progressWheel.setVisibility(View.GONE);
 
@@ -774,8 +809,9 @@ public class SubActivity extends AppCompatActivity {
                                     String vendorName = jsonObject.getString("vendorName");
                                     Integer vendorId = jsonObject.getInt("vendorId");
                                     String area = jsonObject.getString("area");
+                                    String vendorShopImage = jsonObject.getString("vendorShopImage");
 
-                                    subActivityModels.add(new SubActivityModel(vendorName, area,vendorId));
+                                    subActivityModels.add(new SubActivityModel(vendorName, area,vendorId,vendorShopImage));
                                     subactivityAdapter.notifyDataSetChanged();
 
                                 }
@@ -788,42 +824,52 @@ public class SubActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("frwgtw", String.valueOf(error));
+
                         progressWheel.setVisibility(View.GONE);
 
                         itShouldLoadMore = true;
 
-
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=findViewById(R.id.TryAgain);
+                            Button button = findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     recreate();
-                                }});
+                                }
+                            });
                         } else if (error instanceof ServerError) {
 
-                            Log.d("heuiwirhu1", String.valueOf(error));
+                            View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            allViewLayout.addView(view);
+                            Button button =view.findViewById(R.id.SomethingTryAgain1);
+                            button.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    recreate();
+                                }
+                            });
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof TimeoutError) {
-                            noInternetLayout.setVisibility(View.VISIBLE);
-                            allViewLayout.setVisibility(View.GONE);
-                            Button button=findViewById(R.id.TryAgain);
+                        }  else if (error instanceof TimeoutError) {
+
+                            View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            allViewLayout.addView(view);
+                            Button button =view.findViewById(R.id.SomethingTryAgain1);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     recreate();
-                                }});
-
+                                }
+                            });
                         }
                     }
                 });
-                RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-                requestQueue1.add(request1);
+                VolleySingleton.getInstance(SubActivity.this).addToRequestQueue(request1);
 
             } else {
 
@@ -839,7 +885,6 @@ public class SubActivity extends AppCompatActivity {
                 StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("hgerithjiow", String.valueOf(response));
 
                         progressWheel.setVisibility(View.GONE);
 
@@ -858,8 +903,9 @@ public class SubActivity extends AppCompatActivity {
                                     String vendorName = jsonObject.getString("vendorName");
                                     Integer vendorId = jsonObject.getInt("vendorId");
                                     String area = jsonObject.getString("area");
+                                    String vendorShopImage = jsonObject.getString("vendorShopImage");
 
-                                    subActivityModels.add(new SubActivityModel(vendorName, area,vendorId));
+                                    subActivityModels.add(new SubActivityModel(vendorName, area,vendorId,vendorShopImage));
                                     subactivityAdapter.notifyDataSetChanged();
                                 }
                             }
@@ -871,37 +917,47 @@ public class SubActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("frwgtw", String.valueOf(error));
+
                         progressWheel.setVisibility(View.GONE);
 
                         itShouldLoadMore = true;
-
-
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
                             allViewLayout.setVisibility(View.GONE);
-                            Button button=findViewById(R.id.TryAgain);
+                            Button button = findViewById(R.id.TryAgain);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     recreate();
-                                }});
+                                }
+                            });
                         } else if (error instanceof ServerError) {
 
-                            Log.d("heuiwirhu1", String.valueOf(error));
+                            View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            allViewLayout.addView(view);
+                            Button button =view.findViewById(R.id.SomethingTryAgain1);
+                            button.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    recreate();
+                                }
+                            });
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                        } else if (error instanceof TimeoutError) {
-                            noInternetLayout.setVisibility(View.VISIBLE);
-                            allViewLayout.setVisibility(View.GONE);
-                            Button button=findViewById(R.id.TryAgain);
+                        }  else if (error instanceof TimeoutError) {
+
+                            View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            allViewLayout.addView(view);
+                            Button button =view.findViewById(R.id.SomethingTryAgain1);
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     recreate();
-                                }});
-
+                                }
+                            });
                         }
                     }
                 }) /*{
@@ -914,14 +970,12 @@ public class SubActivity extends AppCompatActivity {
 
                     }
                 }*/;
-                RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-                requestQueue1.add(request1);
-
+                VolleySingleton.getInstance(SubActivity.this).addToRequestQueue(request1);
             }
         }
     }
     private void searchLoadMore(){
-        Log.d("fjifiedwedew",searchText);
+
 
         mOffset = temp;
         mLimit = temp + 5;
@@ -932,36 +986,33 @@ public class SubActivity extends AppCompatActivity {
         StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("mierefmier", String.valueOf(response));
+
                 mprogressBar.setVisibility(View.GONE);
                 itShouldLoadMore = true;
                 try {
                     JSONArray jsonArray = new JSONArray(response);
-                    Log.d("mierefmier1", String.valueOf(jsonArray));
+
                     if (jsonArray.length() == 0) {
-                        Log.d("mierefmier1", String.valueOf(jsonArray));
+
                        // noValuesLayout.setVisibility(View.VISIBLE);
                               /*  Toast toast = Toast.makeText(SubActivity.this, "No Values3", Toast.LENGTH_LONG);
                                 toast.setGravity(Gravity.CENTER, 0, 0);
                                 toast.show();*/
                     } else {
-                        Log.d("mierefmier3", String.valueOf(jsonArray.length()));
+
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            Log.d("mierefmier2", String.valueOf(jsonObject.length()));
-
-                            String vendorName = jsonObject.getString("vendorName");
+                                         String vendorName = jsonObject.getString("vendorName");
                             Integer vendorId = jsonObject.getInt("vendorId");
                             String area = jsonObject.getString("area");
                           //  String activityId = jsonObject.getString("activityId");
                             String subActivityId = jsonObject.getString("subActivityId");
-                            Log.d("gbjieguir",subActivityId);
+
                             mtinyDb.putString("activityId",subActivityId);
+                            String vendorShopImage = jsonObject.getString("vendorShopImage");
 
 
-                            Log.d("iiiiiii1", vendorName);
-
-                            subActivityModels.add(new SubActivityModel(vendorName, area,vendorId));
+                            subActivityModels.add(new SubActivityModel(vendorName, area,vendorId,vendorShopImage));
                             subactivityAdapter.notifyDataSetChanged();
 
                         }
@@ -974,7 +1025,6 @@ public class SubActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("nciefeir", String.valueOf(error));
 
                 itShouldLoadMore = true;
                 mprogressBar.setVisibility(View.GONE);
@@ -982,33 +1032,44 @@ public class SubActivity extends AppCompatActivity {
                 if (error instanceof NetworkError) {
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
-                    Button button=findViewById(R.id.TryAgain);
+                    Button button = findViewById(R.id.TryAgain);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             recreate();
-                        }});
+                        }
+                    });
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
+                    View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                    view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    allViewLayout.addView(view);
+                    Button button =view.findViewById(R.id.SomethingTryAgain1);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            recreate();
+                        }
+                    });
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                } else if (error instanceof TimeoutError) {
-                    noInternetLayout.setVisibility(View.VISIBLE);
-                    allViewLayout.setVisibility(View.GONE);
-                    Button button=findViewById(R.id.TryAgain);
+                }  else if (error instanceof TimeoutError) {
+
+                    View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                    view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    allViewLayout.addView(view);
+                    Button button =view.findViewById(R.id.SomethingTryAgain1);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             recreate();
-                        }});
-
+                        }
+                    });
                 }
             }
         });
-        RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-        requestQueue1.add(request1);
+        VolleySingleton.getInstance(SubActivity.this).addToRequestQueue(request1);
 
 
     }
@@ -1040,7 +1101,6 @@ public class SubActivity extends AppCompatActivity {
 
             @Override
             public boolean onClose() {
-               Log.d("fwuiifjuw","fjrirw");
 
                     startActivity(getIntent());
                     finish();
@@ -1065,7 +1125,6 @@ public class SubActivity extends AppCompatActivity {
                 subActivityModels.clear();
 
                 searchText = s.toUpperCase();
-                Log.d("jrwuii",searchText);
                 searchMethods(searchText);
                 return false;
             }
@@ -1092,9 +1151,9 @@ public class SubActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
     protected void searchMethods(String text){
-        Log.d("fhewuhui",text);
+
         if(text.equals("")){
-            noValuesLayout.setVisibility(View.GONE);
+
             firstLoadData();
         }else {
             recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -1108,63 +1167,53 @@ public class SubActivity extends AppCompatActivity {
                 textSearchlat=latitude;
                 textSearchlon=longitude;
             }
+
             String URL = Constant.API + "/general/searchIndividualOrChain?searchText=" + text + "&limit=5&offset=0&subActivityId="+msubActivityId+"&lat="+textSearchlat+"&long="+textSearchlon+"&distance=5";
             itShouldLoadMore = false;
             StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.d("ngietgierg", String.valueOf(response));
+
                     mprogressBar.setVisibility(View.GONE);
                     itShouldLoadMore = true;
                     try {
                         JSONArray jsonArray = new JSONArray(response);
-                        Log.d("ngietgierg1", String.valueOf(jsonArray));
+
                         if (jsonArray.length() == 0) {
-                            noValuesLayout.setVisibility(View.VISIBLE);
-                              /*  Toast toast = Toast.makeText(SubActivity.this, "No Values3", Toast.LENGTH_LONG);
-                                toast.setGravity(Gravity.CENTER, 0, 0);
-                                toast.show();*/
+                            View view = getLayoutInflater().inflate(R.layout.no_values, allViewLayout,false);
+                            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            allViewLayout.addView(view);
                         } else {
-                            Log.d("ngietgierg2", String.valueOf(jsonArray.length()));
-                            noValuesLayout.setVisibility(View.GONE);
+
                             for (int k = 0; k < jsonArray.length(); k++) {
-                                Log.d("ngietgierg10", "run1");
+
                                 JSONObject jsonObject = jsonArray.getJSONObject(k);
 
                                 String vendorName = jsonObject.getString("vendorName");
                                 Integer vendorId = jsonObject.getInt("vendorId");
                                 String area = jsonObject.getString("area");
                                 String subActivityId = jsonObject.getString("subActivityId");
-                                Log.d("gbjieguir", subActivityId);
+                                String vendorShopImage = jsonObject.getString("vendorShopImage");
+
                                 mtinyDb.putString("activityId", subActivityId);
 
 
-                                Log.d("ngietgierg3", String.valueOf(jsonObject.length()));
-                                Log.d("ngietgierg4", String.valueOf(jsonObject));
-
-                                Log.d("ngietgierg11", "run2");
-
-                                Log.d("vuinreru43", vendorName);
-                                Log.d("dfneinfe3", String.valueOf(vendorId));
-
-
-                                subActivityModels.add(new SubActivityModel(vendorName, area, vendorId));
+                                subActivityModels.add(new SubActivityModel(vendorName, area,vendorId,vendorShopImage));
                                 subactivityAdapter.notifyDataSetChanged();
 
                             }
-                            Log.d("ngietgierg12", "run3");
+
                         }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Log.d("ngietgierg14", String.valueOf(e));
-                        Log.d("ngietgierg13", "run4");
+
                     }
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.d("ncncrrfuir", String.valueOf(error));
+
 
                     itShouldLoadMore = true;
                     mprogressBar.setVisibility(View.GONE);
@@ -1172,7 +1221,7 @@ public class SubActivity extends AppCompatActivity {
                     if (error instanceof NetworkError) {
                         noInternetLayout.setVisibility(View.VISIBLE);
                         allViewLayout.setVisibility(View.GONE);
-                        Button button =  findViewById(R.id.TryAgain);
+                        Button button = findViewById(R.id.TryAgain);
                         button.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -1181,26 +1230,35 @@ public class SubActivity extends AppCompatActivity {
                         });
                     } else if (error instanceof ServerError) {
 
-                        Log.d("heuiwirhu1", String.valueOf(error));
-                    } else if (error instanceof ParseError) {
-                        Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
-
-                    } else if (error instanceof TimeoutError) {
-                        noInternetLayout.setVisibility(View.VISIBLE);
-                        allViewLayout.setVisibility(View.GONE);
-                        Button button =  findViewById(R.id.TryAgain);
+                        View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                        view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                        allViewLayout.addView(view);
+                        Button button =view.findViewById(R.id.SomethingTryAgain1);
                         button.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 recreate();
                             }
                         });
+                    } else if (error instanceof ParseError) {
+                        Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
+                    }  else if (error instanceof TimeoutError) {
+
+                        View view = getLayoutInflater().inflate(R.layout.something_went_wrong, allViewLayout,false);
+                        view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                        allViewLayout.addView(view);
+                        Button button =view.findViewById(R.id.SomethingTryAgain1);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                recreate();
+                            }
+                        });
                     }
                 }
             });
-            RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-            requestQueue1.add(request1);
+            VolleySingleton.getInstance(SubActivity.this).addToRequestQueue(request1);
 
         }
         }

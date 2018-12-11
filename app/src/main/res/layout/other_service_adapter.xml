@@ -10,12 +10,11 @@
     >
     <TextView
         android:gravity="center"
-
         android:textColor="@color/block"
         android:textStyle="italic"
-        android:textSize="12sp"
+        android:textSize="11sp"
         android:layout_centerHorizontal="true"
         android:id="@+id/nameofService"
         android:layout_width="100dp"
-        android:layout_height="wrap_content" />
+        android:layout_height="35dp" />
 </RelativeLayout>

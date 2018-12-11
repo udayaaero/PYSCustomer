@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="@color/colorPrimary"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    tools:context="com.coeuz.pyscustomer.PaymentActivity">
+    <LinearLayout
+        android:padding="6dp"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+           android:weightSum="2"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            tools:ignore="DisableBaselineAlignment">
+        <LinearLayout
+         android:layout_weight="1"
+         android:layout_width="0dp"
+         android:layout_height="30dp">
+        <TextView
+
+         android:textColor="@color/green"
+         android:layout_gravity="start"
+         android:text="Otp: "
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
+         <TextView
+          android:textStyle="bold"
+          android:id="@+id/otp"
+          android:textColor="@color/green"
+          android:layout_gravity="start"
+          android:text="Otp:"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+             tools:ignore="HardcodedText" />
+       </LinearLayout>
+         <LinearLayout
+           android:gravity="end"
+           android:layout_weight="1"
+           android:layout_width="0dp"
+           android:layout_height="30dp">
+        <TextView
+        android:layout_marginEnd="5dp"
+        android:id="@+id/skipBtn"
+        android:textColor="@color/green"
+        android:text="close"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+            tools:ignore="HardcodedText" />
+
+     </LinearLayout>
+        </LinearLayout>
+    <LinearLayout
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:textColor="@color/block"
+            android:textStyle="bold"
+            android:id="@+id/subActivityType1"
+            android:text="Type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
+        <TextView
+            android:layout_marginTop="5dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp"
+            android:id="@+id/vendorName1"
+            android:text="vendorName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
+        <LinearLayout
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <TextView
+            android:layout_marginTop="5dp"
+            android:textColor="@color/block"
+            android:textSize="12sp"
+            android:text="PersonCount  : "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
+            <TextView
+                android:layout_marginTop="5dp"
+                android:textColor="@color/block"
+                android:textSize="14sp"
+                android:id="@+id/personCounts"
+                android:text="0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+        <LinearLayout
+
+            android:layout_marginTop="5dp"
+            android:weightSum="2"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="DisableBaselineAlignment">
+            <LinearLayout
+                android:gravity="center"
+                android:orientation="horizontal"
+               android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="UseCompoundDrawables">
+          <ImageView
+             android:background="@drawable/calender"
+              android:layout_gravity="center"
+               android:layout_width="20dp"
+              android:layout_height="20dp"
+              tools:ignore="ContentDescription" />
+        <TextView
+            android:layout_marginStart="5dp"
+            android:id="@+id/booedforDate1"
+            android:text="booked for date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/timeLayouts"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:background="@drawable/clock"
+                    android:layout_gravity="center"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    tools:ignore="ContentDescription" />
+        <TextView
+            android:layout_marginStart="5dp"
+            android:id="@+id/startTime1"
+            android:text="startTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
+        <TextView
+         android:text=" - "
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
+        <TextView
+            android:id="@+id/endTime1"
+            android:text="endTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <TextView
+          android:textColor="@color/block"
+            android:text="Address:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
+        <TextView
+            android:id="@+id/area1"
+            android:text="Area"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+           >
+            <TextView
+                android:textColor="@color/block"
+                android:text="ContactNumber:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="HardcodedText" />
+            <TextView
+               android:layout_marginStart="10dp"
+                android:id="@+id/contactNo1"
+                android:text="ContactNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <ImageView
+                android:layout_gravity="center"
+                android:background="@drawable/important"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                tools:ignore="ContentDescription" />
+            <TextView
+                android:textColor="@color/block"
+                android:text="Prerequisite:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="HardcodedText" />
+            <TextView
+                android:layout_marginStart="10dp"
+                android:id="@+id/note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
+</LinearLayout>

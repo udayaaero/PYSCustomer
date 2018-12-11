@@ -112,13 +112,14 @@ public class SlotModel {
         @Expose
         private Object courseendDate;
 
-    public SlotModel(Integer slotId, String slotStartTime, String slotEndTime, Integer maxAllowed,Integer bookingSlotCost) {
+    public SlotModel(Integer slotId, String slotStartTime, String slotEndTime, Integer maxAllowed, Integer bookingSlotCost, Integer personCount) {
 
         this.slotId=slotId;
         this.slotStartTime=slotStartTime;
         this.slotEndTime=slotEndTime;
         this.maxAllowed=maxAllowed;
         this.bookingCost=bookingSlotCost;
+        this.personCount=personCount;
 
     }
 

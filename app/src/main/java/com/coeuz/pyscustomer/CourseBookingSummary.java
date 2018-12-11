@@ -37,6 +37,7 @@ import com.coeuz.pyscustomer.AdapterClass.OfferAdapterBookSummary;
 
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,6 +77,7 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
             ,mslotReccurence,mcourseStartDate,mcourseEndDate,mcourseRegistrationEndDate;
     String nCourseCost,nslotStartTime,nslotEndTime,ncourseDuration
             ,nmaxAllowed,nslotReccurence,ncourseStartDate,ncourseEndDate,ncourseRegistrationEndDate;
+    private String mpersonCount;
 
     @SuppressLint("SetTextI18n")
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -89,6 +91,7 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
 
         tinyDB=new TinyDB(getApplicationContext());
         tinyDB.putString(Constant.HISTORYPAGE,"COU");
+        mpersonCount=tinyDB.getString(Constant.PERSONCOUNT);
        // mToken=tinyDB.getString(Constant.TOKEN);
         msubActivityId=tinyDB.getString(Constant.COURSESUBACTIVITYID);
         selectedSlotIds=tinyDB.getString(Constant.COURSESLOTID);
@@ -164,13 +167,13 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
         btnFive.setOnClickListener(this);
 
         try {
-            Log.d("fhruifhruei1",vsessionDate);
+
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             Date date = formatter.parse(vsessionDate);
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
             newDates = sdf.format(date);
 
-            Log.d("fhruifhruei",newDates);
+
 
 
         } catch (Exception e) {
@@ -199,13 +202,13 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
         StringRequest request3 = new StringRequest(Request.Method.GET, URL3, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("trwtyfewfe", String.valueOf(response));
+
 
                 try {
 
                     JSONArray jsonArray = new JSONArray(response);
                     if (jsonArray.length() == 0) {
-                        Log.d("trwty", String.valueOf(response));
+
 
                     } else {
                         for (int i = 0; i < jsonArray.length(); i++) {
@@ -215,8 +218,7 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
                             String discount = jsonObject.getString("discount");
                             String category = jsonObject.getString("category");
                            // String type = jsonObject.getString("type");
-                            Log.d("nfjfnjfr", String.valueOf(startDate));
-                            Log.d("nfjfnjfr1", String.valueOf(expiryDate));
+
                             Integer discount1 = jsonObject.getInt("discount");
 
                             Long timestamp10 = Long.parseLong(startDate);
@@ -246,30 +248,22 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
                             offerBenefits.add(discount);
                             int s=0;
                             s+=discount1;
-                            Log.d("fjeifj", String.valueOf(s));
-                            Log.d("fjeriujre123", String.valueOf(offerBenefits));
-                            Log.d("fjeriujre1234", String.valueOf(offerDiscount));
-                            Log.d("fjeriujre", String.valueOf(offerBenefits));
-
 
                             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(CourseBookingSummary.this);
                             offerRecycler.setLayoutManager(layoutManager);
                             RecyclerView.Adapter adapter = new OfferAdapterBookSummary(getApplicationContext(),offerTypeList,offerBenefits);
                             offerRecycler.setAdapter(adapter);
-                            Log.d("fjeriujrefewrfw3", String.valueOf(offerDiscount));
+
 
 
 
                         }
-                        Log.d("dewfewfwfew", String.valueOf(offerBenefits));
-                        Log.d("fjeriujrefewrfw34", String.valueOf(offerDiscount));
 
 
                         for(int j = 0; j < offerDiscount.size(); j++){
                             if(offerDiscount.get(j)!=null){
                                 sum += offerDiscount.get(j);}}
 
-                        Log.d("fjwiofio", String.valueOf(sum));
                         mTotalDiscount.setText(String.valueOf(sum));
 
                     }
@@ -281,7 +275,7 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("yreuie", String.valueOf(error));
+
 
                 if (error instanceof NetworkError) {
 
@@ -295,7 +289,6 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
                         }});
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -313,8 +306,7 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
                 }
             }
         });
-        RequestQueue requestQueue3 = Volley.newRequestQueue(getApplicationContext());
-        requestQueue3.add(request3);
+        VolleySingleton.getInstance(CourseBookingSummary.this).addToRequestQueue(request3);
 
 
 
@@ -331,7 +323,7 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
             }
 
             totalCost=Integer.valueOf(mbookCosts.getText().toString());
-            Log.d("jfwiejfiwre", String.valueOf(totalCost));
+
 
         tinyDB.putString(Constant.PAYMENTPERSONCOUNT,personCounts);
 
@@ -346,7 +338,7 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
             StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.d("fhhuiefh", response);
+
                     mProgressDialog.dismiss();
                     try {
                         JSONObject jsonObject=new JSONObject(response);
@@ -389,9 +381,9 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.d("ryeuiryweq", error.toString());
+
                     mProgressDialog.dismiss();
-                    //  Log.d("ewqdadsfewr", String.valueOf(error.networkResponse.statusCode));
+
                     Toast.makeText(CourseBookingSummary.this, "Please try again", Toast.LENGTH_SHORT).show();
 
                 }
@@ -401,11 +393,6 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
 
                     HashMap<String, Object> hashMap = new HashMap<>();
 
-                    Log.d("jfiojfero2",mVendorId);
-                    Log.d("jfiojfero3",msubActivityId);
-                    Log.d("jfiojfero4",personCounts);
-                    Log.d("jfiojfero5",selectedSlotIds);
-                    Log.d("jfiojfero6",vsessionDate);
                     hashMap.put("vendorId", mVendorId);
                     hashMap.put("subActivityId", msubActivityId);
                     hashMap.put("personCount", personCounts);
@@ -440,8 +427,7 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
 
                 }
             });
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            requestQueue.add(request);
+        VolleySingleton.getInstance(CourseBookingSummary.this).addToRequestQueue(request);
 
     }
     public void checkPersonCount() {
@@ -454,13 +440,13 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
         StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("feifjeije", response);
+
                 try {
                     JSONObject jsonObject=new JSONObject(response);
                     String status=jsonObject.getString("status");
                     String errorMessage=jsonObject.getString("errorMessage");
                     if(status.equals("true")){
-                        Log.d("feifjeije", response);
+
                     }else {
                         Toast toast = Toast.makeText(CourseBookingSummary.this, errorMessage, Toast.LENGTH_SHORT);
                         toast.setGravity(Gravity.CENTER, 0, 0);
@@ -474,7 +460,7 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("ryeuiryweq", error.toString());
+
 
             }
         }) {
@@ -483,11 +469,6 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
 
                 HashMap<String, Object> hashMap = new HashMap<>();
 
-                Log.d("jfiojfero2",mVendorId);
-                Log.d("jfiojfero3",msubActivityId);
-                Log.d("jfiojfero4",personCounts);
-                Log.d("jfiojfero5",selectedSlotIds);
-                Log.d("jfiojfero6",vsessionDate);
                 hashMap.put("vendorId", mVendorId);
                 hashMap.put("subActivityId", msubActivityId);
                 hashMap.put("personCount", personCounts);
@@ -522,8 +503,7 @@ public class CourseBookingSummary extends AppCompatActivity implements View.OnCl
 
             }
         });
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        requestQueue.add(request);
+        VolleySingleton.getInstance(CourseBookingSummary.this).addToRequestQueue(request);
 
     }
     @Override

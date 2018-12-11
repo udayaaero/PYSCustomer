@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:background="#C0000000"
+    tools:context="com.coeuz.pyscustomer.PaymentActivity">
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+      <LinearLayout
+          android:orientation="vertical"
+          android:background="#EFF5FE"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <android.support.v7.widget.CardView
+        android:background="#EFF5FE"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:background="#EFF5FE"
+            android:paddingTop="20dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="20dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_weight="1.5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:gravity="center"
+                        android:background="@drawable/backroselite"
+                        android:textStyle="bold"
+                        android:textColor="@color/block"
+                        android:text="MASTERCARD"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        tools:ignore="HardcodedText" />
+                </LinearLayout>
+
+            </LinearLayout>
+            <LinearLayout
+
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_marginTop="10dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/block"
+                    android:text="Get 25% discount using Mastercard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText,TooDeepLayout" />
+                <TextView
+                    android:layout_marginTop="5dp"
+                    android:text="Use code MASTERCARD and get 25% discount upto Rs.60 on your booking"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+    </LinearLayout>
+    <LinearLayout
+        android:background="@color/white"
+        android:padding="10dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:drawablePadding="10dp"
+            android:drawableStart="@drawable/ic_fiber_manual_record_black_24dp"
+            android:layout_marginTop="5dp"
+            android:text="Valid twice per user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
+        <TextView
+            android:drawablePadding="10dp"
+            android:drawableStart="@drawable/ic_fiber_manual_record_black_24dp"
+            android:layout_marginTop="10dp"
+            android:text="other T and C apply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
+        <TextView
+            android:drawablePadding="10dp"
+            android:drawableStart="@drawable/ic_fiber_manual_record_black_24dp"
+            android:layout_marginTop="10dp"
+            android:text="offer valid till Dec 31,2018 23.59 PM"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText" />
+        <Button
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:text="APPLY THIS OFFER"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/backbuttonyellow1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+    </LinearLayout>
+    </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

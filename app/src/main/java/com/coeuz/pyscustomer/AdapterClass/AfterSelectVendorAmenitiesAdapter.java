@@ -2,6 +2,7 @@ package com.coeuz.pyscustomer.AdapterClass;
 
 import android.content.Context;
 
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import com.coeuz.pyscustomer.Requiredclass.TinyDB;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class AfterSelectVendorAmenitiesAdapter extends RecyclerView.Adapter<AfterSelectVendorAmenitiesAdapter.MyViewHolder> {
@@ -23,35 +25,25 @@ public class AfterSelectVendorAmenitiesAdapter extends RecyclerView.Adapter<Afte
     TinyDB mtinyDb;
 
 
-    private ArrayList<Integer> ImageList=new ArrayList<>();
 
     private ArrayList<String> amenitiesAdapter1;
+    private ArrayList<String>  amenitiesIdList1=new ArrayList<>();
+    private HashMap<String,Bitmap> imagesHasmap=new HashMap<>();
+
+    private  Bitmap bit;
 
 
 
-    public AfterSelectVendorAmenitiesAdapter(Context applicationContext, ArrayList<String> amenitiesList) {
 
+
+
+    public AfterSelectVendorAmenitiesAdapter(Context applicationContext, ArrayList<String> amenitiesIdList, ArrayList<String> amenitiesList, HashMap<String, Bitmap> amenitiesImageList) {
         mcontext=applicationContext;
         amenitiesAdapter1=amenitiesList;
-
-        mtinyDb=new TinyDB(mcontext);
-        ImageList.add(R.drawable.ac_icon);
-        ImageList.add(R.drawable.locker_icon);
-        ImageList.add(R.drawable.parking_icon);
-        ImageList.add(R.drawable.wifi_icon);
-        ImageList.add(R.drawable.jacuzzi_icon);
-        ImageList.add(R.drawable.music_icon);
-        ImageList.add(R.drawable.salad_icon);
-        ImageList.add(R.drawable.locker_icon);
-        ImageList.add(R.drawable.locker_icon);
-
-        Log.d("yeruwiuifwi2", String.valueOf(amenitiesAdapter1.size()));
-        for (int i = 0; i <amenitiesAdapter1.size() ; i++) {
-            ImageList.add(R.drawable.locker_icon);
-        }
-
-
+        amenitiesIdList1=amenitiesIdList;
+        imagesHasmap=amenitiesImageList;
     }
+
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -75,8 +67,9 @@ public class AfterSelectVendorAmenitiesAdapter extends RecyclerView.Adapter<Afte
 
     @Override
     public void onBindViewHolder(final AfterSelectVendorAmenitiesAdapter.MyViewHolder holder, final int position) {
-
-        holder.image.setImageResource(ImageList.get(position));
+        String id=amenitiesIdList1.get(position);
+       Bitmap bitmap= imagesHasmap.get(id);
+        holder.image.setImageBitmap(bitmap);
         holder.nameOfAmenity.setText(amenitiesAdapter1.get(position));
 
         }

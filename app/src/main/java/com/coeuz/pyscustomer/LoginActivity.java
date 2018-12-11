@@ -4,6 +4,7 @@ package com.coeuz.pyscustomer;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 import com.facebook.FacebookSdk;
 import android.content.Context;
 import android.content.Intent;
@@ -109,9 +110,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             @Override
             public void idsAvailable(String userId, String registrationId) {
                 onsignalUserId=userId;
-                Log.d("debug", "User:" + userId);
-                if (registrationId != null)
-                    Log.d("debug", "registrationId:" + registrationId);
+
+                if (registrationId != null){}
+
 
             }
         });
@@ -152,8 +153,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     mProfileTracker = new ProfileTracker() {
                         @Override
                         protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
-                            Log.d("ffwrfewfew12", "ffwrfewfew");
-                            Log.d("facebook - profile", currentProfile.getFirstName());
+
                             mProfileTracker.stopTracking();
                         }
                     };
@@ -161,20 +161,18 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     // because it is called by its constructor, internally.
                 } else {
                     Profile profile = Profile.getCurrentProfile();
-                    Log.d("ffwrfewfew342", "ffwrfewfew");
-                    Log.d("frewfrewf322", profile.getFirstName());
+
                 }
             }
 
             @Override
             public void onCancel() {
-                Log.d("ffwrfewfew12", "ffwrfewfew");
-                Log.d("facebook - onCancel", "cancelled");
+
             }
 
             @Override
             public void onError(FacebookException e) {
-                Log.d("facebook - onError", e.getMessage());
+
             }
         });*/
        callbackManager=CallbackManager.Factory.create();
@@ -185,12 +183,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
                /* Toast.makeText(LoginActivity.this, "Login Success \n"+loginResult.getAccessToken().getUserId()+
                         "\n"+loginResult.getAccessToken().getToken(), Toast.LENGTH_SHORT).show();*/
-                Log.d("yuwriyiwuwe",loginResult.getAccessToken().getToken());
-                Log.d("yuwriyiwuwe1", String.valueOf(loginResult));
+
 
                 mToken=loginResult.getAccessToken().getToken();
                 tinyDB.putString(Constant.TOKEN,mToken);
-                Log.d("fuiwrfuwiewfeww",mToken);
+
 
 
                 SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -216,7 +213,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
             @Override
             public void onError(FacebookException error) {
-            Log.d("fhewuhfu8eiw",error.toString());
 
             }
         });
@@ -243,6 +239,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -282,7 +279,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     private void signIn() {
         Intent signIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        Log.d("jhuwri2", String.valueOf(mGoogleApiClient));
+
         startActivityForResult(signIntent, RC_SIGN_IN);
     }
 
@@ -330,7 +327,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
                 @Override
                 public void onResponse(String response) {
-                    Log.d("fnruingior",response);
+
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         muserId = jsonObject.getString("userId");
@@ -352,14 +349,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     startActivity(intent);
                     finish();
 
-                    Log.d("jfiojeio", String.valueOf(response));
-
-
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.d("ppppppppppp", String.valueOf(error));
+
+              
                     if (String.valueOf(error).equals("com.android.volley.AuthFailureError")) {
                         Toast.makeText(getApplicationContext(), "Couldn't find Your Account! Please SignUp!!", Toast.LENGTH_SHORT).show();
                     }
@@ -376,7 +371,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         });
                     } else if (error instanceof ServerError) {
 
-                        Log.d("heuiwirhu1", String.valueOf(error));
+
                     } else if (error instanceof ParseError) {
                         Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -399,7 +394,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 @Override
                 protected Response<String> parseNetworkResponse(final NetworkResponse response) {
                     try {
-                        Log.d("mfiwoeiomifm", response.headers.get("x-auth-token"));
+
                         tinyDB.putString(Constant.TOKEN, response.headers.get("x-auth-token"));
                         return Response.success(
                                 new String(
@@ -417,21 +412,18 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     Map<String, String> headers = new HashMap<>();
 
                     String credentials = emails + ':' + passwords;
-                    Log.d("hfrwuihi", emails);
-                    Log.d("hfrwuihi", passwords);
+
                     String auth = "Basic "
                             + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
                     headers.put("Authorization", auth);
                     headers.put("X-Notify-Token", onsignalUserId);
-                    Log.d("jfiwejetr", onsignalUserId);
-                    Log.d("jfiwej", String.valueOf(headers.get("x-auth-token")));
+
                     return headers;
 
                 }
 
             };
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            requestQueue.add(request);
+            VolleySingleton.getInstance(LoginActivity.this).addToRequestQueue(request);
 
         }
     }
@@ -441,16 +433,16 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             String a = result.getStatus().toString();
-            Log.d("iortrewutrt", a);
+
 
             if (result.isSuccess()) {
                 GoogleSignInAccount acct = result.getSignInAccount();
 
                 if (acct != null) {
-                    Log.d("iortrewutrt2", acct.getIdToken());
+
                     mToken = acct.getIdToken();
                     tinyDB.putString(Constant.TOKEN, mToken);
-                    Log.d("fuiwrfuwiewfeww", mToken);
+
 
 
                     SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -468,7 +460,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
                 }
                 assert acct != null;
-                Log.d("iortrewutrt4", acct.getEmail());
+
 
             }
 
@@ -487,7 +479,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         String personEmail = acct.getEmail();
                         String personPhotoUrl = acct.getPhotoUrl().toString();
                         String personKey = acct.getIdToken().toString();*//*
-                        Log.d("fewfwe",authCode);
+
                     }*/
 
 
@@ -504,20 +496,20 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
 
             if (acct != null) {
-                Log.d("riueeire1", String.valueOf(acct));
+
                 GoogleSignInAccount acct1 = result.getSignInAccount();
                 String acct12 = acct1.getIdToken();
                 if (acct12 != null) {
-                    Log.d("riueeire12", acct12);
+
                 }
-                Log.d("riueeire12", String.valueOf(acct1));
+
                 String idTokenString = acct1.getIdToken();
                 if (idTokenString != null) {
-                    Log.d("riueeire", idTokenString);
+
                 }
                  *//* mToken=idTokenString.getAccessToken().getToken();
                 tinyDB.putString(TOKEN,mToken);
-                Log.d("fuiwrfuwiew",mToken);*//*
+
                 //getCurrentUser();
 
                 SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -593,7 +585,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 key = new String(Base64.encode(md.digest(), 0));
 
                 // String key = new String(Base64.encodeBytes(md.digest()));
-                Log.d("Key Hash=", key);
+
             }
         } catch (PackageManager.NameNotFoundException e1) {
             Log.e("Name not found", e1.toString());
@@ -602,13 +594,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         } catch (Exception e) {
             Log.e("Exception", e.toString());
         }
-        Log.d("ewrt43t", key);
+
     }
 
    /* public void disconnectFromFacebook() {
 
         if (AccessToken.getCurrentAccessToken() == null) {
-            Log.d("jriotjio3", "greuthn4uire");
+
             return; // already logged out
         }
 
@@ -616,7 +608,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 .Callback() {
             @Override
             public void onCompleted(GraphResponse graphResponse) {
-                Log.d("jriotjio31", "greuthn4uire");
+
                 LoginManager.getInstance().logOut();
 
             }

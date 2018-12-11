@@ -39,7 +39,7 @@ public class OtherServiceAdapter extends RecyclerView.Adapter<OtherServiceAdapte
 
         mtinyDb=new TinyDB(mcontext);
         subActivityId=mtinyDb.getString("activityId");
-        Log.d("jwirjo",subActivityId);
+
 
     }
 
@@ -75,8 +75,7 @@ public class OtherServiceAdapter extends RecyclerView.Adapter<OtherServiceAdapte
 
        holder.nameOfActivity.setText(serviceList.get(position));
 
-        Log.d("dfewrfew", String.valueOf(subActivityIdList));
-        Log.d("dfewrfew1",subActivityId);
+
         holder.nameOfActivity.setOnClickListener(new View.OnClickListener() {
             @SuppressWarnings("deprecation")
             @Override
@@ -124,7 +123,7 @@ public class OtherServiceAdapter extends RecyclerView.Adapter<OtherServiceAdapte
             selectedEndTime.add(slotModels.get(position).getSlotEndTime());
             String Date66=slotModels.get(position).getSlotStartTime();
             String Start66=slotModels.get(position).getSlotEndTime();
-            Log.d("hfiwrjfiw",Date66);*/
+         */
 
             //holder.layout.setBackgroundColor(Color.parseColor("#567845"));
 
@@ -146,8 +145,7 @@ public class OtherServiceAdapter extends RecyclerView.Adapter<OtherServiceAdapte
         }
 
         if(subActivityIdList.get(position).contains(subActivityId)){
-            Log.d("frufwefwe1", String.valueOf(subActivityIdList));
-            Log.d("frufwefwe",subActivityId);
+
             if (isFirstRun){
             final int sdk = android.os.Build.VERSION.SDK_INT;
             if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {

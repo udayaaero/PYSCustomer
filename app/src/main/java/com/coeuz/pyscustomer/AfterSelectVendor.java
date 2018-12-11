@@ -3,9 +3,12 @@ package com.coeuz.pyscustomer;
 import android.Manifest;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -27,11 +30,16 @@ import android.support.v7.widget.RecyclerView;
 
 
 import android.support.v7.widget.Toolbar;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
+import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -48,13 +56,12 @@ import android.widget.Toast;
 import com.android.volley.NetworkError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.coeuz.pyscustomer.AdapterClass.AfterSelectVendorAmenitiesAdapter;
 import com.coeuz.pyscustomer.AdapterClass.ConsecutiveDateBookingAdapter;
 import com.coeuz.pyscustomer.AdapterClass.DateBookingAdapter;
@@ -71,10 +78,14 @@ import com.coeuz.pyscustomer.Requiredclass.ConnectionDetector;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.MyBounceInterpolator;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.YAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -84,6 +95,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 
 import org.json.JSONArray;
@@ -98,6 +110,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 
 import android.view.animation.Animation;
@@ -111,7 +124,8 @@ import devs.mulham.horizontalcalendar.HorizontalCalendarView;
 public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener,OnItemClick  {
 
-    public static RequestQueue mRequestQueue;
+
+    private Integer dayName;
     OnItemClick listener;
     private  String changedSubActivityId;
     BarChart barChart;
@@ -122,6 +136,8 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
     JSONArray jsonArray1;
     String label,lables;
     HashMap<String,JSONArray> totalGraphValue = new HashMap<>();
+    private  boolean firstRun=true;
+    private String vendorContact;
 
     private TinyDB mTinyDb;
     Bundle bundle;
@@ -130,6 +146,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
     private String mBookingType;
     private String mcbookingType;
     private ArrayList<String> slotTypeList=new ArrayList<>();
+    ArrayList<Bitmap> bitmapsLists = new ArrayList<>();
 
     private GoogleMap gMap;
     ConnectionDetector cd;
@@ -140,8 +157,10 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
     LinearLayout mapVisibleLayout;
     RecyclerView recyclerViewAmenities,recyclerGallery;
     private ArrayList<String> amenitiesList=new ArrayList<>();
-    private ArrayList<String> amenitiesImagesList=new ArrayList<>();
-    private TextView nArea,nCity,nMobile,nEmail;
+    private ArrayList<String> amenitiesIdList=new ArrayList<>();
+    private HashMap<String,Bitmap> amenitiesImageList=new HashMap<>();
+  //  private ArrayList<String> amenitiesImagesList=new ArrayList<>();
+    private TextView nArea,nCity,nMobile;
     private TextView nFrom,nTo;
 
 
@@ -161,18 +180,21 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
     ArrayList<String> motherServiceList=new ArrayList<>();
     ArrayList<String> otherServiceid=new ArrayList<>();
     RecyclerView mRecyclerView;
-
+private RelativeLayout galleryLayout;
     private String  mCalenderdate,todayDate;
     private ArrayList<SlotModel> slotModel;
     private ArrayList<String> consecutiveslotModel=new ArrayList<>();
     private ArrayList<String> consecutiveslotModelCost=new ArrayList<>();
     private ArrayList<String> consecutiveslotModelTiming=new ArrayList<>();
     private ArrayList<String> sendconsecutiveslotModelTiming=new ArrayList<>();
+    private ArrayList<String> consecutivePersonModel=new ArrayList<>();
     private ConsecutiveDateBookingAdapter consecutiveSlotDateAdapter;
     private DateBookingAdapter SlotDateAdapter;
     private RecyclerView RecyclerDateSlot;
     private  Integer maxAllowed,slotId,bookingSlotCost;
-    private String slotStartTime,slotEndTime,sendStartTime;
+    private String slotStartTime,slotEndTime,sendStartTime,slotReccurence;
+    private Integer personCount;
+    private String ConsecpersonCount;
     JSONArray ConsecutiveTimingArray=new JSONArray();
 
     public Animation myAnim;
@@ -186,6 +208,7 @@ public class AfterSelectVendor extends AppCompatActivity implements OnMapReadyCa
     ArrayList<String> memberbookingType = new ArrayList<>();
     ArrayList<String> memberbookingCost = new ArrayList<>();
     ArrayList<String> memberbookingSlotId = new ArrayList<>();
+    ArrayList<String> memberbookingPerson = new ArrayList<>();
 private Button cAllday,cweekday,cweekend;
 
     ArrayList<String> mslotidsList=new ArrayList<>();
@@ -198,25 +221,35 @@ private Button cAllday,cweekday,cweekend;
     ArrayList<String> mcourseRegistrationEndDateList=new ArrayList<>();
     ArrayList<String> mCourseCostList=new ArrayList<>();
     ArrayList<String> mCourseDurationList=new ArrayList<>();
+    ArrayList<String> mCoursePersonList=new ArrayList<>();
 
     boolean layoutShow=true;
     private RelativeLayout recommendedLayout;
     private NearVendorSLotsAdapter nearVendorSLotsAdapter;
     private ArrayList<SubActivityModel> subActivityModels;
+    private ArrayList<String> slotRecurrence=new ArrayList<>();
     private LinearLayout calendarViewLayout,noCourseData;
-    private String courseTypes;
-
-
-
+    private String courseTypes,backGroundImage;
+    private ImageView vendorBackgroundImage;
+    private LinearLayout noSlotAvailableLayouts;
+    int mOffset=0;
+    int mLimit=5;
+    int temp=5;
+    String vvendorName;
+    ViewGroup progressView;
+    boolean isProgressShowing = false;
+    RelativeLayout mainLayout;
+    View view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_after_select_vendor);
+        showProgressingView();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window w = getWindow();
-            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar1); // get the reference of Toolbar
@@ -226,15 +259,25 @@ private Button cAllday,cweekday,cweekend;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
 
+//        mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+
         mTinyDb=new TinyDB(getApplicationContext());
         String latString = mTinyDb.getString("latttt");
         String longSting = mTinyDb.getString("longggg");
         msubActivityId=mTinyDb.getString("activityId");
-        String vvendorName = mTinyDb.getString(Constant.VENDORNAME);
+        vvendorName = mTinyDb.getString(Constant.VENDORNAME);
         String vvendorArea = mTinyDb.getString(Constant.VENDORAREA);
+        backGroundImage=mTinyDb.getString(Constant.BACKGROUNDIMAGE);
+        vendorBackgroundImage=findViewById(R.id.vendorBackImage);
+        if(!backGroundImage.equals("")){
+            if(!backGroundImage.equals("null")){
+            byte[] images= Base64.decode(backGroundImage,Base64.DEFAULT);
+            Bitmap bitmap= BitmapFactory.decodeByteArray(images,0,images.length);
+            vendorBackgroundImage.setImageBitmap(bitmap);}
+        }
 
         if(latString !=null &&!latString.isEmpty()){
-            Log.d("jgreio", latString);
+
             lat= Double.valueOf(latString);
             longi= Double.valueOf(longSting);
         }
@@ -242,7 +285,7 @@ private Button cAllday,cweekday,cweekend;
         Date today = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         todayDate = format.format(today);
-        Log.d("dateToStr",todayDate);
+
 
 
         cd=new ConnectionDetector(getApplicationContext());
@@ -258,6 +301,8 @@ private Button cAllday,cweekday,cweekend;
         mapVisibleLayout= findViewById(R.id.mapVisible);
         RecyclerDateSlot = findViewById(R.id.RecyclerDateBooking);
         mapVisibleLayout.setVisibility(View.GONE);
+        galleryLayout=findViewById(R.id.gallery);
+        noSlotAvailableLayouts=findViewById(R.id.noSlotAvailableLayout);
 
         mofferDetails= findViewById(R.id.offerDetails);
         myAnim = AnimationUtils.loadAnimation(this, R.anim.bounce);
@@ -265,6 +310,7 @@ private Button cAllday,cweekday,cweekend;
         myAnim.setInterpolator(interpolator);
         myAnim.setRepeatCount(Animation.INFINITE);
         mofferDetails.startAnimation(myAnim);
+
 
         LinearLayout mapView = findViewById(R.id.mapview);
         mapView.setOnClickListener(new View.OnClickListener() {
@@ -298,12 +344,14 @@ private Button cAllday,cweekday,cweekend;
         linearLayout1= findViewById(R.id.l1);
          barChart = findViewById(R.id.barchart);
 
+
+
         TextView nvendorName = findViewById(R.id.NameOfVendor);
         TextView nvendorArea = findViewById(R.id.AdressOfVendor);
         nArea= findViewById(R.id.mArea);
         nCity= findViewById(R.id.mCity);
         nMobile= findViewById(R.id.mMobile);
-        nEmail= findViewById(R.id.mEmails);
+       // nEmail= findViewById(R.id.mEmails);
         nFrom= findViewById(R.id.from);
         nTo= findViewById(R.id.to);
         mRecyclerView= findViewById(R.id.recycler);
@@ -329,10 +377,6 @@ private Button cAllday,cweekday,cweekend;
         nearVendorRecycler.setAdapter(nearVendorSLotsAdapter);
 
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AfterSelectVendor.this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerGallery.setLayoutManager(layoutManager);
-        RecyclerView.Adapter adapter = new GalleryAdapter(AfterSelectVendor.this);
-        recyclerGallery.setAdapter(adapter);
 
 
 
@@ -348,7 +392,7 @@ private Button cAllday,cweekday,cweekend;
 
         mBookingType=mTinyDb.getString(Constant.BOOKINGTYPE);
         mcbookingType=mTinyDb.getString(Constant.MCBOOKINGTYPE);
-        Log.d("fhwwufhuewi",mcbookingType);
+
         membersLayout.setVisibility(View.GONE);
         if(mcbookingType.equals("MEMBERSHIP")){
             mcbookingType="MEMBERSHIP";
@@ -356,6 +400,7 @@ private Button cAllday,cweekday,cweekend;
             courseBtn.setVisibility(View.GONE);
 
         }else if(mcbookingType.equals("COURSE")){
+            noSlotAvailableLayouts.setVisibility(View.GONE);
             mcbookingType="COURSE";
             courseBtn.setVisibility(View.VISIBLE);
           //  courseDetails();
@@ -364,7 +409,7 @@ private Button cAllday,cweekday,cweekend;
             courseTypes="ALL_DAYS";
         }
 
-
+        getGalleryImage();
 
 
         String URL15 = Constant.API +"/general/vendorOtherServices?vendorId="+vendorId;
@@ -372,9 +417,7 @@ private Button cAllday,cweekday,cweekend;
         StringRequest request15 = new StringRequest(Request.Method.GET, URL15, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("qwrrew", String.valueOf(response));
-
-                try {
+               try {
                     JSONArray jsonArray = new JSONArray(response);
                     for(int i=0;i<jsonArray.length();i++){
                         JSONObject jsonObject=jsonArray.getJSONObject(i);
@@ -383,20 +426,24 @@ private Button cAllday,cweekday,cweekend;
                         motherServiceList.add(subActivityType);
                         otherServiceid.add(subActivityId);
                     }
-                    Log.d("fuew", String.valueOf(otherServiceid));
+
 
                     RecyclerView.LayoutManager layoutManager = new GridLayoutManager(AfterSelectVendor.this,3);
                     mRecyclerView.setLayoutManager(layoutManager);
                     RecyclerView.Adapter adapter = new OtherServiceAdapter(getApplicationContext(),otherServiceid, motherServiceList, new OnItemClick() {
                         @Override
                         public void onClick(final String value) {
-                            Log.d("jfrij2",value);
+
                             changedSubActivityId=value;
                             if(changedSubActivityId!=null){
                            // changingSubActivityTypes(changedSubActivityId);
+                                membershipBtn.setVisibility(View.GONE);
                                 recommendedLayout.setVisibility(View.GONE);
                                 membersLayout.setVisibility(View.GONE);
 
+                                 mOffset=0;
+                                 mLimit=5;
+                                 temp=5;
 
                             slotTypeList.clear();
                             String URL10 = Constant.API +"/user/getSlotTypesBySubActivityIdAndVendorId?subActivityId="+changedSubActivityId+"&vendorId="+vendorId;
@@ -404,20 +451,29 @@ private Button cAllday,cweekday,cweekend;
                             StringRequest request10 = new StringRequest(Request.Method.GET, URL10, new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
-                                    Log.d("rtrews", String.valueOf(response));
+
+                                    noSlotAvailableLayouts.setVisibility(View.GONE);
+                                    mBookingType="";
+                                    mcbookingType="";
 
                                     try {
                                         JSONArray jsonArray = new JSONArray(response);
 
                                         if (jsonArray.length() == 0) {
-                                            Log.d("rtrews", String.valueOf(response));
+
+                                            calendarViewLayout.setVisibility(View.VISIBLE);
+                                            membersLayout.setVisibility(View.GONE);
+                                            courseBtn.setVisibility(View.GONE);
+                                            noSlotAvailableLayouts.setVisibility(View.GONE);
+                                            RecyclerDateSlot.setVisibility(View.GONE);
                        /* Toast toast = Toast.makeText(AfterSelectVendor.this, "No Values", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();*/
                                         } else {
+                                            RecyclerDateSlot.setVisibility(View.VISIBLE);
                                             for (int i = 0; i < jsonArray.length(); i++) {
                                                 String slotTypes = String.valueOf(jsonArray.get(i));
-                                                Log.d("fsdfw", String.valueOf(slotTypes));
+
 
                                                 slotTypeList.add(slotTypes);
                                             }
@@ -425,35 +481,50 @@ private Button cAllday,cweekday,cweekend;
                                                 mBookingType="PRE_DEFINED_SLOT";
                                                 mTinyDb.putString(Constant.BOOKINGTYPE,mBookingType);
                                                 membersLayout.setVisibility(View.GONE);
+                                                courseBtn.setVisibility(View.GONE);
+                                                noCourseData.setVisibility(View.GONE);
+                                                calendarViewLayout.setVisibility(View.VISIBLE);
                                             }else if(slotTypeList.contains("CONSECUTIVE")){
                                                 mBookingType="CONSECUTIVE";
                                                 membersLayout.setVisibility(View.GONE);
                                                 courseBtn.setVisibility(View.GONE);
+                                                noCourseData.setVisibility(View.GONE);
                                                 membershipBtn.setVisibility(View.GONE);
+                                                calendarViewLayout.setVisibility(View.VISIBLE);
                                                 mTinyDb.putString(Constant.BOOKINGTYPE,mBookingType);
                                             }
                                             if(slotTypeList.contains("MEMBERSHIP")){
                                                 membersLayout.setVisibility(View.GONE);
                                                 mcbookingType="MEMBERSHIP";
                                                 membershipBtn.setVisibility(View.VISIBLE);
+                                                membershipService(vendorId,changedSubActivityId,mCalenderdate);
                                                 membersLayout.setVisibility(View.GONE);
                                                 courseBtn.setVisibility(View.GONE);
+                                                noCourseData.setVisibility(View.GONE);
+                                                calendarViewLayout.setVisibility(View.VISIBLE);
 
                                             }else if(slotTypeList.contains("COURSE")){
+                                                noSlotAvailableLayouts.setVisibility(View.GONE);
                                                 mcbookingType="COURSE";
                                                 membersLayout.setVisibility(View.GONE);
                                                 courseBtn.setVisibility(View.VISIBLE);
+                                                courseTypes="ALL_DAYS";
                                                 courseDetails();
                                                 membershipBtn.setVisibility(View.GONE);
                                                 calendarViewLayout.setVisibility(View.GONE);
                                                 courseTypes="ALL_DAYS";
                                             }
                                         }
+
+
+                                        if(mBookingType.equals("")&&mcbookingType.equals("")){
+                                            noSlotAvailableLayouts.setVisibility(View.VISIBLE);
+                                        }
     if(mBookingType.equals("PRE_DEFINED_SLOT")){
         mTinyDb.putString(Constant.PREDEFINEDSUBACTIVITYID,value);
                                         slotModel = new ArrayList<>();
                                         SlotDateAdapter = new DateBookingAdapter(getApplicationContext(), slotModel);
-                                        RecyclerDateSlot.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
+                                        RecyclerDateSlot.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
                                         RecyclerDateSlot.setHasFixedSize(true);
                                         RecyclerDateSlot.setAdapter(SlotDateAdapter);
 
@@ -465,25 +536,26 @@ private Button cAllday,cweekday,cweekend;
                                         StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                                             @Override
                                             public void onResponse(String response) {
-                                                Log.d("yrwuiyiw", String.valueOf(response));
 
                                                 try {
                                                     JSONArray jsonArray = new JSONArray(response);
                                                     if (jsonArray.length() == 0) {
+                                                        noSlotAvailableLayouts.setVisibility(View.VISIBLE);
                                                          getNearVendorSlots();
                                                     } else {
-
+                                                        firstRun=true;
                                                         for (int i = 0; i < jsonArray.length(); i++) {
                                                             JSONObject jsonObject = jsonArray.getJSONObject(i);
 
                                                             slotId = jsonObject.getInt("slotId");
                                                             slotStartTime = jsonObject.getString("slotStartTime");
                                                             slotEndTime = jsonObject.getString("slotEndTime");
-                                                /*            try {
+                                                            personCount = jsonObject.getInt("personCount");
+
+                                                            try {
                                                                 final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                                                                 final Date dateObj = sdf.parse(slotStartTime );
                                                                 String timein12Format=new SimpleDateFormat("hh:mmaa").format(dateObj);
-                                                                Log.d("fnuifreui45", String.valueOf(timein12Format));
                                                                 slotStartTime=String.valueOf(timein12Format);
                                                                 slotStartTime = slotStartTime.replace(".", "");
                                                             } catch (final ParseException e) {
@@ -493,16 +565,39 @@ private Button cAllday,cweekday,cweekend;
                                                                 final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                                                                 final Date dateObj = sdf.parse(slotEndTime );
                                                                 String timein12Format=new SimpleDateFormat("hh:mmaa").format(dateObj);
-                                                                Log.d("fnuifreui45", String.valueOf(timein12Format));
                                                                 slotEndTime=String.valueOf(timein12Format);
                                                                 slotEndTime = slotEndTime.replace(".", "");
                                                             } catch (final ParseException e) {
                                                                 e.printStackTrace();
-                                                            }*/
+                                                            }
+
                                                             maxAllowed = jsonObject.getInt("maxAllowed");
                                                             bookingSlotCost = jsonObject.getInt("bookingCost");
-                                                            slotModel.add(new SlotModel(slotId, slotStartTime, slotEndTime, maxAllowed, bookingSlotCost));
+                                                            slotReccurence=jsonObject.getString("slotReccurence");
 
+                                                            if(slotReccurence.equalsIgnoreCase("WEEKDAYS")){
+                                                                if(dayName==1||dayName==2||dayName==3||dayName==4||dayName==5){
+
+                                                                    firstRun=false;
+                                                                    slotModel.add(new SlotModel(slotId, slotStartTime, slotEndTime, maxAllowed, bookingSlotCost, personCount));
+
+
+                                                                }
+                                                            }else if(slotReccurence.equalsIgnoreCase("WEEKEND")){
+                                                                if(dayName==0||dayName==6){
+                                                                    firstRun=false;
+
+                                                                    slotModel.add(new SlotModel(slotId, slotStartTime, slotEndTime, maxAllowed, bookingSlotCost, personCount));}
+
+                                                            }else{
+
+                                                                firstRun=false;
+                                                                slotModel.add(new SlotModel(slotId, slotStartTime, slotEndTime, maxAllowed, bookingSlotCost,personCount));
+
+                                                            }
+                                                        }
+                                                        if(firstRun){
+                                                            noSlotAvailableLayouts.setVisibility(View.VISIBLE);
                                                         }
                                                         SlotDateAdapter.notifyDataSetChanged();
 
@@ -516,7 +611,7 @@ private Button cAllday,cweekday,cweekend;
                                         }, new Response.ErrorListener() {
                                             @Override
                                             public void onErrorResponse(VolleyError error) {
-                                                Log.d("dscer", String.valueOf(error));
+
 
                                                 if (error instanceof NetworkError) {
                                                     noInternetLayout.setVisibility(View.VISIBLE);
@@ -530,7 +625,6 @@ private Button cAllday,cweekday,cweekend;
                                                     });
                                                 } else if (error instanceof ServerError) {
 
-                                                    Log.d("heuiwirhu1", String.valueOf(error));
                                                 } else if (error instanceof ParseError) {
                                                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -548,13 +642,13 @@ private Button cAllday,cweekday,cweekend;
                                                 }
                                             }
                                         });
-                                        RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-                                        requestQueue1.add(request1);}
+        VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(request1);}
     else if(mBookingType.equals("CONSECUTIVE")){
 
         mTinyDb.putString(Constant.PREDEFINEDSUBACTIVITYID,value);
         consecutiveslotModelCost.clear();
         consecutiveslotModel.clear();
+        consecutivePersonModel.clear();
         consecutiveslotModelTiming.clear();
         sendconsecutiveslotModelTiming.clear();
 
@@ -564,12 +658,12 @@ private Button cAllday,cweekday,cweekend;
         StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("ewfwefewfew", String.valueOf(response));
+
 
                 try {
                     JSONArray jsonArray = new JSONArray(response);
                     if (jsonArray.length() == 0) {
-
+                      noSlotAvailableLayouts.setVisibility(View.VISIBLE);
                       getNearVendorSlots();
                     } else {
 
@@ -579,6 +673,8 @@ private Button cAllday,cweekday,cweekend;
                             slotId = jsonObject.getInt("slotId");
                             maxAllowed = jsonObject.getInt("maxAllowed");
                             bookingSlotCost = jsonObject.getInt("bookingCost");
+                            ConsecpersonCount = jsonObject.getString("personCount");
+
                             ConsecutiveTimingArray=jsonObject.getJSONArray("timings");
 
                         }
@@ -588,14 +684,13 @@ private Button cAllday,cweekday,cweekend;
                             sendStartTime=jsonObject.getString("startTime");
                             slotEndTime = jsonObject.getString("endTime");
                         }
-                        Log.d("ewfwefewfew2", String.valueOf(slotStartTime));
-                        Log.d("ewfwefewfew5", String.valueOf(slotId));
+
 
                         try {
                             final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.getDefault());
                             final Date dateObj = sdf.parse(slotStartTime );
                             String timein12Format=new SimpleDateFormat("hh:mmaa",Locale.getDefault()).format(dateObj);
-                            Log.d("mcmcemciqc", String.valueOf(timein12Format));
+
                             slotStartTime=String.valueOf(timein12Format);
                             slotStartTime = slotStartTime.replace(".", "");
                         } catch (final ParseException e) {
@@ -607,14 +702,14 @@ private Button cAllday,cweekday,cweekend;
                         consecutiveslotModelCost.add(String.valueOf(bookingSlotCost));
                         consecutiveslotModelTiming.add( slotStartTime);
                         sendconsecutiveslotModelTiming.add(sendStartTime);
-                        Log.d("fnrifi1", String.valueOf(consecutiveslotModel.size()));
-                        Log.d("fnrifi2", String.valueOf(consecutiveslotModelTiming.size()));
+                        consecutivePersonModel.add(ConsecpersonCount);
+
 
 
 
                     }
-                    consecutiveSlotDateAdapter = new ConsecutiveDateBookingAdapter(getApplicationContext(), consecutiveslotModel,consecutiveslotModelCost,consecutiveslotModelTiming,sendconsecutiveslotModelTiming);
-                    RecyclerDateSlot.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
+                    consecutiveSlotDateAdapter = new ConsecutiveDateBookingAdapter(getApplicationContext(), consecutiveslotModel,consecutiveslotModelCost,consecutiveslotModelTiming,sendconsecutiveslotModelTiming,consecutivePersonModel);
+                    RecyclerDateSlot.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
                     RecyclerDateSlot.setHasFixedSize(true);
                     RecyclerDateSlot.setAdapter(consecutiveSlotDateAdapter);
                  //   SlotDateAdapter.notifyDataSetChanged();
@@ -626,7 +721,6 @@ private Button cAllday,cweekday,cweekend;
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("dscer", String.valueOf(error));
 
                 if (error instanceof NetworkError) {
                     noInternetLayout.setVisibility(View.VISIBLE);
@@ -640,7 +734,7 @@ private Button cAllday,cweekday,cweekend;
                     });
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
+
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -658,11 +752,9 @@ private Button cAllday,cweekday,cweekend;
                 }
             }
         });
-        RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-        requestQueue1.add(request1);
+        VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(request1);
 
     }
-
 
 
 
@@ -675,24 +767,23 @@ private Button cAllday,cweekday,cweekend;
                             }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    Log.d("ewqreqw", String.valueOf(error));
+
 
                                     if (error instanceof NetworkError) {
-                                        Log.d("ewqreqw", String.valueOf(error));
+
                                     } else if (error instanceof ServerError) {
 
-                                        Log.d("heuiwirhu1", String.valueOf(error));
+
                                     } else if (error instanceof ParseError) {
                                         Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
                                     } else if (error instanceof TimeoutError) {
-                                        Log.d("ewqreqw", String.valueOf(error));
+
 
                                     }
                                 }
                             });
-                            RequestQueue requestQueue10 = Volley.newRequestQueue(getApplicationContext());
-                            requestQueue10.add(request10);
+                                VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(request10);
 
                         }}
                     });
@@ -706,7 +797,7 @@ private Button cAllday,cweekday,cweekend;
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("yreuie", String.valueOf(error));
+
 
                 if (error instanceof NetworkError) {
                     noInternetLayout.setVisibility(View.VISIBLE);
@@ -719,7 +810,7 @@ private Button cAllday,cweekday,cweekend;
                         }});
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
+
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -736,8 +827,7 @@ private Button cAllday,cweekday,cweekend;
                 }
             }
         });
-        RequestQueue requestQueue15 = Volley.newRequestQueue(getApplicationContext());
-        requestQueue15.add(request15);
+        VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(request15);
 
 
        /* slotTypeList.clear();
@@ -746,20 +836,20 @@ private Button cAllday,cweekday,cweekend;
         StringRequest request10 = new StringRequest(Request.Method.GET, URL10, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("rtrews", String.valueOf(response));
+
 
                 try {
                     JSONArray jsonArray = new JSONArray(response);
 
                     if (jsonArray.length() == 0) {
-                        Log.d("rtrews", String.valueOf(response));
+
                        *//* Toast toast = Toast.makeText(AfterSelectVendor.this, "No Values", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();*//*
                     } else {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             String slotTypes = String.valueOf(jsonArray.get(i));
-                            Log.d("fsdfw", String.valueOf(slotTypes));
+
 
                             slotTypeList.add(slotTypes);
                         }
@@ -790,20 +880,20 @@ private Button cAllday,cweekday,cweekend;
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("ewqreqw", String.valueOf(error));
+
 
                 if (error instanceof NetworkError) {
-                    Log.d("ewqreqw", String.valueOf(error));
+
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
+
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
                 } else if (error instanceof NoConnectionError) {
                     Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof TimeoutError) {
-                    Log.d("ewqreqw", String.valueOf(error));
+
 
                 }
             }
@@ -816,18 +906,19 @@ private Button cAllday,cweekday,cweekend;
 
 
         amenitiesList.clear();
-        amenitiesImagesList.clear();
+        amenitiesIdList.clear();
+        amenitiesImageList.clear();
         String URL = Constant.API +"/general/getVendorByVendorId?vendorId="+vendorId;
 
-        StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+        StringRequest requests = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("uieioe", String.valueOf(response));
+
 
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     if (jsonObject.length() == 0) {
-                        Log.d("uieioe1", String.valueOf(response));
+
                        /* Toast toast = Toast.makeText(AfterSelectVendor.this, "No Values", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();*/
@@ -839,17 +930,17 @@ private Button cAllday,cweekday,cweekend;
                             String longitude = jsonObject.getString("longitude");
                            // String availableAmenities = jsonObject.getString("availableAmenities");
                             String email = jsonObject.getString("email");
-                            String mobile = jsonObject.getString("mobile");
+                              vendorContact = jsonObject.getString("contact1");
                             String openingTime = jsonObject.getString("openingTime");
                             String closingTime = jsonObject.getString("closingTime");
 
                         lat= Double.valueOf(latitude);
                         longi= Double.valueOf(longitude);
-                        try {
+                   /*     try {
                             final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.getDefault());
                             final Date dateObj = sdf.parse(openingTime );
                             String timein12Format=new SimpleDateFormat("hh:mmaa",Locale.getDefault()).format(dateObj);
-                            Log.d("mcmcemciqc", String.valueOf(timein12Format));
+
                             openingTime=String.valueOf(timein12Format);
                             openingTime = openingTime.replace(".", "");
                         } catch (final ParseException e) {
@@ -859,49 +950,96 @@ private Button cAllday,cweekday,cweekend;
                             final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.getDefault());
                             final Date dateObj = sdf.parse(closingTime );
                             String timein12Format=new SimpleDateFormat("hh:mmaa",Locale.getDefault()).format(dateObj);
-                            Log.d("mcmcemciqc", String.valueOf(timein12Format));
+
                             closingTime=String.valueOf(timein12Format);
                             closingTime = closingTime.replace(".", "");
                         } catch (final ParseException e) {
                             e.printStackTrace();
-                        }
+                        }*/
 
                         nFrom.setText(openingTime);
                         nTo.setText(closingTime);
 
                         nArea.setText(area);
                         nCity.setText(city);
-                        nMobile.setText(mobile);
-                        nEmail.setText(email);
+                        nMobile.setText(vendorContact);
+                      /*  if(email.equalsIgnoreCase("null")){
+                            nEmail.setVisibility(View.GONE);
+                        }else
+                        { nEmail.setText(email);}*/
                             JSONArray jsonArray=jsonObject.getJSONArray("amenities");
-                        Log.d("nfirni4", String.valueOf(jsonArray));
+
                         if (jsonArray.length() == 0) {
-                            amenitiesLayout.setVisibility(View.GONE);
-                            Log.d("yertyuir", String.valueOf(jsonArray));
+
                        /* Toast toast = Toast.makeText(AfterSelectVendor.this, "No Values", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();*/
                         }else{
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                           // String amenityId = jsonObject1.getString("amenityId");
+                            final String amenityId = jsonObject1.getString("amenityId");
+
                             String amenityType = jsonObject1.getString("amenityType");
-                            String image1 = jsonObject1.getString("image");
+                          //  String image1 = jsonObject1.getString("image");
                             //String status = jsonObject1.getString("status");
-                            Log.d("nfirni5",amenityType);
-                            amenitiesList.add(amenityType);
-                         /*   byte[] imageBytes = Base64.decode(image1, Base64.DEFAULT);
-                            Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                            amenityImage.setImageBitmap(decodedImage);*/
-                            amenitiesImagesList.add(image1);
+
+                            String status=jsonObject1.getString("status");
+                            if(status.equalsIgnoreCase("true")) {
+                                amenitiesIdList.add(amenityId);
+                                amenitiesList.add(amenityType);
+
+                                if (amenitiesIdList.size() == 0) {
+                                    amenitiesLayout.setVisibility(View.GONE);
+                                }
+                                amenitiesLayout.setVisibility(View.VISIBLE);
+
+                                String Url =Constant.API+"/rest/photos/getAmenityIconImagesByAmenityId?amenityId=" + amenityId;
+                                StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
+                                    @Override
+                                    public void onResponse(String response) {
+
+                                        String imagess = String.valueOf(response);
+
+                                        byte[] images = Base64.decode(imagess, Base64.DEFAULT);
+                                        Bitmap bitmap = BitmapFactory.decodeByteArray(images, 0, images.length);
+
+                                        amenitiesImageList.put(amenityId,bitmap);
+
+
+                                        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AfterSelectVendor.this, LinearLayoutManager.HORIZONTAL, false);
+                                        recyclerViewAmenities.setLayoutManager(layoutManager);
+                                        RecyclerView.Adapter adapter = new AfterSelectVendorAmenitiesAdapter(getApplicationContext(),amenitiesIdList, amenitiesList,amenitiesImageList);
+                                        recyclerViewAmenities.setAdapter(adapter);}
+
+
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+
+
+                                    }
+                                }) {
+                                    @Override
+                                    public Map<String, String> getHeaders() {
+                                        HashMap<String, String> headers = new HashMap<>();
+                                        String Tokens = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJkMDk4ZTNjMC1iMTRmLTRlNDItODljYS01Y2FmYTM2MDhjODYiLCJpYXQiOjE1NDAzOTQ0NTQsInN1YiI6ImtrQGdtYWlsLmNvbSIsImlzcyI6ImFuYW5kcGxheXMiLCJST0xFX1BST1ZJREVSIjoiQXZhaWxhYmxlIiwiUk9MRV9WRU5ET1IiOiJBdmFpbGFibGUiLCJleHAiOjE1NDE4NjU2ODN9.Z82ekQlctjR-sUHCh98fHhYO4hQZjyWX0O7HM7I8zNc";
+
+                                        headers.put("X-Auth-Token", String.valueOf(Tokens).replaceAll("\"", ""));
+
+                                        return headers;
+                                    }
+                                };
+
+
+                                VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(stringRequest);
+
+
+                            }
+                        }
 
 
 
-                            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AfterSelectVendor.this, LinearLayoutManager.HORIZONTAL, false);
-                            recyclerViewAmenities.setLayoutManager(layoutManager);
-                            RecyclerView.Adapter adapter = new AfterSelectVendorAmenitiesAdapter(getApplicationContext(), amenitiesList);
-                            recyclerViewAmenities.setAdapter(adapter);
-                        }}
+                        }
 
 
                     }
@@ -913,7 +1051,7 @@ private Button cAllday,cweekday,cweekend;
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("ert", String.valueOf(error));
+
 
 
                 if (error instanceof NetworkError) {
@@ -927,7 +1065,7 @@ private Button cAllday,cweekday,cweekend;
                         }});
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
+
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -944,19 +1082,19 @@ private Button cAllday,cweekday,cweekend;
                 }
             }
         });
-        RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-        requestQueue1.add(request1);
+
+        VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(requests);
 
 
 
         Calendar start = Calendar.getInstance();
         start.add(Calendar.MONTH, -1);
         Date date=java.util.Calendar.getInstance().getTime();
-        Log.d("hfuifhu", String.valueOf(date));
+
 /* ends after 1 month from now */
         Calendar endDate = Calendar.getInstance();
         endDate.add(Calendar.DAY_OF_MONTH, 6);
-        HorizontalCalendar horizontalCalendar = new HorizontalCalendar.Builder(this, R.id.calendarView)
+        final HorizontalCalendar horizontalCalendar = new HorizontalCalendar.Builder(this, R.id.calendarView)
 
                 .startDate(date)
                 .endDate(endDate.getTime())
@@ -979,6 +1117,11 @@ private Button cAllday,cweekday,cweekend;
             @Override
             public void onDateSelected(Date date, int position) {
 
+                 dayName = date.getDay();
+
+
+
+
                           /*  Calendar endDate = Calendar.getInstance();
                             endDate.setTimeInMillis(endDateInMillSecs);
 
@@ -986,81 +1129,139 @@ private Button cAllday,cweekday,cweekend;
                             cl.setTimeInMillis(startDateInMillSecs);*/
                 Long timeStamp200 = date.getTime();
                 String S1 = String.valueOf(timeStamp200);
-                Log.d("popopop", S1);
-                Log.d("popopop1", String.valueOf(timeStamp200));
+
                 Long timestamp1 = Long.parseLong(S1);
                 try {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
                     Date netDate = (new Date(timestamp1));
                     String CalenderDate1 = sdf.format(netDate);
                     mCalenderdate = CalenderDate1;
-                    Log.d("kkkkkkkkkuuuu3", CalenderDate1);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                Log.d("nfwifniw2", mCalenderdate);
-                Log.d("wfwerfwre1", msubActivityId);
+
                 mTinyDb.putString(Constant.CALENDERDATE,mCalenderdate);
+                membershipBtn.setVisibility(View.GONE);
 
                 if(changedSubActivityId != null){
                     msubActivityId=changedSubActivityId;
                     }
                     mTinyDb.putString(Constant.PREDEFINEDSUBACTIVITYID,msubActivityId);
                 recommendedLayout.setVisibility(View.GONE);
+                slotTypeList.clear();
+                String URL10 = Constant.API +"/user/getSlotTypesBySubActivityIdAndVendorId?subActivityId="+msubActivityId+"&vendorId="+vendorId;
 
-                if(mcbookingType.equals("MEMBERSHIP")){
-                    mcbookingType="MEMBERSHIP";
-                    membershipBtn.setVisibility(View.VISIBLE);
-                    layoutShow=true;
-                    membersLayout.setVisibility(View.GONE);
-                    courseBtn.setVisibility(View.GONE);
+                StringRequest request10 = new StringRequest(Request.Method.GET, URL10, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
 
-                }else if(mcbookingType.equals("COURSE")){
-                    mcbookingType="COURSE";
-                    courseBtn.setVisibility(View.VISIBLE);
-                    courseDetails();
-                    membershipBtn.setVisibility(View.GONE);
-                    calendarViewLayout.setVisibility(View.GONE);
-                    courseTypes="ALL_DAYS";
-                }
+                        noSlotAvailableLayouts.setVisibility(View.GONE);
+
+                        try {
+                            JSONArray jsonArray = new JSONArray(response);
+
+                            if (jsonArray.length() == 0) {
+
+                       /* Toast toast = Toast.makeText(AfterSelectVendor.this, "No Values", Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();*/
+                            } else {
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    String slotTypes = String.valueOf(jsonArray.get(i));
+
+
+                                    slotTypeList.add(slotTypes);
+                                }
+                                if(slotTypeList.contains("PRE_DEFINED_SLOT")){
+                                    mBookingType="PRE_DEFINED_SLOT";
+                                    mTinyDb.putString(Constant.BOOKINGTYPE,mBookingType);
+                                    membersLayout.setVisibility(View.GONE);
+                                    courseBtn.setVisibility(View.GONE);
+                                    noCourseData.setVisibility(View.GONE);
+                                    calendarViewLayout.setVisibility(View.VISIBLE);
+                                }else if(slotTypeList.contains("CONSECUTIVE")){
+                                    mBookingType="CONSECUTIVE";
+                                    membersLayout.setVisibility(View.GONE);
+                                    courseBtn.setVisibility(View.GONE);
+                                    noCourseData.setVisibility(View.GONE);
+                                    membershipBtn.setVisibility(View.GONE);
+                                    calendarViewLayout.setVisibility(View.VISIBLE);
+                                    mTinyDb.putString(Constant.BOOKINGTYPE,mBookingType);
+                                }
+                                if(slotTypeList.contains("MEMBERSHIP")){
+                                    membersLayout.setVisibility(View.GONE);
+                                    mcbookingType="MEMBERSHIP";
+                                    membershipBtn.setVisibility(View.VISIBLE);
+                                    membershipService(vendorId,msubActivityId,mCalenderdate);
+                                    membersLayout.setVisibility(View.GONE);
+                                    courseBtn.setVisibility(View.GONE);
+                                    noCourseData.setVisibility(View.GONE);
+                                    calendarViewLayout.setVisibility(View.VISIBLE);
+
+                                }else if(slotTypeList.contains("COURSE")){
+                                    noSlotAvailableLayouts.setVisibility(View.GONE);
+                                    mcbookingType="COURSE";
+                                    membersLayout.setVisibility(View.GONE);
+                                    courseBtn.setVisibility(View.VISIBLE);
+                                    courseTypes="ALL_DAYS";
+                                    courseDetails();
+                                    membershipBtn.setVisibility(View.GONE);
+                                    calendarViewLayout.setVisibility(View.GONE);
+                                    courseTypes="ALL_DAYS";
+                                }
+                            }
+
+
+                            if(mBookingType.equals("")&&mcbookingType.equals("")){
+
+                                noSlotAvailableLayouts.setVisibility(View.VISIBLE);
+                            }
+
+
 
                 if(mBookingType.equals("PRE_DEFINED_SLOT")){
                 slotModel = new ArrayList<>();
                 SlotDateAdapter = new DateBookingAdapter(getApplicationContext(), slotModel);
-                RecyclerDateSlot.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
+                RecyclerDateSlot.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
                 RecyclerDateSlot.setHasFixedSize(true);
                 RecyclerDateSlot.setAdapter(SlotDateAdapter);
 
                 slotModel.clear();
+                    noSlotAvailableLayouts.setVisibility(View.GONE);
 
                 String URL = Constant.API + "/slot/getSlotsByDate?vendorId=" + vendorId + "&subActivityId=" + msubActivityId + "&date=" + mCalenderdate + "&type=" + mBookingType;
 
                 StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("yrwuiyiw123", String.valueOf(response));
+
+
 
                         try {
                             JSONArray jsonArray = new JSONArray(response);
                             if (jsonArray.length() == 0) {
+                                noSlotAvailableLayouts.setVisibility(View.VISIBLE);
                                 getNearVendorSlots();
                                 /*Toast toast = Toast.makeText(SlotPages.this, "No Values", Toast.LENGTH_LONG);
                                 toast.setGravity(Gravity.CENTER, 0, 0);
                                 toast.show();*/
                             } else {
-
+                                firstRun=true;
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
 
                                     slotId = jsonObject.getInt("slotId");
                                     slotStartTime = jsonObject.getString("slotStartTime");
                                     slotEndTime = jsonObject.getString("slotEndTime");
-                                    Log.d("fnuifreui23", slotEndTime);
-                                /*    try {
+                                    personCount = jsonObject.getInt("personCount");
+
+
+                                   try {
                                         final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                                         final Date dateObj = sdf.parse(slotStartTime );
                                         String timein12Format=new SimpleDateFormat("hh:mmaa").format(dateObj);
-                                        Log.d("fnuifreui45", String.valueOf(timein12Format));
+
                                         slotStartTime=String.valueOf(timein12Format);
                                         slotStartTime = slotStartTime.replace(".", "");
                                     } catch (final ParseException e) {
@@ -1070,16 +1271,40 @@ private Button cAllday,cweekday,cweekend;
                                         final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                                         final Date dateObj = sdf.parse(slotEndTime );
                                         String timein12Format=new SimpleDateFormat("hh:mmaa").format(dateObj);
-                                        Log.d("fnuifreui45", String.valueOf(timein12Format));
+
                                         slotEndTime=String.valueOf(timein12Format);
                                         slotEndTime = slotEndTime.replace(".", "");
                                     } catch (final ParseException e) {
                                         e.printStackTrace();
-                                    }*/
+                                    }
                                     maxAllowed = jsonObject.getInt("maxAllowed");
                                     bookingSlotCost = jsonObject.getInt("bookingCost");
-                                    slotModel.add(new SlotModel(slotId, slotStartTime, slotEndTime, maxAllowed, bookingSlotCost));
+                                    slotReccurence=jsonObject.getString("slotReccurence");
 
+
+                                    if(slotReccurence.equalsIgnoreCase("WEEKDAYS")){
+                                    if(dayName==1||dayName==2||dayName==3||dayName==4||dayName==5){
+
+                                            firstRun=false;
+                                            slotModel.add(new SlotModel(slotId, slotStartTime, slotEndTime, maxAllowed, bookingSlotCost, personCount));
+
+
+                                    }
+                                    }else if(slotReccurence.equalsIgnoreCase("WEEKEND")){
+                                        if(dayName==0||dayName==6){
+                                            firstRun=false;
+
+                                            slotModel.add(new SlotModel(slotId, slotStartTime, slotEndTime, maxAllowed, bookingSlotCost, personCount));}
+
+                                    }else{
+
+                                            firstRun=false;
+                                    slotModel.add(new SlotModel(slotId, slotStartTime, slotEndTime, maxAllowed, bookingSlotCost, personCount));
+
+                                    }
+                                }
+                                if(firstRun){
+                                    noSlotAvailableLayouts.setVisibility(View.VISIBLE);
                                 }
                                 SlotDateAdapter.notifyDataSetChanged();
 
@@ -1093,7 +1318,6 @@ private Button cAllday,cweekday,cweekend;
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("dscer", String.valueOf(error));
 
                         if (error instanceof NetworkError) {
                             noInternetLayout.setVisibility(View.VISIBLE);
@@ -1107,7 +1331,6 @@ private Button cAllday,cweekday,cweekend;
                             });
                         } else if (error instanceof ServerError) {
 
-                            Log.d("heuiwirhu1", String.valueOf(error));
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -1125,8 +1348,7 @@ private Button cAllday,cweekday,cweekend;
                         }
                     }
                 });
-                RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-                requestQueue1.add(request1);
+                    VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(request1);
 
                 }else if(mBookingType.equals("CONSECUTIVE")){
 
@@ -1136,9 +1358,8 @@ private Button cAllday,cweekday,cweekend;
                     consecutiveslotModelTiming.clear();
                     consecutiveslotModelCost.clear();
                     sendconsecutiveslotModelTiming.clear();
-                    Log.d("fhwusifhsr",vendorId);
-                    Log.d("fhwusifhsr1",msubActivityId);
-                    Log.d("fhwusifhsr2",mCalenderdate);
+                    consecutivePersonModel.clear();
+
 
 
                     String URL = Constant.API + "/slot/getSlotsByDate?vendorId=" + vendorId + "&subActivityId=" + msubActivityId + "&date=" + mCalenderdate + "&type=" + mBookingType;
@@ -1146,12 +1367,13 @@ private Button cAllday,cweekday,cweekend;
                     StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Log.d("ewfwefewfew", String.valueOf(response));
+
 
                             try {
                                 JSONArray jsonArray = new JSONArray(response);
                                 if (jsonArray.length() == 0) {
-                                    Log.d("fhwusifhsr","fhwusifhsr");
+
+                                    noSlotAvailableLayouts.setVisibility(View.VISIBLE);
                                     getNearVendorSlots();
                                 } else {
 
@@ -1162,6 +1384,7 @@ private Button cAllday,cweekday,cweekend;
                                         maxAllowed = jsonObject.getInt("maxAllowed");
                                         bookingSlotCost = jsonObject.getInt("bookingCost");
                                         ConsecutiveTimingArray=jsonObject.getJSONArray("timings");
+                                        ConsecpersonCount=jsonObject.getString("personCount");
 
                                     }
                                     for (int i = 0; i < ConsecutiveTimingArray.length(); i++) {
@@ -1170,14 +1393,13 @@ private Button cAllday,cweekday,cweekend;
                                         sendStartTime = jsonObject.getString("startTime");
                                         slotEndTime = jsonObject.getString("endTime");
                                     }
-                                    Log.d("ewfwefewfew2", String.valueOf(slotStartTime));
-                                    Log.d("ewfwefewfew5", String.valueOf(slotId));
+
 
                                   try {
                                         final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.getDefault());
                                         final Date dateObj = sdf.parse(slotStartTime );
                                         String timein12Format=new SimpleDateFormat("hh:mmaa",Locale.getDefault()).format(dateObj);
-                                        Log.d("mcmcemciqc", String.valueOf(timein12Format));
+
                                         slotStartTime=String.valueOf(timein12Format);
                                         slotStartTime = slotStartTime.replace(".", "");
                                     } catch (final ParseException e) {
@@ -1189,14 +1411,14 @@ private Button cAllday,cweekday,cweekend;
                                     consecutiveslotModelCost.add(String.valueOf(bookingSlotCost));
                                     consecutiveslotModelTiming.add( slotStartTime);
                                     sendconsecutiveslotModelTiming.add( sendStartTime);
-                                    Log.d("fnrifi1", String.valueOf(consecutiveslotModel.size()));
-                                    Log.d("fnrifi2", String.valueOf(consecutiveslotModelTiming.size()));
+                                    consecutivePersonModel.add(ConsecpersonCount);
+
 
 
 
                                 }
-                                consecutiveSlotDateAdapter = new ConsecutiveDateBookingAdapter(getApplicationContext(), consecutiveslotModel,consecutiveslotModelCost,consecutiveslotModelTiming,sendconsecutiveslotModelTiming);
-                                RecyclerDateSlot.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
+                                consecutiveSlotDateAdapter = new ConsecutiveDateBookingAdapter(getApplicationContext(), consecutiveslotModel,consecutiveslotModelCost,consecutiveslotModelTiming,sendconsecutiveslotModelTiming, consecutivePersonModel);
+                                RecyclerDateSlot.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
                                 RecyclerDateSlot.setHasFixedSize(true);
                                 RecyclerDateSlot.setAdapter(consecutiveSlotDateAdapter);
                              //   SlotDateAdapter.notifyDataSetChanged();
@@ -1208,7 +1430,7 @@ private Button cAllday,cweekday,cweekend;
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.d("dscer", String.valueOf(error));
+
 
                             if (error instanceof NetworkError) {
                                 noInternetLayout.setVisibility(View.VISIBLE);
@@ -1222,7 +1444,7 @@ private Button cAllday,cweekday,cweekend;
                                 });
                             } else if (error instanceof ServerError) {
 
-                                Log.d("heuiwirhu1", String.valueOf(error));
+
                             } else if (error instanceof ParseError) {
                                 Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -1240,10 +1462,48 @@ private Button cAllday,cweekday,cweekend;
                             }
                         }
                     });
-                    RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-                    requestQueue1.add(request1);
+                    VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(request1);
 
                 }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+
+                        if (error instanceof NetworkError) {
+                            noInternetLayout.setVisibility(View.VISIBLE);
+                            allViewLayout.setVisibility(View.GONE);
+                            Button button = findViewById(R.id.TryAgain);
+                            button.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    recreate();
+                                }
+                            });
+                        } else if (error instanceof ServerError) {
+
+                        } else if (error instanceof ParseError) {
+                            Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
+
+                        }  else if (error instanceof TimeoutError) {
+                            noInternetLayout.setVisibility(View.VISIBLE);
+                            allViewLayout.setVisibility(View.GONE);
+                            Button button = findViewById(R.id.TryAgain);
+                            button.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    recreate();
+                                }
+                            });
+
+                        }
+                    }
+                });
+                VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(request10);
 
             }
 
@@ -1265,12 +1525,12 @@ private Button cAllday,cweekday,cweekend;
         StringRequest request = new StringRequest(Request.Method.GET, URLs, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("uieruwor", String.valueOf(response));
+
 
                 try {
                     JSONArray jsonArray = new JSONArray(response);
                     if (jsonArray.length() == 0) {
-                        Log.d("uieruwo1r", String.valueOf(response));
+
                        /* Toast toast = Toast.makeText(AfterSelectVendor.this, "No Values", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();*/
@@ -1283,9 +1543,7 @@ private Button cAllday,cweekday,cweekend;
                             mlabelList.add(label);
                              jsonArray1=jsonObject.getJSONArray("data");
                             firstLableList.add(jsonArray1);
-                        Log.d("dhuifhuwi1",data);
-                            Log.d("dhuifhuwi2",label);
-                            Log.d("dhuifhuwi3", String.valueOf(jsonArray1));
+
 
                             totalGraphValue.put(label, (jsonArray1));
 
@@ -1317,7 +1575,7 @@ private Button cAllday,cweekday,cweekend;
                                 if(totalGraphValue.containsKey(selectedLable)){
                                     mCountList.clear();
                                  JSONArray jsonArray2=totalGraphValue.get(selectedLable);
-                                    Log.d("nfirjewio", String.valueOf(totalGraphValue.get(selectedLable)));
+
                                     for (int j = 0; j < jsonArray2.length(); j++) {
                                         Object jsonObject1 = null;
                                         try {
@@ -1325,7 +1583,7 @@ private Button cAllday,cweekday,cweekend;
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
-                                        Log.d("dhuifhuwi4", String.valueOf(jsonObject1));
+
                                         mCountList.add(Integer.valueOf(String.valueOf(jsonObject1)));
                                     }
                                     barChart.animateY(1000);
@@ -1348,8 +1606,7 @@ private Button cAllday,cweekday,cweekend;
                                     labels.add("Thu");
                                     labels.add("Fri");
                                     labels.add("Sat");
-                                    Log.d("nfurifiurw2", String.valueOf(labels));
-                                    Log.d("nfurifiurw3", String.valueOf(barDataSet1));
+
                                     BarData data1 = new BarData(labels,  barDataSet1);
 
                                     barChart.setData(data1);
@@ -1363,7 +1620,7 @@ private Button cAllday,cweekday,cweekend;
                         if(totalGraphValue.containsKey(lables)){
                             mCountList.clear();
                             JSONArray jsonArray2=totalGraphValue.get(lables);
-                            Log.d("nfirjewio", String.valueOf(totalGraphValue.get(lables)));
+
                             for (int j = 0; j < jsonArray2.length(); j++) {
                                 Object jsonObject1 = null;
                                 try {
@@ -1371,7 +1628,7 @@ private Button cAllday,cweekday,cweekend;
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                Log.d("dhuifhuwi4", String.valueOf(jsonObject1));
+
                                 mCountList.add(Integer.valueOf(String.valueOf(jsonObject1)));
                             }
                             barChart.animateY(1000);
@@ -1394,21 +1651,42 @@ private Button cAllday,cweekday,cweekend;
                             labels.add("Thu");
                             labels.add("Fri");
                             labels.add("Sat");
-                            Log.d("nfurifiurw2", String.valueOf(labels));
-                            Log.d("nfurifiurw3", String.valueOf(barDataSet1));
+
                             BarData data1 = new BarData(labels,  barDataSet1);
+                            YAxisValueFormatter customYaxisFormatter = new YAxisValueFormatter() {
+                                @Override
+                                public String getFormattedValue(float value, YAxis yAxis) {
+                                    //  return String.valueOf((int)value);
+                                    return String.valueOf((int) Math.floor(value));
+                                }
+                            };
+                             barChart.getAxisLeft().setAxisMinValue(0f);
+                            barChart.getAxisRight().setAxisMinValue(0f);
+                            barChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+                            barChart.getXAxis().setAxisLineWidth(1f);
+                            barChart.getAxisLeft().setValueFormatter(customYaxisFormatter);
+                            barChart.getAxisRight().setValueFormatter(customYaxisFormatter);
+
+
+                            XAxis xAxis = barChart.getXAxis();
+
 
                             barChart.setData(data1);
+
+
+
+
+
+
                    /*     mCountList.clear();
-                        Log.d("dhuifhuwi9", String.valueOf(totalGraphValue));
-                        Log.d("dhuifhuwi8", String.valueOf(firstLableList.size()));
+
                         for (int j = 0; j < firstLableList.size(); j++) {
                             jsonArray4 = firstLableList.get(0);
 
                         }
                         for (int j = 0; j < jsonArray4.length(); j++) {
                             Object jsonObject1 = jsonArray4.get(0);
-                            Log.d("dhuifhuwi4", String.valueOf(jsonObject1));
+
                             mCountList.add(Integer.valueOf(String.valueOf(jsonObject1)));
                         }
                         barChart.animateY(2000);
@@ -1431,10 +1709,10 @@ private Button cAllday,cweekday,cweekend;
                         labels.add("Thu");
                         labels.add("Fri");
                         labels.add("Sat");
-                        Log.d("nfurifiurw", String.valueOf(labels));
-                        Log.d("nfurifiurw1", String.valueOf(barDataSet1));
+
                         BarData data1 = new BarData(labels,  barDataSet1);
                         barChart.setData(data1);*/
+
 
                     }}
 
@@ -1445,8 +1723,8 @@ private Button cAllday,cweekday,cweekend;
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("yreuie", String.valueOf(error));
 
+                hideProgressingView();
                 if (error instanceof NetworkError) {
                     noInternetLayout.setVisibility(View.VISIBLE);
                     allViewLayout.setVisibility(View.GONE);
@@ -1458,7 +1736,7 @@ private Button cAllday,cweekday,cweekend;
                         }});
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
+
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -1475,8 +1753,7 @@ private Button cAllday,cweekday,cweekend;
                 }
             }
         });
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        requestQueue.add(request);
+        VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(request);
 
 
         String URL2 = Constant.API +"/general/offerChecksByVendor?vendorId="+vendorId;
@@ -1484,7 +1761,7 @@ private Button cAllday,cweekday,cweekend;
         StringRequest request2 = new StringRequest(Request.Method.GET, URL2, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("uieruwor1", String.valueOf(response));
+
 
                 try {
                        JSONObject jsonObject = new JSONObject(response);
@@ -1501,7 +1778,7 @@ private Button cAllday,cweekday,cweekend;
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("yreuie", String.valueOf(error));
+
 
                 if (error instanceof NetworkError) {
                     noInternetLayout.setVisibility(View.VISIBLE);
@@ -1514,7 +1791,6 @@ private Button cAllday,cweekday,cweekend;
                         }});
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -1531,8 +1807,7 @@ private Button cAllday,cweekday,cweekend;
                 }
             }
         });
-        RequestQueue requestQueue2 = Volley.newRequestQueue(getApplicationContext());
-        requestQueue2.add(request2);
+        VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(request2);
 
         mofferDetails.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1567,13 +1842,13 @@ private Button cAllday,cweekday,cweekend;
                 StringRequest request3 = new StringRequest(Request.Method.GET, URL3, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("trwty", String.valueOf(response));
+
 
                         try {
 
                             JSONArray jsonArray = new JSONArray(response);
                             if (jsonArray.length() == 0) {
-                                Log.d("trwtyte", String.valueOf(response));
+
                              /*   Toast toast = Toast.makeText(AfterSelectVendor.this, "No Values", Toast.LENGTH_LONG);
                                 toast.setGravity(Gravity.CENTER, 0, 0);
                                 toast.show();*/
@@ -1585,8 +1860,7 @@ private Button cAllday,cweekday,cweekend;
                                     String discount = jsonObject.getString("discount");
                                     String category = jsonObject.getString("category");
                                    // String type = jsonObject.getString("type");
-                                    Log.d("nfjfnjfr", String.valueOf(startDate));
-                                    Log.d("nfjfnjfr1", String.valueOf(expiryDate));
+
 
                                     Long timestamp10 = Long.parseLong(startDate);
                                     Long timestamp20 = Long.parseLong(expiryDate);
@@ -1630,7 +1904,7 @@ private Button cAllday,cweekday,cweekend;
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("yreuie", String.valueOf(error));
+
 
                         if (error instanceof NetworkError) {
 
@@ -1644,7 +1918,7 @@ private Button cAllday,cweekday,cweekend;
                                 }});
                         } else if (error instanceof ServerError) {
 
-                            Log.d("heuiwirhu1", String.valueOf(error));
+
                         } else if (error instanceof ParseError) {
                             Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -1662,8 +1936,7 @@ private Button cAllday,cweekday,cweekend;
                         }
                     }
                 });
-                RequestQueue requestQueue3 = Volley.newRequestQueue(getApplicationContext());
-                requestQueue3.add(request3);
+                VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(request3);
 
 
                 /* visible = !visible;
@@ -1692,99 +1965,16 @@ private Button cAllday,cweekday,cweekend;
 
                   membersLayout.setVisibility(View.VISIBLE);
 
-                    Log.d("fhdufhew",vendorId+msubActivityId+mCalenderdate);
                     if(changedSubActivityId!=null){
                         msubActivityId=changedSubActivityId;
                     }
                     mTinyDb.putString(Constant.MEMBERSUBACTIVITYID,msubActivityId);
                     memberbookingType.clear();
                     memberbookingCost.clear();
-                    Log.d("fhdufhew123",vendorId+msubActivityId+mCalenderdate);
-                    String URL25 = Constant.API +"/slot/getSlotsByDate?vendorId="+vendorId+"&subActivityId="+msubActivityId+"&date="+todayDate+"&type=MEMBERSHIP";
-
-                    StringRequest request25 = new StringRequest(Request.Method.GET, URL25, new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            Log.d("frewerfew", String.valueOf(response));
-
-                     /*   TransitionManager.beginDelayedTransition(memberLayout);
-                        visible = !visible;
-                       memberLayout.setVisibility(View.VISIBLE);
-                        memberLayout.setVisibility(visible ? View.VISIBLE : View.GONE);*/
 
 
-                            try {
-                                JSONArray jsonArray = new JSONArray(response);
-                                if (jsonArray.length() == 0) {
-                                    Log.d("frewerfew", String.valueOf(response));
-                                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AfterSelectVendor.this);
-                                    memberCourseRecycler.setLayoutManager(layoutManager);
-                                    RecyclerView.Adapter adapter = new SelectMemberAdapter(getApplicationContext(), memberbookingType,memberbookingCost,memberbookingSlotId);
-                                    memberCourseRecycler.setAdapter(adapter);
-                    /*    Toast toast = Toast.makeText(AfterSelectVendor.this, "No Values", Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER, 0, 0);
-                        toast.show();*/
-                                } else {
-                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                  membershipService(vendorId,msubActivityId,mCalenderdate);
 
-                                        String  membershipType = jsonObject.getString("membershipType");
-                                        String bookingCost = jsonObject.getString("bookingCost");
-                                        String slotId=jsonObject.getString("slotId");
-
-                                        memberbookingType.add(membershipType);
-                                        memberbookingCost.add(bookingCost);
-                                        memberbookingSlotId.add(slotId);
-
-                                    }
-                                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AfterSelectVendor.this);
-                                    memberCourseRecycler.setLayoutManager(layoutManager);
-                                    RecyclerView.Adapter adapter = new SelectMemberAdapter(getApplicationContext(), memberbookingType,memberbookingCost,memberbookingSlotId);
-                                    memberCourseRecycler.setAdapter(adapter);
-
-                                }
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Log.d("dscer", String.valueOf(error));
-
-
-                            if (error instanceof NetworkError) {
-                                noInternetLayout.setVisibility(View.VISIBLE);
-                                allViewLayout.setVisibility(View.GONE);
-                                Button button= findViewById(R.id.TryAgain);
-                                button.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        recreate();
-                                    }});
-                            } else if (error instanceof ServerError) {
-
-                                Log.d("heuiwirhu1", String.valueOf(error));
-                            } else if (error instanceof ParseError) {
-                                Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
-
-                            }else if (error instanceof TimeoutError) {
-                                noInternetLayout.setVisibility(View.VISIBLE);
-                                allViewLayout.setVisibility(View.GONE);
-                                Button button= findViewById(R.id.TryAgain);
-                                button.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        recreate();
-                                    }});
-
-                            }
-                        }
-                    });
-                    RequestQueue requestQueue25 = Volley.newRequestQueue(getApplicationContext());
-                    requestQueue25.add(request25);
-                    layoutShow=false;
                 }else{
                     membersLayout.setVisibility(View.GONE);
                     layoutShow=true;
@@ -1860,6 +2050,7 @@ private Button cAllday,cweekday,cweekend;
        SupportMapFragment mapFragment = ((SupportMapFragment)this.getSupportFragmentManager().findFragmentById(R.id.map));
         mapFragment.getMapAsync(this);
          GREENBELT1 = new LatLng(lat, longi);
+
         Button getDirection = findViewById(R.id.getDirection);
         getDirection.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1897,7 +2088,214 @@ private Button cAllday,cweekday,cweekend;
 
         });
 
+        if(mBookingType.equals("")&&mcbookingType.equals("")){
+
+            noSlotAvailableLayouts.setVisibility(View.VISIBLE);
+        }
+
     }
+
+    private void membershipService(String vendorId, String msubActivityId, String mCalenderdate) {
+
+        memberbookingType.clear();
+        memberbookingCost.clear();
+        memberbookingSlotId.clear();
+        memberbookingPerson.clear();
+
+        String URL25 = Constant.API +"/slot/getSlotsByDate?vendorId="+vendorId+"&subActivityId="+msubActivityId+"&date="+mCalenderdate+"&type=MEMBERSHIP";
+
+        StringRequest request25 = new StringRequest(Request.Method.GET, URL25, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+
+                     /*   TransitionManager.beginDelayedTransition(memberLayout);
+                        visible = !visible;
+                       memberLayout.setVisibility(View.VISIBLE);
+                        memberLayout.setVisibility(visible ? View.VISIBLE : View.GONE);*/
+
+
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    if (jsonArray.length() == 0) {
+                        membershipBtn.setVisibility(View.GONE);
+
+                        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AfterSelectVendor.this);
+                        memberCourseRecycler.setLayoutManager(layoutManager);
+                        RecyclerView.Adapter adapter = new SelectMemberAdapter(getApplicationContext(), memberbookingType,memberbookingCost,memberbookingSlotId, memberbookingPerson);
+                        memberCourseRecycler.setAdapter(adapter);
+                    /*    Toast toast = Toast.makeText(AfterSelectVendor.this, "No Values", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();*/
+                    } else {
+                        membershipBtn.setVisibility(View.VISIBLE);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                            String  membershipType = jsonObject.getString("membershipType");
+                            String bookingCost = jsonObject.getString("bookingCost");
+                            String slotId=jsonObject.getString("slotId");
+                            String personCount=jsonObject.getString("personCount");
+
+                            memberbookingType.add(membershipType);
+                            memberbookingCost.add(bookingCost);
+                            memberbookingSlotId.add(slotId);
+                            memberbookingPerson.add(personCount);
+
+                        }
+                        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AfterSelectVendor.this);
+                        memberCourseRecycler.setLayoutManager(layoutManager);
+                        RecyclerView.Adapter adapter = new SelectMemberAdapter(getApplicationContext(), memberbookingType,memberbookingCost,memberbookingSlotId,memberbookingPerson);
+                        memberCourseRecycler.setAdapter(adapter);
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+
+
+                if (error instanceof NetworkError) {
+                    noInternetLayout.setVisibility(View.VISIBLE);
+                    allViewLayout.setVisibility(View.GONE);
+                    Button button= findViewById(R.id.TryAgain);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            recreate();
+                        }});
+                } else if (error instanceof ServerError) {
+
+                } else if (error instanceof ParseError) {
+                    Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
+
+                }else if (error instanceof TimeoutError) {
+                    noInternetLayout.setVisibility(View.VISIBLE);
+                    allViewLayout.setVisibility(View.GONE);
+                    Button button= findViewById(R.id.TryAgain);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            recreate();
+                        }});
+
+                }
+            }
+        });
+        VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(request25);
+        layoutShow=false;
+    }
+
+    private void getGalleryImage() {
+        {
+            String URL=Constant.API+"/rest/photos/getVendorImageKeys?vendorId="+vendorId;
+
+            StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                    bitmapsLists.clear();
+
+                    try {
+                        JSONArray jsonArray=new JSONArray(response);
+
+                        if (jsonArray.length() ==0) {
+                            galleryLayout.setVisibility(View.GONE);
+                            hideProgressingView();
+                        }
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                          String  values = String.valueOf(jsonArray.get(i));
+                      /*      keyList.add(values);
+                            if(keyList!=null){
+                                NewTinyDB.putListString("KEYLIST",keyList);}*/
+                            int ifder = getApplicationContext().getResources().getIdentifier(values,"ic_launcher", getApplicationContext().getPackageName());
+
+                            int resID = getResources().getIdentifier(values,
+                                    "string", getPackageName());
+
+                            String URL = Constant.API +"/rest/photos/getVendorImagesByKey?key=" + values;
+
+                            StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+
+                                    String imagess = String.valueOf(response);
+
+                                    byte[] imageBytes = Base64.decode(imagess, Base64.DEFAULT);
+                                    Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+
+
+
+                                    bitmapsLists.add(decodedImage);
+
+
+                                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AfterSelectVendor.this, LinearLayoutManager.HORIZONTAL, false);
+                                    recyclerGallery.setLayoutManager(layoutManager);
+                                    RecyclerView.Adapter adapter = new GalleryAdapter(getApplicationContext(),bitmapsLists);
+                                    recyclerGallery.setAdapter(adapter);
+
+                                    hideProgressingView();
+
+
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+
+                                    hideProgressingView();
+
+
+                                }
+                            });
+
+                            VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(request1);
+                        }
+
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    hideProgressingView();
+
+
+
+
+                }
+            });
+            request1.setRetryPolicy(new RetryPolicy() {
+                @Override
+                public int getCurrentTimeout() {
+                    return 10000;
+                }
+
+                @Override
+                public int getCurrentRetryCount() {
+                    return 10000;
+                }
+
+                @Override
+                public void retry(VolleyError error) {
+
+                }
+            });
+
+            VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(request1);
+        }
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         if(cd.isConnected()) {
@@ -1917,10 +2315,17 @@ private Button cAllday,cweekday,cweekend;
                   //  Marker davao = gMap.addMarker(new MarkerOptions().position(GREENBELT1).title("COEUZ").snippet("Technology"));
 
                     // zoom in the camera to Greenbelt 1
+
+                    gMap.addMarker(new MarkerOptions().position(GREENBELT1).title("vvendorName"));
+         /*           mGoogleMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(latitude, longitude))
+                            .title(getAddressOfLatLng(latitude, longitude))
+                            .icon(<your_marker_icon>));*/
                     gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(GREENBELT1, 15));
 
                     // animate the zoom process
                     gMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+
                 }
         }else{
             Toast toast = Toast.makeText(AfterSelectVendor.this,"Check Your Internet Connection", Toast.LENGTH_LONG);
@@ -1934,6 +2339,7 @@ private Button cAllday,cweekday,cweekend;
     }*/
     private void courseDetails(){
      membersLayout.setVisibility(View.VISIBLE);
+
         Date today = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
         String todayDates = format.format(today);
@@ -1954,18 +2360,21 @@ private Button cAllday,cweekday,cweekend;
             mcourseRegistrationEndDateList.clear();
             mCourseCostList.clear();
             mCourseDurationList.clear();
+        mCoursePersonList.clear();
+        slotRecurrence.clear();
 
             String URL50 = Constant.API + "/slot/getSlotsByDate?vendorId=" + vendorId + "&subActivityId=" + msubActivityId + "&date=" + todayDates + "&type=COURSE";
 
             StringRequest request50 = new StringRequest(Request.Method.GET, URL50, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.d("cdewdwesa", String.valueOf(response));
+
+                    noSlotAvailableLayouts.setVisibility(View.GONE);
 
                     try {
                         JSONArray jsonArray = new JSONArray(response);
                         if (jsonArray.length() == 0) {
-                            Log.d("uytjuki", String.valueOf(response));
+
                             noCourseData.setVisibility(View.VISIBLE);
                             membersLayout.setVisibility(View.GONE);
                         /*    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AfterSelectVendor.this);
@@ -1988,10 +2397,13 @@ private Button cAllday,cweekday,cweekend;
                                 String slotEndTime = jsonObject.getString("slotEndTime");
                                 String maxAllowed = jsonObject.getString("maxAllowed");
                                 String slotReccurence = jsonObject.getString("slotReccurence");
+                                slotRecurrence.add(slotReccurence);
+
                                 String courseStartDate = jsonObject.getString("courseStartDate");
                                 String courseEndDate = jsonObject.getString("courseEndDate");
                                 String courseRegistrationEndDate = jsonObject.getString("courseRegistrationEndDate");
                                 String courseCost = jsonObject.getString("bookingCost");
+                                String personCount = jsonObject.getString("personCount");
 
                                 Date sDate = null;
                                 try {
@@ -2021,7 +2433,7 @@ private Button cAllday,cweekday,cweekend;
                                     Date date = formatter.parse(courseStartDate);
                                     SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
                                     courseStartDate = sdf.format(date);
-                                    Log.d("fewrwerw",courseStartDate);
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -2031,7 +2443,7 @@ private Button cAllday,cweekday,cweekend;
                                     Date date = formatter.parse(courseEndDate);
                                     SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
                                     courseEndDate = sdf.format(date);
-                                    Log.d("fewrwerw1",courseEndDate);
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -2041,11 +2453,86 @@ private Button cAllday,cweekday,cweekend;
                                     Date date = formatter.parse(courseRegistrationEndDate);
                                     SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
                                     courseRegistrationEndDate = sdf.format(date);
-                                    Log.d("fewrwerw1",courseRegistrationEndDate);
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
 
+
+                                if(slotRecurrence.size()==3){
+
+                                    LinearLayout layout=findViewById(R.id.courese);
+                                    layout.setWeightSum(3f);
+                                    layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,3f));
+                                }else if(slotRecurrence.size()==2){
+                                    LinearLayout layout=findViewById(R.id.courese);
+                                    layout.setWeightSum(2f);
+
+                                }else{
+                                    LinearLayout layout=findViewById(R.id.courese);
+                                    layout.setWeightSum(1f);
+                                }
+                                if(slotRecurrence.contains("ALL_DAYS")){
+                                    cAllday.setVisibility(View.VISIBLE);
+                                }else{
+                                    cAllday.setVisibility(View.GONE);
+                                }
+                                if(slotRecurrence.contains("WEEKDAYS")){
+                                    cweekday.setVisibility(View.VISIBLE);
+                                }else{
+                                    cweekday.setVisibility(View.GONE);
+                                }
+                                if(slotRecurrence.contains("WEEKEND")){
+                                    cweekend.setVisibility(View.VISIBLE);
+                                }else{
+                                    cweekend.setVisibility(View.GONE);
+                                }
+
+
+                                if(courseTypes.equalsIgnoreCase("ALL_DAYS")){
+                                courseTypes="ALL_DAYS";
+
+                                final int sdk = android.os.Build.VERSION.SDK_INT;
+                                if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                                    cAllday.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg1) );
+                                    cweekday.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2) );
+                                    cweekend.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2) );
+
+                                } else {
+                                    cAllday.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg1));
+                                    cweekday.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2));
+                                    cweekend.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2));
+
+                                }}else   if(courseTypes.equalsIgnoreCase("WEEKDAYS")){
+
+                                        courseTypes="WEEKDAYS";
+                                        final int sdk = android.os.Build.VERSION.SDK_INT;
+                                        if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                                            cAllday.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2) );
+                                            cweekday.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg1) );
+                                            cweekend.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2) );
+
+                                        } else {
+                                            cAllday.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2));
+                                            cweekday.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg1));
+                                            cweekend.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2));
+
+                                        }}else   if(courseTypes.equalsIgnoreCase("WEEKEND")){
+
+
+                                        courseTypes="WEEKEND";
+                                        final int sdk = android.os.Build.VERSION.SDK_INT;
+                                        if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                                            cAllday.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2) );
+                                            cweekday.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2) );
+                                            cweekend.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg1) );
+
+                                        } else {
+                                            cAllday.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2));
+                                            cweekday.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg2));
+                                            cweekend.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.coursebtnbg1));
+
+                                        }}
 
 
 if(slotReccurence.equals(courseTypes)) {
@@ -2059,6 +2546,8 @@ if(slotReccurence.equals(courseTypes)) {
     mcourseRegistrationEndDateList.add(courseRegistrationEndDate);
     mCourseCostList.add(courseCost);
     mCourseDurationList.add(duration);
+    mCoursePersonList.add(personCount);
+
 
 }
 
@@ -2071,7 +2560,7 @@ if(slotReccurence.equals(courseTypes)) {
                                 memberCourseRecycler.setLayoutManager(layoutManager);
                                 RecyclerView.Adapter adapter = new SelectCourseAdapter(getApplicationContext(), mslotidsList, mslotStartTimeList,
                                         mslotEndTimeList, mmaxAllowedList, mslotReccurenceList, mcourseStartDateList, mcourseEndDateList,
-                                        mcourseRegistrationEndDateList, mCourseCostList, mCourseDurationList);
+                                        mcourseRegistrationEndDateList, mCourseCostList, mCourseDurationList,mCoursePersonList);
                                 memberCourseRecycler.setAdapter(adapter);
 
                         }else {      noCourseData.setVisibility(View.VISIBLE);
@@ -2087,7 +2576,8 @@ if(slotReccurence.equals(courseTypes)) {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.d("dscer", String.valueOf(error));
+
+                    noSlotAvailableLayouts.setVisibility(View.GONE);
 
                     if (error instanceof NetworkError) {
                         noInternetLayout.setVisibility(View.VISIBLE);
@@ -2101,7 +2591,7 @@ if(slotReccurence.equals(courseTypes)) {
                         });
                     } else if (error instanceof ServerError) {
 
-                        Log.d("heuiwirhu1", String.valueOf(error));
+
                     } else if (error instanceof ParseError) {
                         Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -2119,11 +2609,12 @@ if(slotReccurence.equals(courseTypes)) {
                     }
                 }
             });
-            RequestQueue requestQueue50 = Volley.newRequestQueue(getApplicationContext());
-            requestQueue50.add(request50);
+        VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(request50);
 
     }
     private  void getNearVendorSlots(){
+
+
 
         subActivityModels.clear();
         String lat;
@@ -2142,21 +2633,24 @@ if(slotReccurence.equals(courseTypes)) {
         if(changedSubActivityId!=null){
             msubActivityId=changedSubActivityId;
         }
-        Log.d("gnerigit",lat);
-        Log.d("ryrru65",msubActivityId+"-"+mCalenderdate+"-"+mBookingType+"-"+lat+"-"+lon);
 
 
-        String URL = Constant.API + "/general/getVendorsByAvailableSlots?subActivityId="+msubActivityId+"&offset=0&limit=7&lat="+lat+"&long="+lon+"&distance=5"+"&date="+mCalenderdate+"&type="+mBookingType;
 
-        StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+        String URL = Constant.API + "/general/getVendorsByAvailableSlots?subActivityId="+msubActivityId+"&offset="+String.valueOf(mOffset)+"&limit="+String.valueOf(mLimit)+"&lat="+lat+"&long="+lon+"&distance=5"+"&date="+mCalenderdate+"&type="+mBookingType;
+
+        StringRequest stringrequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("dewfrr3ew3", String.valueOf(response));
+
 
                 try {
                     JSONArray jsonArray = new JSONArray(response);
                     if (jsonArray.length() == 0) {
-                        Log.d("dewfrr3ew34", String.valueOf(response));
+
+
+                            getNearVendorSlots2();
+
 
                     } else {
                         recommendedLayout.setVisibility(View.VISIBLE);
@@ -2167,10 +2661,12 @@ if(slotReccurence.equals(courseTypes)) {
                             Integer vendorId = jsonObject.getInt("vendorId");
                             String area = jsonObject.getString("area");
 
-                            Log.d("ncwiwnfiri1", vendorName);
+                            String vendorShopImage = jsonObject.getString("vendorShopImage");
 
-                            subActivityModels.add(new SubActivityModel(vendorName, area,vendorId));
+
+                            subActivityModels.add(new SubActivityModel(vendorName, area,vendorId,vendorShopImage));
                             nearVendorSLotsAdapter.notifyDataSetChanged();
+
 
                         }
                     }
@@ -2182,7 +2678,7 @@ if(slotReccurence.equals(courseTypes)) {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("frwgtw", String.valueOf(error));
+
 
 
                 if (error instanceof NetworkError) {
@@ -2196,7 +2692,7 @@ if(slotReccurence.equals(courseTypes)) {
                         }});
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
+
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -2213,8 +2709,111 @@ if(slotReccurence.equals(courseTypes)) {
                 }
             }
         });
-        RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-        requestQueue1.add(request1);
+        VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(stringrequest);
+
+    }
+    private  void getNearVendorSlots2(){
+        mOffset=temp;
+        mLimit=temp+5;
+        temp=mLimit;
+
+        subActivityModels.clear();
+        String lat;
+        String lon;
+        String  initialLat=mTinyDb.getString(Constant.INITIALLAT);
+        String  intialLong=mTinyDb.getString(Constant.INITIALLONG);
+        String  searchLat=mTinyDb.getString(Constant.LATITUDE);
+        String  searchLong=mTinyDb.getString(Constant.LONGITUDE);
+        if (searchLat != null && !searchLat.isEmpty()) {
+            lat=searchLat;
+            lon=searchLong;
+        }else{
+            lat=initialLat;
+            lon=intialLong;
+        }
+        if(changedSubActivityId!=null){
+            msubActivityId=changedSubActivityId;
+        }
+
+
+
+        String URL = Constant.API + "/general/getVendorsByAvailableSlots?subActivityId="+msubActivityId+"&offset="+String.valueOf(mOffset)+"&limit="+String.valueOf(mLimit)+"&lat="+lat+"&long="+lon+"&distance=5"+"&date="+mCalenderdate+"&type="+mBookingType;
+
+        StringRequest requests = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    if (jsonArray.length() == 0) {
+
+                        if(temp<25){
+                            getNearVendorSlots2();
+                         }
+                        else{
+                            recommendedLayout.setVisibility(View.GONE);
+                        }
+
+                    } else {
+                        recommendedLayout.setVisibility(View.VISIBLE);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                            String vendorName = jsonObject.getString("vendorName");
+                            Integer vendorId = jsonObject.getInt("vendorId");
+                            String area = jsonObject.getString("area");
+
+                            String vendorShopImage = jsonObject.getString("vendorShopImage");
+
+
+                            subActivityModels.add(new SubActivityModel(vendorName, area,vendorId,vendorShopImage));
+                            nearVendorSLotsAdapter.notifyDataSetChanged();
+
+
+                        }
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+
+
+                if (error instanceof NetworkError) {
+                    noInternetLayout.setVisibility(View.VISIBLE);
+                    allViewLayout.setVisibility(View.GONE);
+                    Button button= findViewById(R.id.TryAgain);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            recreate();
+                        }});
+                } else if (error instanceof ServerError) {
+
+
+                } else if (error instanceof ParseError) {
+                    Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
+
+                } else if (error instanceof TimeoutError) {
+                    noInternetLayout.setVisibility(View.VISIBLE);
+                    allViewLayout.setVisibility(View.GONE);
+                    Button button= findViewById(R.id.TryAgain);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            recreate();
+                        }});
+
+                }
+            }
+        });
+
+        VolleySingleton.getInstance(AfterSelectVendor.this).addToRequestQueue(requests);
 
     }
 
@@ -2252,28 +2851,114 @@ if(slotReccurence.equals(courseTypes)) {
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+    public void showProgressingView() {
 
+        if (!isProgressShowing) {
+            isProgressShowing = true;
 
- @Override
+            view = getLayoutInflater().inflate(R.layout.progressbar_layout, null);
+            mainLayout =  findViewById(R.id. detailsMainLayout);
+            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            mainLayout.addView(view);
+
+        }
+    }
+
+    public void hideProgressingView() {
+            mainLayout.removeView(view);
+            isProgressShowing = false;
+        }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.call_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
             this.finish();
         }
+        if (id == R.id.call) {
+           callVendor();
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void callVendor() {
+        MyPhoneListener phoneListener = new MyPhoneListener();
+
+        TelephonyManager telephonyManager =
+
+                (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+
+        telephonyManager.listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE);
+
+        Intent callIntent = new Intent(Intent.ACTION_CALL);
+
+        callIntent.setData(Uri.parse("tel:+91"+vendorContact));
+
+
+        if (ContextCompat.checkSelfPermission(AfterSelectVendor.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(AfterSelectVendor.this, new String[]{Manifest.permission.CALL_PHONE}, 1);
+
+            return;
+        } else {
+
+            startActivity(callIntent);
+        }
+
+
     }
 
 
     @Override
     public void onClick(String value) {
-        Log.d("dhewuirw",value);
+
 
     }
-    public  RequestQueue getRequestQueue() {
-        if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
-        }
-        return mRequestQueue;
-    }
+    class MyPhoneListener extends PhoneStateListener {
+
+        private boolean onCall = false;
+        @Override
+        public void onCallStateChanged(int state, String incomingNumber) {
+
+            switch (state) {
+                case TelephonyManager.CALL_STATE_RINGING:
+                    // phone ringing...
+
+                    Toast.makeText(AfterSelectVendor.this, incomingNumber + " calls you",
+
+                            Toast.LENGTH_LONG).show();
+
+                    break;
+
+                case TelephonyManager.CALL_STATE_OFFHOOK:
+
+                    // one call exists that is dialing, active, or on hold
+
+                    Toast.makeText(AfterSelectVendor.this, "on call...",
+
+                            Toast.LENGTH_LONG).show();
+
+                    //because user answers the incoming call
+
+                    onCall = true;
+
+                    break;
+
+
+
+                case TelephonyManager.CALL_STATE_IDLE:
+
+                    break;
+
+                default:
+                    break;
+
+            }
+    }}
 }

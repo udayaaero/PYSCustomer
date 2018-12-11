@@ -8,6 +8,7 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -37,6 +38,7 @@ import com.android.volley.toolbox.Volley;
 import com.coeuz.pyscustomer.AdapterClass.OfferAdapterBookSummary;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -79,6 +81,9 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
 
     DatePickerDialog datePickerDialog;
     ImageView changedates;
+    private  String subActivityName;
+    private CardView membership_layout;
+    private String mpersonCount;
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
@@ -91,6 +96,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
 
         tinyDB=new TinyDB(getApplicationContext());
         tinyDB.putString(Constant.HISTORYPAGE,"MEM");
+        mpersonCount=tinyDB.getString(Constant.PERSONCOUNT);
       //  String mToken = tinyDB.getString(Constant.TOKEN);
         msubActivityId=tinyDB.getString(Constant.MEMBERSUBACTIVITYID);
         selectedSlotIds=tinyDB.getString(Constant.MEMSLOTID);
@@ -104,6 +110,18 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
         mMembershipType=tinyDB.getString("membershipType");
         tinyDB.putString(Constant.PAYMENTPAGESUBID,msubActivityId);
         tinyDB.putString(Constant.PAYMENTPAGESLOTID,selectedSlotIds);
+        subActivityName=tinyDB.getString(Constant.SUBACTIVITYNAME);
+        membership_layout=findViewById(R.id.membership_layout);
+        membership_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent =new Intent(MembershipBookingSummary.this,AddPlayer.class);
+                startActivity(intent);
+            }
+        });
+        if(subActivityName.equalsIgnoreCase("")){
+
+        }
 
 
 
@@ -142,14 +160,11 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
 
 
         try {
-            Log.d("fhruifhruei1",vsessionDate);
+
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             Date date =formatter.parse(vsessionDate);
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
             newDates = sdf.format(date);
-
-            Log.d("fhruifhruei",newDates);
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -185,13 +200,12 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
                            String  dpDate=(dayOfMonth + "/"
                                         + (monthOfYear + 1) + "/" + year);
                                 try {
-                                    Log.d("fhruifhruei1",dpDate);
+
                                     DateFormat formatter = new SimpleDateFormat("dd/MM/yy",Locale.getDefault());
                                     Date date =formatter.parse(dpDate);
                                     SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
                                     newDates = sdf.format(date);
 
-                                    Log.d("dpDate",newDates);
 
 
                                 } catch (Exception e) {
@@ -205,7 +219,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
                                     //Date date =formatter.parse(dpDate);
                                   //  SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd",Locale.getDefault());
                                     vsessionDate=dpDate;
-                                    Log.d("nfringfieri",vsessionDate);
+
                                     } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -230,13 +244,12 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
         StringRequest request3 = new StringRequest(Request.Method.GET, URL3, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("trwtyfewfe", String.valueOf(response));
+
 
                 try {
 
                     JSONArray jsonArray = new JSONArray(response);
                     if (jsonArray.length() == 0) {
-                        Log.d("trwty", String.valueOf(response));
 
                     } else {
                         for (int i = 0; i < jsonArray.length(); i++) {
@@ -246,8 +259,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
                             String discount = jsonObject.getString("discount");
                             String category = jsonObject.getString("category");
                           //  String type = jsonObject.getString("type");
-                            Log.d("nfjfnjfr", String.valueOf(startDate));
-                            Log.d("nfjfnjfr1", String.valueOf(expiryDate));
+
                             Integer discount1 = jsonObject.getInt("discount");
 
                             Long timestamp10 = Long.parseLong(startDate);
@@ -277,30 +289,23 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
                             offerBenefits.add(discount);
                             int s=0;
                             s+=discount1;
-                            Log.d("fjeifj", String.valueOf(s));
-                            Log.d("fjeriujre123", String.valueOf(offerBenefits));
-                            Log.d("fjeriujre1234", String.valueOf(offerDiscount));
-                            Log.d("fjeriujre", String.valueOf(offerBenefits));
+
 
 
                             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(MembershipBookingSummary.this);
                             offerRecycler.setLayoutManager(layoutManager);
                             RecyclerView.Adapter adapter = new OfferAdapterBookSummary(getApplicationContext(),offerTypeList,offerBenefits);
                             offerRecycler.setAdapter(adapter);
-                            Log.d("fjeriujrefewrfw3", String.valueOf(offerDiscount));
+
 
 
 
                         }
-                        Log.d("dewfewfwfew", String.valueOf(offerBenefits));
-                        Log.d("fjeriujrefewrfw34", String.valueOf(offerDiscount));
-
 
                         for(int j = 0; j < offerDiscount.size(); j++){
                             if(offerDiscount.get(j)!=null){
                                 sum += offerDiscount.get(j);}}
 
-                        Log.d("fjwiofio", String.valueOf(sum));
                         mTotalDiscount.setText(String.valueOf(sum));
 
                     }
@@ -312,7 +317,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("yreuie", String.valueOf(error));
+
 
                 if (error instanceof NetworkError) {
 
@@ -326,7 +331,6 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
                         }});
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -344,8 +348,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
                 }
             }
         });
-        RequestQueue requestQueue3 = Volley.newRequestQueue(getApplicationContext());
-        requestQueue3.add(request3);
+        VolleySingleton.getInstance(MembershipBookingSummary.this).addToRequestQueue(request3);
 
 
 
@@ -358,7 +361,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
             }
 
             totalCost=Integer.valueOf(mbookCosts.getText().toString());
-            Log.d("jfwiejfiwre", String.valueOf(totalCost));
+
         tinyDB.putString(Constant.PAYMENTPERSONCOUNT,personCounts);
 
             final ProgressDialog mProgressDialog;
@@ -372,7 +375,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
             StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.d("fhhuiefh", response);
+
                     mProgressDialog.dismiss();
                     try {
                         JSONObject jsonObject=new JSONObject(response);
@@ -418,9 +421,9 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.d("ryeuiryweq", error.toString());
+
                     mProgressDialog.dismiss();
-                    //  Log.d("ewqdadsfewr", String.valueOf(error.networkResponse.statusCode));
+
                     Toast.makeText(MembershipBookingSummary.this, "Please try again", Toast.LENGTH_SHORT).show();
 
                 }
@@ -430,11 +433,6 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
 
                     HashMap<String, Object> hashMap = new HashMap<>();
 
-                    Log.d("jfiojfero2",mVendorId);
-                    Log.d("jfiojfero3",msubActivityId);
-                    Log.d("jfiojfero4",personCounts);
-                    Log.d("jfiojfero5",selectedSlotIds);
-                    Log.d("jfiojfero6",vsessionDate);
                     hashMap.put("vendorId", mVendorId);
                     hashMap.put("subActivityId", msubActivityId);
                     hashMap.put("personCount", personCounts);
@@ -470,8 +468,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
 
                 }
             });
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            requestQueue.add(request);
+        VolleySingleton.getInstance(MembershipBookingSummary.this).addToRequestQueue(request);
 
 
 
@@ -488,13 +485,13 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
         StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("feifjeije", response);
+
                 try {
                     JSONObject jsonObject=new JSONObject(response);
                     String status=jsonObject.getString("status");
                     String errorMessage=jsonObject.getString("errorMessage");
                     if(status.equals("true")){
-                        Log.d("feifjeije", response);
+
                     }else {
                         Toast toast = Toast.makeText(MembershipBookingSummary.this, errorMessage, Toast.LENGTH_SHORT);
                         toast.setGravity(Gravity.CENTER, 0, 0);
@@ -509,7 +506,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("ryeuiryweq", error.toString());
+
 
             }
         }) {
@@ -518,11 +515,6 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
 
                 HashMap<String, Object> hashMap = new HashMap<>();
 
-                Log.d("1jfiojfero2",mVendorId);
-                Log.d("1jfiojfero3",msubActivityId);
-                Log.d("1jfiojfero4",personCounts);
-                Log.d("1jfiojfero5",selectedSlotIds);
-                Log.d("1jfiojfero6",vsessionDate);
                 hashMap.put("vendorId", mVendorId);
                 hashMap.put("subActivityId", msubActivityId);
                 hashMap.put("personCount", personCounts);
@@ -558,8 +550,7 @@ public class MembershipBookingSummary extends AppCompatActivity implements View.
 
             }
         });
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        requestQueue.add(request);
+        VolleySingleton.getInstance(MembershipBookingSummary.this).addToRequestQueue(request);
 
 
 

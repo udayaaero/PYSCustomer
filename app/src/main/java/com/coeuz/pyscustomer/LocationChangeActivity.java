@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -23,6 +24,7 @@ import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -39,10 +41,12 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
@@ -62,7 +66,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-public class LocationChangeActivity extends AppCompatActivity implements PlaceSelectionListener {
+public class LocationChangeActivity extends AppCompatActivity implements PlaceSelectionListener,View.OnClickListener {
 
     private static final String LOG_TAG = "PlaceSelectionListener";
     private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
@@ -75,7 +79,10 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
 
     private String  locatonValues;
 
+    private long mLastClickTime;
+    private int  firstime=1;
 
+private int first;
 
     String mToken;
     TinyDB mtinyDb;
@@ -98,11 +105,14 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mtinyDb = new TinyDB(getApplicationContext());
-
-
+        first=mtinyDb.getInt(Constant.FIRSTTIME);
         progressBar =  findViewById(R.id.progressbar200);
         notYourcity=findViewById(R.id.NotYourCity);
         firstViews= findViewById(R.id.firstviews);
+        Button searchButton = findViewById(R.id.findPlace);
+        searchButton.setOnClickListener(this);
+        Button chooseAnother = findViewById(R.id.chooseAnother);
+        chooseAnother.setOnClickListener(this);
 
         getCurrentLocation = findViewById(R.id.cardFirst);
 
@@ -132,6 +142,7 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
                 mtinyDb.putString(Constant.INITIALLAT, String.valueOf(latitude));
                 mtinyDb.putString(Constant.INITIALLONG, String.valueOf(longitude));
                 hereLocattion(latitude, longitude);
+                //getFromLocations(latitude,longitude);
             } else {
                 if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
@@ -147,12 +158,13 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
                     @Override
                     public void onComplete(@NonNull Task<Location> task) {
                         location100 = task.getResult();
-                        double lat = location100.getLatitude();
-                        double lon = location100.getLongitude();
-                        Log.d("fhewuihfw", String.valueOf(lat+lon));
-                        mtinyDb.putString(Constant.INITIALLAT, String.valueOf(lat));
-                        mtinyDb.putString(Constant.INITIALLONG, String.valueOf(lon));
-                        hereLocattion(lat, lon);
+
+                        if (location100 != null) {
+                            double  lat = location100.getLatitude();
+                            double    lon = location100.getLongitude();
+                            hereLocattion(lat, lon);
+                        }
+
 
 
                     }
@@ -193,7 +205,7 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
 
             case PERMISSION_REQUEST_COARSE_LOCATION: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("TAGww", "coarse location permission granted");
+
                 } else {
                     Intent intent = new Intent();
                     intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -209,54 +221,47 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
 
     public void hereLocattion(double lat, double lon) {
 
-        Log.d("fhrwuihejriytruuwei1", "fhrwuihejriytruuwei");
         String curCity;
         Geocoder geocoder = new Geocoder(LocationChangeActivity.this, Locale.getDefault());
-        List<Address> addressList;
-        try {
-            Log.d("fhrwuihejriytruuwei2", "fhrwuihejriytruuwei");
-            addressList = geocoder.getFromLocation(lat, lon, 1);
-            if (addressList.size() > 0) {
-                curCity = addressList.get(0).getLocality();
-                locatonValues = curCity.toLowerCase();
-                Log.d("yfhuewir", locatonValues);
-                Log.d("fhrwuihejriytruuwei3", "fhrwuihejriytruuwei");
 
-            }
+
+        try {
+
+
             List<Address> addressList1 = geocoder.getFromLocation(
                     lat, lon, 1);
-            Log.d("fhrwuihejriytruuwei4", "fhrwuihejriytruuwei");
             if (addressList1 != null && addressList1.size() > 0) {
                 Address address = addressList1.get(0);
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
                     sb.append(address.getAddressLine(i)).append("\n");
                 }
-                Log.d("fhrwuihejriytruuwei5", "fhrwuihejriytruuwei");
-               /* sb.append(address.getSubAdminArea()).append("\n");*/
+
                 sb.append(address.getSubLocality());
                 String sb1=address.getLocality();
-               /* sb.append(address.getLocale()).append("\n");
-                sb.append(address.getAdminArea()).append("\n");
-                sb.append(address.getLocality()).append("\n");*/
-                /*sb.append(address.getPostalCode()).append("\n");
-                sb.append(address.getCountryName());*/
                 notWorking=false;
-                Log.d("fhrwuihejriytruuwei6", "fhrwuihejriytruuwei");
-                locatonValues=sb.toString()+ System.getProperty("line.separator")+sb1;
+                mtinyDb.putString(Constant.INITIALLAT, String.valueOf(lat));
+                mtinyDb.putString(Constant.INITIALLONG, String.valueOf(lon));
+                if(sb.toString().equalsIgnoreCase("null")){
+                    locatonValues =sb1;
+                }else{
+
+                    locatonValues = sb.toString() + System.getProperty("line.separator") + sb1;}
+
                 mtinyDb.putString(Constant.INITIALLOCATION, locatonValues);
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.putExtra("EXTRA_SESSION_ID", locatonValues);
                 startActivity(intent);
                 finish();
-                Log.d("fhrwuihejriytruuwei", sb.toString());
+
             }
         } catch (IOException e) {
             e.printStackTrace();
+
         }
         if(notWorking){
             getFromLocations(lat,lon);
-            Log.d("fhuwifhi","fhuwhe");
+
         }
 
 
@@ -264,34 +269,42 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
 
     public void findPlace(View view) {
         firstViews.setVisibility(View.VISIBLE);
+        notYourcity.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
-        mHandler.postDelayed(new Runnable() {
-            public void run() {
-                progressBar.setVisibility(View.GONE);
-            }
-        }, 200);
 
-     /*   try {
-            Intent intent =
-                    new PlaceAutocomplete
-                            .IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
-                            .build(this);
-            startActivityForResult(intent, 1);
-        } catch (GooglePlayServicesRepairableException e) {
-            // TODO: Handle the error.
-        } catch (GooglePlayServicesNotAvailableException e) {
-            // TODO: Handle the error.
-        }*/
         try {
+            AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                    .setTypeFilter(Place.TYPE_COUNTRY)
+                    .setCountry("IN")
+                    .build();
             Intent intent = new PlaceAutocomplete.IntentBuilder
                     (PlaceAutocomplete.MODE_FULLSCREEN)
                     .setBoundsBias(BOUNDS_MOUNTAIN_VIEW)
+                    .setFilter(typeFilter)
                     .build(LocationChangeActivity.this);
             startActivityForResult(intent, REQUEST_SELECT_PLACE);
         } catch (GooglePlayServicesRepairableException |
                 GooglePlayServicesNotAvailableException e) {
             e.printStackTrace();
         }
+
+        if(firstime==1) {
+
+            mHandler.postDelayed(new Runnable() {
+                public void run() {
+                    progressBar.setVisibility(View.GONE);
+                }
+            }, 6000);
+            firstime=2;
+        }else{
+            mHandler.postDelayed(new Runnable() {
+                public void run() {
+                    progressBar.setVisibility(View.GONE);
+                }
+            }, 500);
+        }
+
+
     }
 
 
@@ -299,15 +312,10 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
 
     @Override
     public void onPlaceSelected(Place place) {
-        Log.d("fhuewrifierf1", "Place Selected: " + place.getAddress());
+
         String address= String.valueOf(place.getAddress());
         if(address.contains("Tamil Nadu")){
-            Log.d("fjrifreui","Tamil Nadu");
 
-        Log.d("fhuewrifierf2", "Place Selected: " + place.getPlaceTypes());
-        Log.d("fhuewrifierf3", "Place Selected: " + place.getLocale());
-        Log.d("fhuewrifierf", "Place Selected: " + place.getName());
-        Log.d("imowefiiewo", "Place Selected: " + place.getLatLng());
         locatonValues = String.valueOf(place.getName());
 
         String lat = place.getLatLng().toString();
@@ -320,8 +328,7 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
         mtinyDb.putString(Constant.LATITUDE, sLat);
         mtinyDb.putString(Constant.LONGITUDE, sLng);
         mtinyDb.putString(Constant.INITIALLOCATION, locatonValues);
-        Log.d("jfioowfj", sLat);
-        Log.d("jfioowfj1", sLng);
+
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.putExtra("EXTRA_SESSION_ID", locatonValues);
         intent.putExtra("EXTRA_LAT", sLat);
@@ -329,6 +336,7 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
         startActivity(intent);
         finish();
         }else{
+
             notYourcity.setVisibility(View.VISIBLE);
             firstViews.setVisibility(View.GONE);
         }
@@ -367,48 +375,63 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
         return super.onOptionsItemSelected(item);
     }
 
-    public  void getFromLocations(double lat, double lng) {
+    public  void getFromLocations(final double lat, final double lng) {
 
-        String address = String.format(Locale.US,
+      /*  String address = String.format(Locale.US,
                 "https://maps.googleapis.com/maps/api/geocode/json?latlng=%1$f,%2$f&sensor=false&language="
-                        + Locale.getDefault().getCountry(), lat,lng);
+                        + Locale.getDefault().getCountry(), lat,lng);*/
+
+        String address="https://maps.googleapis.com/maps/api/geocode/json?latlng="+String.valueOf(lat)+","+String.valueOf(lng)+
+                "&sensor=true&key=AIzaSyDziFGBS1ef_vIY89Dd-9N9nzfgM7HsjYs";
 
 
         StringRequest request45 = new StringRequest(Request.Method.GET, address, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("fiuwhwiufrew", String.valueOf(response));
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray valuess=jsonObject.getJSONArray("results");
-                    Log.d("fiuwhwiufrew1", String.valueOf(valuess));
+
                     JSONArray jsonArray = null;
                     for(int i=0;i<valuess.length();i++){
-                        JSONObject valuess1= valuess.getJSONObject(0);
+                        JSONObject valuess1= valuess.getJSONObject(1);
                         jsonArray=valuess1.getJSONArray("address_components");
                     }
-                    Log.d("fiuwhwiufrew2", String.valueOf(jsonArray));
                     String areaName = null;
-                    assert jsonArray != null;
-                    for(int i = 0; i<jsonArray.length(); i++){
-                        JSONObject jsonObject2= jsonArray.getJSONObject(1);
-                        areaName=jsonObject2.getString("long_name");
+                    String areaName1 = null;
 
+
+                    if (jsonArray != null) {
+                        for(int i = 0; i<jsonArray.length(); i++){
+                            JSONObject jsonObject2= jsonArray.getJSONObject(3);
+                            JSONObject jsonObject3= jsonArray.getJSONObject(2);
+                            areaName=jsonObject2.getString("long_name");
+                            areaName1=jsonObject3.getString("long_name");
+
+                        }
                     }
                     if(areaName!=null){
-                        mtinyDb.putString(Constant.INITIALLOCATION, areaName);
+                        String allAreaname=areaName1+ System.getProperty("line.separator") + areaName;
+                        mtinyDb.putString(Constant.INITIALLOCATION, allAreaname);
+                        mtinyDb.putString(Constant.INITIALLAT, String.valueOf(lat));
+                        mtinyDb.putString(Constant.INITIALLONG, String.valueOf(lng));
                         Intent intent = new Intent(LocationChangeActivity.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra("EXTRA_SESSION_ID", locatonValues);
                         startActivity(intent);
                         finish();
+                    }else{
 
+                        String allAreaname="Chennai";
+                        mtinyDb.putString(Constant.INITIALLOCATION, allAreaname);
+                        mtinyDb.putString(Constant.INITIALLAT, String.valueOf(lat));
+                        mtinyDb.putString(Constant.INITIALLONG, String.valueOf(lng));
+                        Intent intent = new Intent(LocationChangeActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
                     }
-                    Log.d("fiuwhwiufrew3", areaName);
-
-
-
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -418,7 +441,7 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("dfeterte", String.valueOf(error));
+
 
                 if (error instanceof NetworkError) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(LocationChangeActivity.this);
@@ -436,7 +459,6 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
                     builder.show();
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -455,11 +477,38 @@ public class LocationChangeActivity extends AppCompatActivity implements PlaceSe
 
             }
         };
-        RequestQueue requestQueue45 = Volley.newRequestQueue(getApplicationContext());
-        requestQueue45.add(request45);
+        VolleySingleton.getInstance(LocationChangeActivity.this).addToRequestQueue(request45);
+
 
 
 
     }
+    @Override
+    public final void onClick(final View v) {
+        long currentClickTime= SystemClock.uptimeMillis();
+        long elapsedTime=currentClickTime-mLastClickTime;
+        mLastClickTime=currentClickTime;
 
+        long MIN_CLICK_INTERVAL = 3000;
+        if(first==1) {
+
+            MIN_CLICK_INTERVAL = 10000;
+            if (elapsedTime >= MIN_CLICK_INTERVAL) {
+                first=2;
+                mtinyDb.putInt(Constant.FIRSTTIME,2);
+                findPlace(v);
+            }
+        }else{
+
+            first=2;
+            mtinyDb.putInt(Constant.FIRSTTIME,2);
+            MIN_CLICK_INTERVAL = 1000;
+            if (elapsedTime >= MIN_CLICK_INTERVAL) {
+
+                findPlace(v);
+            }
+
+        }
+    }
 }
+

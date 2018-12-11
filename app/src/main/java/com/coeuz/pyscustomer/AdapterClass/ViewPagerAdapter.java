@@ -2,6 +2,7 @@ package com.coeuz.pyscustomer.AdapterClass;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -12,20 +13,28 @@ import android.widget.ImageView;
 
 import com.coeuz.pyscustomer.R;
 
+import java.util.ArrayList;
+
 
 
 public class ViewPagerAdapter extends PagerAdapter {
 
     private Context context;
-    private Integer[] images={R.drawable.gym,R.drawable.zumba,R.drawable.yoga
+    private ArrayList<Bitmap> images = new ArrayList<>();
+   /* private Integer[] images={R.drawable.gym,R.drawable.zumba,R.drawable.yoga
             ,R.drawable.aerobics,R.drawable.haircoloring};
     public ViewPagerAdapter(Context context) {
         this.context=context;
+    }*/
+
+    public ViewPagerAdapter(Context applicationContext, ArrayList<Bitmap> bitmapsLists) {
+        this.context=applicationContext;
+        this.images=bitmapsLists;
     }
 
     @Override
     public int getCount() {
-        return images.length;
+        return images.size();
     }
 
     @Override
@@ -40,7 +49,7 @@ public class ViewPagerAdapter extends PagerAdapter {
         assert layoutInflater != null;
         @SuppressLint("InflateParams") View view= layoutInflater.inflate(R.layout.viewpageradapter,null);
         ImageView imageView=view.findViewById(R.id.SlideimageView);
-        imageView.setImageResource(images[position]);
+        imageView.setImageBitmap(images.get(position));
 
         ViewPager vp=(ViewPager)container;
         vp.addView(view,0);

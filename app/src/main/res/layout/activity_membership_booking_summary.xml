@@ -326,7 +326,7 @@
                                android:textColor="@color/green"
                                 android:textStyle="bold"
                              android:layout_gravity="center"
-                                android:text="Whould you like to change your start date"
+                                android:text="Would you like to change your start date"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 tools:ignore="HardcodedText" />

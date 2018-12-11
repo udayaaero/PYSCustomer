@@ -20,7 +20,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.Toast;
+
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.LocationServices;
@@ -30,7 +30,6 @@ import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 
 import com.google.android.gms.location.LocationRequest;
-
 
 @SuppressLint("Registered")
 public class GpsTracker extends Service implements ConnectionCallbacks,
@@ -45,6 +44,7 @@ public class GpsTracker extends Service implements ConnectionCallbacks,
     private double currentLongitude;
 
     static final int REQUEST=1;
+
 
 
     private static final int MY_PERMISSION_ACCESS_COURSE_LOCATION =888 ;
@@ -71,11 +71,14 @@ public class GpsTracker extends Service implements ConnectionCallbacks,
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60;
 
 
+
+
     protected LocationManager locationManager;
 
 
     public GpsTracker(Context context) {
         this.mContext = context;
+
         getLocation();
     }
 
@@ -95,10 +98,10 @@ public class GpsTracker extends Service implements ConnectionCallbacks,
             }
 
             if (!isGPSEnabled && !isNetworkEnabled) {
-                Log.d("No network","No network");
+
 
             } else {
-                Log.d("No network1","No network");
+
                 this.canGetLocation = true;
 
 
@@ -109,17 +112,16 @@ public class GpsTracker extends Service implements ConnectionCallbacks,
                                 GpsTracker.MY_PERMISSION_ACCESS_COURSE_LOCATION );
                     }
                     locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                    Log.d("No network2", "Network");
+
                     if (locationManager != null)
-                        Log.d("No network3","No network");
+
                     {
                         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                         if (location != null)
-                        { Log.d("No network4","No network");
+                        {
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
-                            Log.d("Nonnetwork4", String.valueOf(latitude));
-                            Log.d("Nonnetwork4", String.valueOf(longitude));
+
                         }
                     }
                 }
@@ -127,20 +129,20 @@ public class GpsTracker extends Service implements ConnectionCallbacks,
                         != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_COARSE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions((Activity) mContext,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST);
-                }else{
+                }else/*{
                      location=locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                     if(location !=null){
                         latitude=location.getLatitude();
                         longitude=location.getLongitude();
-                        Log.d("uiwefhweui", String.valueOf(latitude));
-                        Log.d("uiwefhweui1", String.valueOf(longitude));
+
                     }
-                }
+                }*/
                 // GPS'ten alinan konum bilgisi;
 
 
 
                 if (isGPSEnabled){
+
                     locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
                     if (locationManager != null) {
                         isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -151,40 +153,46 @@ public class GpsTracker extends Service implements ConnectionCallbacks,
                         ActivityCompat.requestPermissions((Activity) mContext, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  },
                                 GpsTracker.MY_PERMISSION_ACCESS_COURSE_LOCATION );
                     }
-                {Log.d("No network5","No network");
+                {
                     if (location == null)
-                    {Log.d("No network6","No network");
+                    {
                         Criteria criteria = new Criteria();
                         criteria.setAccuracy(Criteria.ACCURACY_FINE);
                         criteria.setCostAllowed(false);
 
                         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                        Log.d("GPS Enabled", "GPS Enabled");
-                        if (locationManager != null)
-                        {Log.d("No network8","No network");
-                             getAnotherLocation();
-                            Toast.makeText(mContext, "Please try again!", Toast.LENGTH_SHORT).show();
 
-                            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                            if (location != null)
-                            {Log.d("No network7","No network");
-                                latitude = location.getLatitude();
-                                longitude = location.getLongitude();
-                            }
-                        }
                         if (locationManager != null)
-                            Log.d("No network31","No network");
-                        {
-                            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                            if (location != null)
-                            { Log.d("No network41","No network");
-                                latitude = location.getLatitude();
-                                longitude = location.getLongitude();
-                            }
+                            this.isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                            location = locationManager
+                                    .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+
+                        if (location != null) {
+
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+
                         }
+
+
                     }
                 }
             }
+                if(isGPSEnabled) {
+                    if(location == null) {
+                        locationManager.requestLocationUpdates(
+                                LocationManager.GPS_PROVIDER,
+                                MIN_TIME_BW_UPDATES,
+                                MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                        if(locationManager != null) {
+                            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                            if(location != null) {
+                                latitude = location.getLatitude();
+                                longitude = location.getLongitude();
+                            }
+                        }
+                    }}
 
         }
         }
@@ -192,7 +200,7 @@ public class GpsTracker extends Service implements ConnectionCallbacks,
         {
             e.printStackTrace();
         }
-Log.d("fewuifhi", String.valueOf(location));
+
         return location;
     }
 
@@ -202,7 +210,7 @@ Log.d("fewuifhi", String.valueOf(location));
         if(location != null)
         {
             latitude = location.getLatitude();
-            Log.d("fhuihr", String.valueOf(latitude));
+
         }
 
         return latitude;
@@ -213,7 +221,7 @@ Log.d("fewuifhi", String.valueOf(location));
         if(location != null)
         {
             longitude = location.getLongitude();
-            Log.d("fhuihr1", String.valueOf(longitude));
+
         }
 
         return longitude;
@@ -250,7 +258,7 @@ Log.d("fewuifhi", String.valueOf(location));
     // Konum bilgisi kapali ise kullaniciya ayarlar sayfasina baglanti iceren bir mesaj goruntulenir
     public void showSettingsAlert()
     {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
+        AlertDialog.Builder alertDialog    = new AlertDialog.Builder(mContext);
 
         // Mesaj basligi
         alertDialog.setTitle("GPS Kapalı");
@@ -302,6 +310,10 @@ Log.d("fewuifhi", String.valueOf(location));
                 .addApi(LocationServices.API)
                 .build();
 
+
+
+
+
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -333,10 +345,14 @@ Log.d("fewuifhi", String.valueOf(location));
             currentLongitude = location.getLongitude();
           //  mcurrentLatitude= String.valueOf(currentLatitude);
            // mcurrentLongitude= String.valueOf(currentLongitude);
-            Log.d("hfuiewrhwuie34", String.valueOf(currentLongitude));
-            Log.d("hfuiewrhwuie45", String.valueOf(currentLatitude));
-            latitude = location.getLatitude();
-            longitude = location.getLongitude();
+
+            if (latitude == 0.0)
+            {
+                latitude = currentLatitude;
+                longitude =currentLongitude;
+
+            }
+
 
         }
     }
@@ -355,10 +371,14 @@ Log.d("fewuifhi", String.valueOf(location));
 
        // mcurrentLatitude= String.valueOf(currentLatitude);
       //  mcurrentLongitude= String.valueOf(currentLongitude);
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-        Log.d("hfuiewrhwuie", String.valueOf(currentLatitude));
-        Log.d("hfuiewrhwuie23", String.valueOf(currentLongitude));
+
+
+        if (latitude == 0.0)
+        {
+            latitude = currentLatitude;
+            longitude =currentLongitude;
+
+        }
 
     }
 

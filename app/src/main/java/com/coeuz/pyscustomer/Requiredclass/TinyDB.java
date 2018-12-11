@@ -36,6 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -281,6 +282,17 @@ public class TinyDB {
     public ArrayList<String> getListString(String key) {
         return new ArrayList<String>(Arrays.asList(TextUtils.split(preferences.getString(key, ""), "‚‗‚")));
     }
+  /*  public HashMap<String,String> getHashmapString(String key) {
+
+        Map<String,String> imageMap = new HashMap<String,String>();
+        imageMap.put()
+
+        return new HashMap<String,String>(HashMap.<String,String>(TextUtils.split(preferences.getString(key, ""), "‚‗‚")));
+    }
+    public void putHashmapString(String key,HashMap<String,String> hashmapList) {
+        checkForNullKey(key);
+        preferences.edit().p
+    }*/
 
     /**
      * Get boolean value from SharedPreferences at 'key'. If key not found, return 'defaultValue'
@@ -346,7 +358,7 @@ public class TinyDB {
      */
     public void putInt(String key, int value) {
         checkForNullKey(key);
-        preferences.edit().putInt(key,0).apply();
+        preferences.edit().putInt(key,value).apply();
     }
 
     /**
@@ -420,6 +432,7 @@ public class TinyDB {
     	checkForNullKey(key);
         String[] myStringList = stringList.toArray(new String[stringList.size()]);
         preferences.edit().putString(key, TextUtils.join("‚‗‚", myStringList)).apply();
+
     }
 
     /**

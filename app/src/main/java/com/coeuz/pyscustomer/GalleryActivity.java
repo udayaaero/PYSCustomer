@@ -2,6 +2,7 @@ package com.coeuz.pyscustomer;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
@@ -33,7 +34,7 @@ public class GalleryActivity extends AppCompatActivity {
     public static final String TAG = "GalleryActivity";
     public static final String EXTRA_NAME = "images";
 
-    private ArrayList<Integer> _images;
+    private ArrayList<Bitmap> _images =new ArrayList<>();
 
     @InjectView(R.id.pager)
     ViewPager _pager;
@@ -45,9 +46,16 @@ public class GalleryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
         ButterKnife.inject(this);
+        byte[] byteArray = getIntent().getByteArrayExtra("image");
 
-        _images = (ArrayList<Integer>) getIntent().getSerializableExtra(EXTRA_NAME);
+        Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
+        _images.add(bmp);
+      // _images= getIntent().getParcelableArrayListExtra(EXTRA_NAME);
+
+     // _images = (ArrayList<Integer>) getIntent().getSerializableExtra(EXTRA_NAME);
         Assert.assertNotNull(_images);
+      //  _images.add();
 
         GalleryPagerAdapter _adapter = new GalleryPagerAdapter(this);
         _pager.setAdapter(_adapter);
@@ -56,7 +64,7 @@ public class GalleryActivity extends AppCompatActivity {
         _closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "Close clicked");
+
                 finish();
             }
         });
@@ -110,7 +118,7 @@ public class GalleryActivity extends AppCompatActivity {
             thumbView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d(TAG, "Thumbnail clicked");
+
 
                     // Set the pager position when thumbnail clicked
                     _pager.setCurrentItem(position);

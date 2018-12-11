@@ -8,6 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:actionMenuTextColor">@color/white</item>
         <item name="android:actionMenuTextAppearance">@style/MyMenuTextAppearance</item>
+
+    </style>
+    <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">@dimen/dimen_11sp</item>
     </style>
 
     <style name="AppTheme10" parent="Theme.AppCompat.Light.DarkActionBar">

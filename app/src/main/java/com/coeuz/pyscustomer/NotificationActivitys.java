@@ -40,15 +40,15 @@ public class NotificationActivitys extends AppCompatActivity {
         TextView text =findViewById(R.id.textView);
         TextView text1 =  findViewById(R.id.textView1);
 
-        text.setText(getData);
-        text1.setText(getdata1);
+   /*     text.setText(getData);
+        text1.setText(getdata1);*/
 
 
         notification=new NotificationCompat.Builder(this);
         notification.setAutoCancel(true);
     }
     public void buttonClick(View view){
-        notification.setSmallIcon(R.drawable.music_icon);
+
         notification.setTicker("ticker");
         notification.setWhen(System.currentTimeMillis());
         notification.setContentTitle("title");

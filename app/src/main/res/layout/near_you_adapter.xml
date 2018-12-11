@@ -2,28 +2,40 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="150dp"
-    android:padding="8dp"
+    android:layout_width="@dimen/service_near_width"
+    android:padding="@dimen/service_near_padding8"
     android:layout_height="wrap_content">
 <android.support.v7.widget.CardView
     android:background="@color/white"
     android:id="@+id/SelectChard"
     android:layout_width="wrap_content"
-    android:layout_height="210dp">
-    <RelativeLayout
-        android:padding="3dp"
-        android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="@dimen/service_near_padding3"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+        <LinearLayout
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
         <ImageView
-            android:layout_centerHorizontal="true"
             android:background="@drawable/gymslide"
             android:id="@+id/image"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            tools:ignore="ContentDescription" />
+            android:scaleType="fitXY"
+            />
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <TextView
-            android:layout_marginStart="5dp"
-            android:layout_below="@+id/image"
+           android:layout_centerHorizontal="true"
             android:id="@+id/NameOfVendor"
             android:text="Name Of Vendor"
             tools:ignore="HardcodedText"
@@ -33,18 +45,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
-            android:layout_marginTop="2dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="5dp"
-            android:layout_marginStart="5dp"
             android:layout_below="@+id/NameOfVendor"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/margin_2dp"
+            android:layout_marginBottom="@dimen/margin_5dp"
+            android:layout_marginStart="@dimen/margin_5dp"
             android:id="@+id/AdressOfVendor"
             android:text="Adress Of Vendor"
             tools:ignore="HardcodedText"
-            android:textSize="12sp"
+            android:textSize="@dimen/text_size_12sp"
             android:layout_width="wrap_content"
-            android:layout_height="65dp" />
-
-    </RelativeLayout>
+            android:layout_height="@dimen/service_near_address" />
+        </RelativeLayout>
+    </LinearLayout>
 </android.support.v7.widget.CardView>
 </LinearLayout>

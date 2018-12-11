@@ -117,7 +117,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/action_register"
-                    android:textColor="@color/block"
+                    android:textColor="@color/colorPrimary"
                     android:textStyle="bold" />
 
                 <TextView

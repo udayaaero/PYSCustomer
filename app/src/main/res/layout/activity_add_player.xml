@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    android:id="@+id/scrollviewss"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true"
+    android:focusableInTouchMode="true"
+    android:layout_height="match_parent">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:context="com.coeuz.pyscustomer.PaymentActivity">
+        <LinearLayout
+            android:padding="10dp"
+            android:fillViewport="true"
+            android:fitsSystemWindows="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="UselessParent">
+            <TextView
+                android:textColor="@color/block"
+                android:text="Add New Player"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:textSize="14sp"
+                android:layout_marginTop="10dp"
+                android:inputType="text"
+                android:hint="Player name*"
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:padding="10dp"
+            android:orientation="vertical"
+             android:background="#f3f3f3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <android.support.v7.widget.CardView
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_marginTop="10dp"
+                android:id="@+id/SelectedLayout"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:background="#f3f3f3"
+                    android:padding="10dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:weightSum="2"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:ignore="DisableBaselineAlignment,UselessParent">
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_weight="0.5"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:layout_gravity="center"
+                                android:src="@drawable/aerobics"
+                                android:layout_width="80dp"
+                                android:layout_height="70dp"
+                                tools:ignore="ContentDescription"
+                                />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_marginStart="5dp"
+                            android:layout_weight="0.9"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:text="SenthilKumar"
+                                android:textStyle="bold"
+                                android:textColor="@color/block"
+                                android:textSize="14sp"
+                                android:id="@+id/vendorName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                            <TextView
+                                android:text="75*****730"
+                                android:layout_marginTop="5dp"
+                                android:textColor="@color/block"
+                                android:textSize="14sp"
+                                android:id="@+id/subActivityType"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                            <TextView
+                                android:drawableStart="@drawable/location"
+                                android:text="chennai"
+                                android:layout_marginTop="5dp"
+                                android:textColor="@color/block"
+                                android:textSize="14sp"
+                                android:id="@+id/amount1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_weight="0.6"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:text="Teams"
+                                android:textStyle="bold"
+                                android:layout_gravity="end"
+                                android:textColor="#27b8a6"
+                                android:textSize="14sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+            <android.support.v7.widget.CardView
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_marginTop="10dp"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:background="#f3f3f3"
+                    android:padding="10dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:weightSum="2"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:ignore="DisableBaselineAlignment,UselessParent">
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_weight="0.5"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:layout_gravity="center"
+                                android:src="@drawable/aerobics"
+                                android:layout_width="80dp"
+                                android:layout_height="70dp"
+                                tools:ignore="ContentDescription"
+                                />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_marginStart="5dp"
+                            android:layout_weight="0.9"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:text="SenthilKumar"
+                                android:textStyle="bold"
+                                android:textColor="@color/block"
+                                android:textSize="14sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                            <TextView
+                                android:text="75*****730"
+                                android:layout_marginTop="5dp"
+                                android:textColor="@color/block"
+                                android:textSize="14sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                            <TextView
+                                android:drawableStart="@drawable/location"
+                                android:text="chennai"
+                                android:layout_marginTop="5dp"
+                                android:textColor="@color/block"
+                                android:textSize="14sp"
+
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_weight="0.6"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:text="Teams"
+                                android:textStyle="bold"
+                                android:layout_gravity="end"
+                                android:textColor="#27b8a6"
+                                android:textSize="14sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+            <android.support.v7.widget.CardView
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_marginTop="10dp"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:background="#f3f3f3"
+                    android:padding="10dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:weightSum="2"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:ignore="DisableBaselineAlignment,UselessParent">
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_weight="0.5"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:layout_gravity="center"
+                                android:src="@drawable/aerobics"
+                                android:layout_width="80dp"
+                                android:layout_height="70dp"
+                                tools:ignore="ContentDescription"
+                                />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_marginStart="5dp"
+                            android:layout_weight="0.9"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:text="SenthilKumar"
+                                android:textStyle="bold"
+                                android:textColor="@color/block"
+                                android:textSize="14sp"
+
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                            <TextView
+                                android:text="75*****730"
+                                android:layout_marginTop="5dp"
+                                android:textColor="@color/block"
+                                android:textSize="14sp"
+
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                            <TextView
+                                android:drawableStart="@drawable/location"
+                                android:text="chennai"
+                                android:layout_marginTop="5dp"
+                                android:textColor="@color/block"
+                                android:textSize="14sp"
+
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_weight="0.6"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:text="Teams"
+                                android:textStyle="bold"
+                                android:layout_gravity="end"
+                                android:textColor="#27b8a6"
+                                android:textSize="14sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+
+
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

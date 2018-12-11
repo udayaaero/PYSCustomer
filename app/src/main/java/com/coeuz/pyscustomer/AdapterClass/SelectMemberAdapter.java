@@ -27,18 +27,18 @@ public class SelectMemberAdapter extends RecyclerView.Adapter<SelectMemberAdapte
     TinyDB mtinyDb;
 
 
-
-
     private ArrayList<String> typeList;
     private ArrayList<String> CostList;
     private ArrayList<String> idList;
+    private ArrayList<String> personList;
 
 
-    public SelectMemberAdapter(Context applicationContext, ArrayList<String> memberbookingType, ArrayList<String> memberbookingCost, ArrayList<String> memberbookingSlotId) {
+    public SelectMemberAdapter(Context applicationContext, ArrayList<String> memberbookingType, ArrayList<String> memberbookingCost, ArrayList<String> memberbookingSlotId, ArrayList<String> memberbookingPerson) {
         mcontext=applicationContext;
         this.typeList =memberbookingType;
         this.CostList =memberbookingCost;
         this.idList =memberbookingSlotId;
+        personList=memberbookingPerson;
 
         mtinyDb=new TinyDB(mcontext);
     }
@@ -79,8 +79,9 @@ public class SelectMemberAdapter extends RecyclerView.Adapter<SelectMemberAdapte
                 String bookingCost=CostList.get(position);
                 String membershipType=typeList.get(position);
                 String membershipslotID=idList.get(position);
+                String personCount=personList.get(position);
 
-
+                mtinyDb.putString(Constant.PERSONCOUNT,personCount);
                 mtinyDb.putString("SlotbookingCost",bookingCost);
                 Calendar calendar = Calendar.getInstance();
                 SimpleDateFormat mdformat = new SimpleDateFormat("hh:mmaa", Locale.getDefault());

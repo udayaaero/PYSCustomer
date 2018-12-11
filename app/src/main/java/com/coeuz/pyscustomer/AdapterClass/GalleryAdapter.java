@@ -2,17 +2,23 @@ package com.coeuz.pyscustomer.AdapterClass;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.coeuz.pyscustomer.AfterSelectVendor;
 import com.coeuz.pyscustomer.GalleryActivity;
 import com.coeuz.pyscustomer.R;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 
@@ -22,16 +28,16 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
     TinyDB mtinyDb;
 
 
-    private ArrayList<Integer> ImageList=new ArrayList<>();
+    private ArrayList<Bitmap> ImageList=new ArrayList<>();
 
 
 
 
-
+/*
 
 
     public GalleryAdapter(Context applicationContext) {
-        mcontext=applicationContext;
+
 
         mtinyDb=new TinyDB(mcontext);
         ImageList.add(R.drawable.gym);
@@ -45,6 +51,13 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
         ImageList.add(R.drawable.aparlar);
         ImageList.add(R.drawable.apilatessquar);
         ImageList.add(R.drawable.aspa);
+
+    }*/
+
+    public GalleryAdapter(Context applicationContext, ArrayList<Bitmap> bitmapsLists) {
+        mcontext=applicationContext;
+        ImageList=bitmapsLists;
+        mtinyDb=new TinyDB(mcontext);
 
     }
 
@@ -71,14 +84,29 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
     @Override
     public void onBindViewHolder(final GalleryAdapter.MyViewHolder holder, final int position) {
 
-        holder.image.setImageResource(ImageList.get(position));
+        holder.image.setImageBitmap(ImageList.get(position));
+       Drawable drawable = new BitmapDrawable(mcontext.getResources(),ImageList.get(position));
+
+
+
+
+
+
+      //  mtinyDb.putImageWithFullPath("name"+position,ImageList.get(position));
+
 
 
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+             /*   ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                Bitmap bmp=ImageList.get(position);
+
+                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+
                 ArrayList<Integer> images = new ArrayList<>();
-                images.add(R.drawable.gym);
+            //    images.add(ImageList.get(position));
                 images.add(R.drawable.zumba);
                 images.add(R.drawable.yoga);
                 images.add(R.drawable.haircoloring);
@@ -88,16 +116,32 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
                 images.add(R.drawable.apilatessquar);
                 images.add(R.drawable.aspa);
 
+                Drawable drawable = new BitmapDrawable(mcontext.getResources(),ImageList.get(position));
+
+                if ( holder.image.getTag() != null) {
+                    int resourceID = (int)  holder.image.getTag();
+
+                    //
+                    // drawable id.
+                    //
+                }
+
+
+
+              //  int resID =mcontext.getResources().getIdentifier(drawable , "drawable",mcontext.getPackageName());
+                int i1 = mcontext.getResources().getIdentifier("pys/vendorImages/37/32183", "string", mcontext.getPackageName());
+
                 Intent intent = new Intent(mcontext, GalleryActivity.class);
-                intent.putIntegerArrayListExtra(GalleryActivity.EXTRA_NAME, images);
-                mcontext.startActivity(intent);
+                intent.putExtra("image",byteArray);
+          //   intent.putExtra(GalleryActivity.EXTRA_NAME, byteArray );
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mcontext.startActivity(intent);*/
             }
         });
         }
 
     @Override
     public int getItemCount() {
-
         return ImageList.size();
     }
 

@@ -2,11 +2,13 @@ package com.coeuz.pyscustomer;
 
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -35,7 +37,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
     private EditText mpas,mnewpas,mnewConformpass;
     private String Token;
-    private String CurrentPassword,ConformPassword;
+    private String mCurrentPassword,mNewPassword,mConformPassword;
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
@@ -57,70 +59,66 @@ public class ChangePasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(final View view) {
 
-                CurrentPassword = mpas.getText().toString().trim();
-                //NewPassWord = mnewpas.getText().toString().trim();
-                ConformPassword = mnewConformpass.getText().toString().trim();
+                mCurrentPassword = mpas.getText().toString().trim();
+                mNewPassword = mnewpas.getText().toString().trim();
+                mConformPassword = mnewConformpass.getText().toString().trim();
 
 
 
                 if (TextUtils.isEmpty(mpas.getText().toString())) {
-                    Log.d("eeeee1", mpas.getText().toString());
-                    mpas.setError("Please enter Password");
+
+                    mpas.setError("Please enter password");
                     mpas.requestFocus();
                     return;
 
-                }
+                }else
                 if (TextUtils.isEmpty(mnewpas.getText().toString())) {
-                    Log.d("tttt1", mnewpas.getText().toString());
-                    mnewpas.setError("Please enter NewPassword");
+
+                    mnewpas.setError("Please enter new password");
                     mnewpas.requestFocus();
                     return;
 
-                }
-              /*  if (mnewpas.getText().toString().equals(mpas.getText().toString())) {
+                }else
+                if (mnewpas.getText().toString().equals(mpas.getText().toString())) {
                     Toast toast = Toast.makeText(getApplicationContext(), "Enter Different Password than Old Password", Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
                     return;
 
-                }*/
+                }else
                 if (mnewpas.getText().toString().length() < 6) {
-                    Log.d("iiiiii1", mnewpas.getText().toString());
+
                     mnewpas.setError("Enter minimum six characters");
                     mnewpas.requestFocus();
                     return;
-                }
+                }else
                 if (TextUtils.isEmpty(mnewConformpass.getText().toString())) {
-                    Log.d("yyyyy1", mnewConformpass.getText().toString());
-                    mnewConformpass.setError("Please enter Correct Password");
+
+                    mnewConformpass.setError("Please enter confirm password");
                     mnewConformpass.requestFocus();
-                }  if ( !mnewConformpass.getText().toString().matches(mnewpas.getText().toString())) {
-                    Log.d("ooooo32", mnewConformpass.getText().toString());
-                    mnewConformpass.setError("Please enter Correct Password");
+                } else  if (!mNewPassword.matches(mConformPassword)){
+
+                    mnewConformpass.setError("Password does not match");
                     mnewConformpass.requestFocus();
                 }
                 else {
                     // Toast.makeText(getActivity(), "Your password Updated", Toast.LENGTH_SHORT).show();
-                    String URL = Constant.APIONE + "/user/changeCurrentPassword?currPass=" + CurrentPassword + "&newPass=" + ConformPassword;
+                    String URL = Constant.APIONE + "/user/changeCurrentPassword?currPass=" + mCurrentPassword + "&newPass=" + mConformPassword;
                     StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Log.d("jiwjrfijr", String.valueOf(response));
+
                             Toast.makeText(getApplicationContext(), "Your Password is Updated", Toast.LENGTH_LONG).show();
 
-                          /*  Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                            intent.putExtra("finish", true);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // To clean up all activities
+                           Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                             startActivity(intent);
-                            finish();*/
+                            finish();
 
 
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.d("ppppppppppp123", String.valueOf(error));
-                            Log.d("fjds", String.valueOf(error.networkResponse.statusCode));
 
                             if (error instanceof NetworkError) {
                                 Toast.makeText(getApplicationContext(), "Cannot connect to Internet...Please check your connection!", Toast.LENGTH_SHORT).show();
@@ -148,6 +146,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     };
                     RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
                     requestQueue.add(request);
+
                 }
 
 
@@ -160,6 +159,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
+            Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivity(intent);
             this.finish();
         }
 

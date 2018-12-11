@@ -113,20 +113,38 @@ private Integer vendorId;
     @SerializedName("groupid")
     @Expose
     private Object groupid;
+    @SerializedName("vendorShopImage")
+    @Expose
+    private String vendorShopImage;
 
 
 
-    public SubActivityModel(String vendorName, String area, Integer vendorId) {
+   /* public SubActivityModel(String vendorName, String area, Integer vendorId) {
         this.vendorName=vendorName;
         this.area=area;
         this.vendorId=vendorId;
-    }
+    }*/
 
-    public SubActivityModel(String vendorName, String area, Integer vendorId, String subActivityId) {
+ /*   public SubActivityModel(String vendorName, String area, Integer vendorId, String subActivityId) {
         this.vendorName=vendorName;
         this.area=area;
         this.vendorId=vendorId;
         this.subActivityId=subActivityId;
+    }*/
+
+    public SubActivityModel(String vendorName, String area, Integer vendorId, String subActivityId, String vendorShopImage) {
+        this.vendorName=vendorName;
+        this.area=area;
+        this.vendorId=vendorId;
+        this.subActivityId=subActivityId;
+        this.vendorShopImage=vendorShopImage;
+    }
+
+    public SubActivityModel(String vendorName, String area, Integer vendorId, String vendorShopImage) {
+        this.vendorName=vendorName;
+        this.area=area;
+        this.vendorId=vendorId;
+        this.vendorShopImage=vendorShopImage;
     }
 
 
@@ -344,6 +362,14 @@ private Integer vendorId;
 
     public void setActivity(String activity) {
         this.activity = activity;
+    }
+
+    public String getVendorShopImage() {
+        return vendorShopImage;
+    }
+
+    public void setVendorShopImage(String vendorShopImage) {
+        this.vendorShopImage = vendorShopImage;
     }
 
     public Object getSubActivitiesList() {

@@ -7,9 +7,12 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -35,6 +38,7 @@ import com.coeuz.pyscustomer.ModelClass.SubActivityModel;
 import com.coeuz.pyscustomer.R;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,7 +51,7 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
     private ArrayList<SubActivityModel> subActivityModel;
     private TinyDB mtinyDb;
     private ArrayList<String> slotTypeList=new ArrayList<>();
-    private String mBookingType,mcBookingType;
+    private String mBookingType,mcBookingType, backGroundimage;
 
 
 
@@ -70,10 +74,24 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
 
         holder.nNameOfVendor.setText(subActivityModel.get(position).getVendorName());
         holder.nAdressOfvendor.setText(subActivityModel.get(position).getArea());
+        backGroundimage=subActivityModel.get(position).getVendorShopImage();
+        if(!backGroundimage.equals("")){
+       try{
+        byte[] images= Base64.decode(backGroundimage,Base64.DEFAULT);
+        Bitmap bitmap= BitmapFactory.decodeByteArray(images,0,images.length);
+        holder.mImage.setImageBitmap(bitmap);}
+        catch (OutOfMemoryError error){
+            error.printStackTrace();
+
+       }
+        }
 
         holder.mLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final String backGroundImages=subActivityModel.get(position).getVendorShopImage();
+
+
                  final ProgressDialog mProgressDialog;
                 mProgressDialog = new ProgressDialog(mcontext);
                 mProgressDialog.setMessage("Loading........");
@@ -89,14 +107,13 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
 
 
                 final String vendorId= String.valueOf(mVendorIds);
-                Log.d("fwfhuiew",vendorId);
+
 
                 String URL = Constant.API +"/general/getVendorByVendorId?vendorId="+vendorId;
 
                 StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("ewrtttty", String.valueOf(response));
 
                         try {
                             JSONObject jsonObject = new JSONObject(response);
@@ -106,35 +123,34 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
                                 toast.setGravity(Gravity.CENTER, 0, 0);
                                 toast.show();
                             } else {
-
-
                                 String latitude = jsonObject.getString("latitude");
                                 String longitude = jsonObject.getString("longitude");
-
                                 mtinyDb.putString("latttt",latitude);
                                 mtinyDb.putString("longggg",longitude);
                                 mtinyDb.putString(Constant.VENDORNAME,mVendorName);
                                 mtinyDb.putString(Constant.VENDORAREA,mArea);
                                 String msubActivityId=mtinyDb.getString("activityId");
-                                Log.d("fnifnerire",msubActivityId);
+
                                 slotTypeList.clear();
                                 String URL10 = Constant.API +"/user/getSlotTypesBySubActivityIdAndVendorId?subActivityId="+msubActivityId+"&vendorId="+vendorId;
 
                                 StringRequest request10 = new StringRequest(Request.Method.GET, URL10, new Response.Listener<String>() {
                                     @Override
                                     public void onResponse(String response) {
-                                        Log.d("bfhfbfjdew", String.valueOf(response));
+
+                                        mtinyDb.putString(Constant.BACKGROUNDIMAGE,backGroundImages);
 
                                         try {
                                             JSONArray jsonArray = new JSONArray(response);
 
                                             if (jsonArray.length() == 0) {
-                                                Log.d("rtrews", String.valueOf(response));
+
                                                 mProgressDialog.dismiss();
                                                 mBookingType="";
                                                 mtinyDb.putString(Constant.BOOKINGTYPE,mBookingType);
                                                 mcBookingType="";
                                                 mtinyDb.putString(Constant.MCBOOKINGTYPE,mcBookingType);
+
                                                 Intent intent=new Intent(mcontext, AfterSelectVendor.class);
                                                 Bundle bundle = new Bundle();
                                                 bundle.putString("positionValue",clickedItem);
@@ -148,7 +164,6 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
                                             } else {
                                                 for (int i = 0; i < jsonArray.length(); i++) {
                                                     String slotTypes = String.valueOf(jsonArray.get(i));
-                                                    Log.d("fsdfw", String.valueOf(slotTypes));
 
                                                     slotTypeList.add(slotTypes);
                                                 }
@@ -195,13 +210,12 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
                                 }, new Response.ErrorListener() {
                                     @Override
                                     public void onErrorResponse(VolleyError error) {
-                                        Log.d("ewqreqw", String.valueOf(error));
+
                                         mProgressDialog.dismiss();
                                         if (error instanceof NetworkError) {
                                             Toast.makeText(mcontext, "Cannot connect to Internet...Please check your connection!", Toast.LENGTH_SHORT).show();
                                         } else if (error instanceof ServerError) {
 
-                                            Log.d("heuiwirhu1", String.valueOf(error));
                                         }  else if (error instanceof ParseError) {
                                             Toast.makeText(mcontext, "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -211,8 +225,7 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
                                         }
                                     }
                                 });
-                                RequestQueue requestQueue10 = Volley.newRequestQueue(mcontext);
-                                requestQueue10.add(request10);
+                                VolleySingleton.getInstance(mcontext).addToRequestQueue(request10);
 
 
 
@@ -225,13 +238,12 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("eqwrwq", String.valueOf(error));
+
                         mProgressDialog.dismiss();
                         if (error instanceof NetworkError) {
                             Toast.makeText(mcontext, "Cannot connect to Internet...Please check your connection!", Toast.LENGTH_SHORT).show();
                         } else if (error instanceof ServerError) {
 
-                            Log.d("heuiwirhu1", String.valueOf(error));
                         }  else if (error instanceof ParseError) {
                             Toast.makeText(mcontext, "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -242,8 +254,7 @@ public class SubActivityAdapter extends RecyclerView.Adapter<SubActivityAdapter.
 
                     }
                 });
-                RequestQueue requestQueue1 = Volley.newRequestQueue(mcontext);
-                requestQueue1.add(request1);
+                VolleySingleton.getInstance(mcontext).addToRequestQueue(request1);
 
             }});
     }

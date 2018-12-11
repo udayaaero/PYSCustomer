@@ -33,6 +33,7 @@ import com.coeuz.pyscustomer.ModelClass.BookingHistoryModel;
 import com.coeuz.pyscustomer.R;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 import com.pnikosis.materialishprogress.ProgressWheel;
 
 import org.json.JSONArray;
@@ -75,6 +76,7 @@ public class NEARING extends Fragment{
     private RelativeLayout allViewLayout;
     private LinearLayout noInternetLayout;
     Button button;
+    RelativeLayout mainLayout;
 
 
     public NEARING() {
@@ -96,12 +98,13 @@ public class NEARING extends Fragment{
         if(Objects.requireNonNull(getActivity()).getIntent().getStringExtra("var")!=null)
         {
             String var_value=getActivity().getIntent().getStringExtra("var");
-            Log.d("fuifhui",var_value);
+
         }
 
 
         mtinyTb = new TinyDB(getActivity());
         mToken = mtinyTb.getString(Constant.TOKEN);
+        mainLayout =view.findViewById(R.id.mainLayouts);
 
         noValuesLayout=view.findViewById(R.id.noValuesLayout);
         noValuesLayout.setVisibility(View.GONE);
@@ -159,14 +162,15 @@ public class NEARING extends Fragment{
         StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("uyweriuewr", String.valueOf(response));
+
                 mprogressBar.setVisibility(View.GONE);
                 itShouldLoadMore = true;
                 try {
                     JSONArray jsonArray = new JSONArray(response);
                     if (jsonArray.length() == 0) {
-                        noValuesLayout.setVisibility(View.VISIBLE);
-                        allViewLayout.setVisibility(View.GONE);
+                        View view = getLayoutInflater().inflate(R.layout.no_values_booking, mainLayout,false);
+                        view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                        mainLayout.addView(view);
                        /* Toast toast = Toast.makeText(getActivity(), "No History", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();*/
@@ -193,7 +197,7 @@ public class NEARING extends Fragment{
                                 Date _24HourDt = _24HourSDF.parse(bookingtimeStamp);
                                 bookingtimeStamp=_12HourSDF.format(_24HourDt);
                                 bookingtimeStamp=bookingtimeStamp.replaceAll("\\.","");
-                                Log.d("fewfewfew",bookingtimeStamp);
+
                             } catch (final ParseException e) {
                                 e.printStackTrace();
                             }
@@ -205,7 +209,7 @@ public class NEARING extends Fragment{
                                 Date date = formatter.parse(booedforDate);
                                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
                                 booedforDate = sdf.format(date);
-                                Log.d("fewrwerw1",booedforDate);
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -227,7 +231,6 @@ public class NEARING extends Fragment{
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("frwgtw", String.valueOf(error));
 
                 itShouldLoadMore = true;
                 mprogressBar.setVisibility(View.GONE);
@@ -248,7 +251,6 @@ public class NEARING extends Fragment{
                         }});
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
                 }  else if (error instanceof ParseError) {
                     Toast.makeText(getActivity(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -279,8 +281,7 @@ public class NEARING extends Fragment{
 
             }
         };
-        RequestQueue requestQueue1 = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
-        requestQueue1.add(request1);
+        VolleySingleton.getInstance(getActivity()).addToRequestQueue(request1);
 
     }
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -301,7 +302,6 @@ public class NEARING extends Fragment{
         StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("hgerithjiow", String.valueOf(response));
 
                 progressWheel.setVisibility(View.GONE);
 
@@ -312,7 +312,7 @@ public class NEARING extends Fragment{
                 try {
                     JSONArray jsonArray = new JSONArray(response);
                     if (jsonArray.length() == 0) {
-                        Log.d("hgerithjiow", String.valueOf(response));
+
 
                     }else{
                         for(int i=0;i<jsonArray.length();i++){
@@ -337,7 +337,7 @@ public class NEARING extends Fragment{
                                 Date _24HourDt = _24HourSDF.parse(bookingtimeStamp);
                                 bookingtimeStamp=_12HourSDF.format(_24HourDt);
                                 bookingtimeStamp=bookingtimeStamp.replaceAll("\\.","");
-                                Log.d("fewfewfew",bookingtimeStamp);
+
                             } catch (final ParseException e) {
                                 e.printStackTrace();
                             }
@@ -349,7 +349,7 @@ public class NEARING extends Fragment{
                                 Date date = formatter.parse(booedforDate);
                                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
                                 booedforDate = sdf.format(date);
-                                Log.d("fewrwerw1",booedforDate);
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -369,7 +369,7 @@ public class NEARING extends Fragment{
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("frwgtw", String.valueOf(error));
+
                 progressWheel.setVisibility(View.GONE);
 
                 itShouldLoadMore = true;
@@ -391,7 +391,6 @@ public class NEARING extends Fragment{
                         }});
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
                 }  else if (error instanceof ParseError) {
                     Toast.makeText(getActivity(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -422,8 +421,7 @@ public class NEARING extends Fragment{
 
             }
         };
-        RequestQueue requestQueue1 = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
-        requestQueue1.add(request1);
+        VolleySingleton.getInstance(getActivity()).addToRequestQueue(request1);
 
     }
     @Override

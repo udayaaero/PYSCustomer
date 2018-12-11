@@ -5,6 +5,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +20,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -39,33 +44,39 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.NetworkError;
 
+import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.coeuz.pyscustomer.AdapterClass.BookingRememberAdapter;
 import com.coeuz.pyscustomer.AdapterClass.MainAdapter;
 import com.coeuz.pyscustomer.AdapterClass.NearYouAdapter;
 import com.coeuz.pyscustomer.AdapterClass.ViewPagerAdapter;
+
 import com.coeuz.pyscustomer.ModelClass.SubActivityModel;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
+import com.coeuz.pyscustomer.Requiredclass.LoginFrontPage;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 import com.facebook.login.LoginManager;
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,8 +90,20 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
+    String values;
+    ArrayList<Bitmap> bitmapsLists = new ArrayList<>();
+    ViewPagerAdapter viewPagerAdapter;
+    ArrayList<String> keyList=new ArrayList<>();
     ArrayList<String> subActivityList = new ArrayList<>();
+    ArrayList<Bitmap> subActivityImageList = new ArrayList<>();
+    HashMap<String,Bitmap> subActivityImageHashMap = new HashMap<>();
     ArrayList<String> subActivityIdList = new ArrayList<>();
+    int mOffset=0;
+    int mLimit=5;
+    int temp=5;
+    String lat="";
+    String lon="";
+    int j=0;
 
     ArrayList<String> rememberVendorName = new ArrayList<>();
     ArrayList<String> rememberBookedDate = new ArrayList<>();
@@ -94,6 +117,7 @@ public class MainActivity extends AppCompatActivity
     ArrayList<String> rememberpersonCount = new ArrayList<>();
     ArrayList<String> rememberNotes = new ArrayList<>();
 
+    String searchLat,searchLong;
 
     String locatonValues, initialLat, intialLong;
     private ProgressBar mprogressBar;
@@ -124,6 +148,13 @@ public class MainActivity extends AppCompatActivity
     private LinearLayout nearYouLayout;
     JSONObject objects;
     String bookingId;
+    LinearLayout mViewMore;
+    RelativeLayout mainLayout;
+    View view;
+    boolean isProgressShowing = false;
+    private Handler mHandler = new Handler();
+
+    private FirebaseAnalytics firebaseAnalytics;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -132,25 +163,41 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+       firebaseAnalytics=FirebaseAnalytics.getInstance(this);
+        showProgressingView();
 
+        ConnectivityManager conMgr =  (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert conMgr != null;
+        NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
+        if (netInfo == null){
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle(getResources().getString(R.string.NoInternetConnection))
+                    .setMessage(getResources().getString(R.string.PleaseTurnOn))
+                    .setPositiveButton("OK", null).show();
+        }
 
 
 
         tinyDB = new TinyDB(getApplicationContext());
         mcustomerName = tinyDB.getString(Constant.CUSTOMERNAME);
+        searchLat=tinyDB.getString(Constant.LATITUDE);
+        searchLong=tinyDB.getString(Constant.LONGITUDE);
 
         mToken = tinyDB.getString(Constant.TOKEN);
         initialLat = tinyDB.getString(Constant.INITIALLAT);
         intialLong = tinyDB.getString(Constant.INITIALLONG);
+
       /*  String popuserId = tinyDB.getString(Constant.USERID);
         String popsubActivityId = tinyDB.getString(Constant.PAYMENTPAGESUBID);
         String popVendorId = tinyDB.getString(Constant.VENDORID);*/
 
         locatonValues = tinyDB.getString(Constant.INITIALLOCATION);
-        //locatonValues = getIntent().getStringExtra("EXTRA_SESSION_ID");
+
+
+
 
         noInternetLayout = findViewById(R.id.NoInternetLayout);
-        allViewLayout = findViewById(R.id.allViewlayout);
+       allViewLayout = findViewById(R.id.allViewlayout);
         layoutPopup = findViewById(R.id.nestedScrollview);
 
         mprogressBar = findViewById(R.id.progressbar100);
@@ -158,14 +205,17 @@ public class MainActivity extends AppCompatActivity
         mRecyclerView.setNestedScrollingEnabled(false);
         nearYouLayout = findViewById(R.id.nearyouLayouts);
         nearRecycler = findViewById(R.id.galleryrecycle);
+
         bookingRememberRecycler = findViewById(R.id.BookingRememberRecycle);
 
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(bookingRememberRecycler);
         rememberlayout = findViewById(R.id.rememberlayout);
 
+
+
         ViewGroup.LayoutParams params1 = mRecyclerView.getLayoutParams();
-        params1.height = 400;
+        params1.height = 395;
         mRecyclerView.setLayoutParams(params1);
 
        /* final ViewFlipper flipper = (ViewFlipper)findViewById(R.id.flipper1);
@@ -184,10 +234,8 @@ public class MainActivity extends AppCompatActivity
         }, 8000);*/
 
 
-        if (!mToken.equals("")) {
-            Log.d("fwuiffewew", mToken);
-        }
-        LinearLayout mViewMore = findViewById(R.id.viewMore);
+
+        mViewMore = findViewById(R.id.viewMore);
         mviewMoretext = findViewById(R.id.viewMoreText);
         final boolean[] showingFirst = {true};
         mViewMore.setOnClickListener(new View.OnClickListener() {
@@ -203,7 +251,7 @@ public class MainActivity extends AppCompatActivity
                     mviewMoretext.setText("View Less Categories");
                 } else {
                     ViewGroup.LayoutParams params = mRecyclerView.getLayoutParams();
-                    params.height = 400;
+                    params.height = 395;
                     mRecyclerView.setLayoutParams(params);
                     showingFirst[0] = true;
                     mviewMoretext.setText("View More Categories");
@@ -215,11 +263,10 @@ public class MainActivity extends AppCompatActivity
 
         subActivityModels = new ArrayList<>();
         nearYouAdapter = new NearYouAdapter(MainActivity.this, subActivityModels);
-
-
-        nearRecycler.setLayoutManager(new GridLayoutManager(this, 1, GridLayoutManager.HORIZONTAL, false));
-        nearRecycler.setHasFixedSize(true);
+       nearRecycler.setLayoutManager(new GridLayoutManager(this, 1, GridLayoutManager.HORIZONTAL, false));
+       nearRecycler.setHasFixedSize(true);
         nearRecycler.setAdapter(nearYouAdapter);
+
        /* cd = new ConnectionDetector(getApplicationContext());
         if (!cd.isConnected()) {
             noInternetLayout.setVisibility(View.VISIBLE);
@@ -263,98 +310,363 @@ public class MainActivity extends AppCompatActivity
         }
         navigationView.setNavigationItemSelectedListener(this);
         if (mToken.equals("")) {
-            Log.d("ndjn", "huihi");
-            navigationView.getMenu().getItem(1).setVisible(false);
+
+            navigationView.getMenu().getItem(0).setVisible(true);
+            navigationView.getMenu().getItem(1).setVisible(true);
             navigationView.getMenu().getItem(2).setVisible(false);
             navigationView.getMenu().getItem(3).setVisible(false);
             navigationView.getMenu().getItem(4).setVisible(false);
             navigationView.getMenu().getItem(5).setVisible(false);
             navigationView.getMenu().getItem(6).setVisible(false);
-            navigationView.getMenu().getItem(7).setVisible(false);//if you want to hide first item
+            navigationView.getMenu().getItem(7).setVisible(false);
+            navigationView.getMenu().getItem(8).setVisible(false);//if you want to hide first item
             // navigationView.getMenu().getItem(1).setVisible(true); // if you want to show second menu item should be visible
+        }else{
+            navigationView.getMenu().getItem(1).setVisible(false);
         }
 
 
         viewPager = findViewById(R.id.viewPager);
         sliderDotspanel = findViewById(R.id.SliderDots);
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getApplicationContext());
-        viewPager.setAdapter(viewPagerAdapter);
-
-        dotscount = viewPagerAdapter.getCount();
-        dots = new ImageView[dotscount];
-        for (int i = 0; i < dotscount; i++) {
-            dots[i] = new ImageView(getApplicationContext());
-            dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.non_active_dot));
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(8, 0, 8, 0);
-            sliderDotspanel.addView(dots[i], params);
-        }
-        dots[0].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
-
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new MyTimerTask(), 2000, 3000);
+        bannerImage();
 
 
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+        String URL=Constant.API+"/rest/photos/getHomeBannerImageKeys";
+
+        StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            public void onResponse(String response) {
 
-            }
+                bitmapsLists.clear();
 
-            @Override
-            public void onPageSelected(int position) {
-                for (int i = 0; i < dotscount; i++) {
-                    dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.non_active_dot));
+                try {
+                    JSONArray jsonArray=new JSONArray(response);
+                             for (int i = 0; i < jsonArray.length(); i++) {
+                        values = String.valueOf(jsonArray.get(i));
+                        keyList.add(values);
+
+                        String URL = Constant.API + "/rest/photos/getHomeBannerImagesByKey?key=" + values;
+
+                        StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                String imagess = String.valueOf(response);
+
+                                byte[] imageBytes = Base64.decode(imagess, Base64.DEFAULT);
+                                Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+
+                                bitmapsLists.add(decodedImage);
+
+                                if(bitmapsLists.size()==keyList.size()) {
+                                    hideProgressingView();
+                                    viewPagerAdapter = new ViewPagerAdapter(getApplicationContext(), bitmapsLists);
+                                    viewPager.setAdapter(viewPagerAdapter);
+                                    dotscount = viewPagerAdapter.getCount();
+                                    dots = new ImageView[dotscount];
+                                    for (int i = 0; i < dotscount; i++) {
+                                        dots[i] = new ImageView(getApplicationContext());
+                                        dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.non_active_dot));
+                                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                                                LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params.setMargins(8, 0, 8, 0);
+                                        sliderDotspanel.addView(dots[i], params);
+                                    }
+                                    dots[0].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
+
+                                    Timer timer = new Timer();
+                                    timer.scheduleAtFixedRate(new MyTimerTask(), 2000, 3000);
+
+
+                                    viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                                        @Override
+                                        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                                        }
+
+                                        @Override
+                                        public void onPageSelected(int position) {
+                                            for (int i = 0; i < dotscount; i++) {
+                                                dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.non_active_dot));
+                                            }
+
+                                            dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
+
+                                        }
+
+                                        @Override
+                                        public void onPageScrollStateChanged(int state) {
+
+                                        }
+                                    });
+
+
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                hideProgressingView();
+                                if (error instanceof NetworkError) {
+                                    noInternetLayout.setVisibility(View.VISIBLE);
+                                    allViewLayout.setVisibility(View.GONE);
+                                    Button button = findViewById(R.id.TryAgain);
+                                    button.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            recreate();
+                                        }
+                                    });
+                                } else if (error instanceof ServerError) {
+                                    mainLayout =  findViewById(R.id. mainLayout);
+                                    View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                                    view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                                    mainLayout.addView(view);
+                                    Button button =view.findViewById(R.id.SomethingTryAgain1);
+                                    button.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            recreate();
+                                        }
+                                    });
+                                } else if (error instanceof ParseError) {
+                                    Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
+
+                                }  else if (error instanceof TimeoutError) {
+
+                                    mainLayout =  findViewById(R.id. mainLayout);
+                                    View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                                    view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                                    mainLayout.addView(view);
+                                    Button button =view.findViewById(R.id.SomethingTryAgain1);
+                                    button.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            recreate();
+                                        }
+                                    });
+                                }
+
+
+                            }
+                        }) ;
+
+                           // mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+                           /* mRequestQueue.add(request1);*/
+                        VolleySingleton.getInstance(MainActivity.this).addToRequestQueue(request1);}
+
+
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
 
-                dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
 
             }
-
+        }, new Response.ErrorListener() {
             @Override
-            public void onPageScrollStateChanged(int state) {
+            public void onErrorResponse(VolleyError error) {
+
+
+                hideProgressingView();
+             if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+
+                    mainLayout =  findViewById(R.id. mainLayout);
+                    View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                    view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    mainLayout.addView(view);
+                    Button button =view.findViewById(R.id.SomethingTryAgain1);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            recreate();
+                        }
+                    });
+                }
+                else if (error instanceof ServerError) {
+                    mainLayout =  findViewById(R.id. mainLayout);
+                    View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                    view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    mainLayout.addView(view);
+                    Button button =view.findViewById(R.id.SomethingTryAgain1);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            recreate();
+                        }
+                    });
+                } else if (error instanceof ParseError) {
+                    Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
+
+                }  else if (error instanceof TimeoutError) {
+
+                    mainLayout =  findViewById(R.id. mainLayout);
+                    View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                    view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    mainLayout.addView(view);
+                    Button button =view.findViewById(R.id.SomethingTryAgain1);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            recreate();
+                        }
+                    });
+                }
+                if (error instanceof NetworkError) {
+                    Log.d("fhuhfr1",String.valueOf(error));
+                    noInternetLayout.setVisibility(View.VISIBLE);
+                    allViewLayout.setVisibility(View.GONE);
+                    Button button = findViewById(R.id.TryAgain);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            recreate();
+                        }
+                    });
+                }
+
+
 
             }
         });
 
 
+     //   mRequestQueue= Volley.newRequestQueue(getApplicationContext());
+      /*  mRequestQueue.add(request1);*/
+        VolleySingleton.getInstance(MainActivity.this).addToRequestQueue(request1);
+
+
+
+
+
         mprogressBar.setVisibility(View.VISIBLE);
         subActivityList.clear();
         subActivityIdList.clear();
-        String URL = Constant.API + "/general/getAllSubActivities";
-        StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+        subActivityImageList.clear();
+        subActivityImageHashMap.clear();
+
+        String URL300 = Constant.API + "/general/getAllSubActivities";
+        StringRequest request300 = new StringRequest(Request.Method.GET, URL300, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("jjtirjtit9i3oti3", String.valueOf(response));
-
 
                 mprogressBar.setVisibility(View.GONE);
-
 
                 try {
                     JSONArray jsonArray = new JSONArray(response);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-
                         String subActivityId = jsonObject.getString("subActivityId");
                         String subActivityType = jsonObject.getString("subActivityType");
+                      //  subActivityType= subActivityType.substring(0).toUpperCase();
+                        String upperString = subActivityType.substring(0,1).toUpperCase() + subActivityType.substring(1);
 
-                        subActivityList.add(subActivityType);
+                        subActivityList.add(upperString);
                         subActivityIdList.add(subActivityId);
 
                         tinyDB.putListString(Constant.SubActivityIdList, subActivityIdList);
-                        //tinyDB.putListString(Constant.VendorIdList,vendorIdList);
-                        Log.d("yeruwiuifwi1", String.valueOf(subActivityList.size()));
+
+                   }
+            /*        for (int i = 0; i < subActivityIdList.size(); i++) {
+                        String subActivityId=subActivityIdList.get(i);*/
+
+                     for(final String subActivityId:subActivityIdList){
 
 
-                        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 3);
-                        mRecyclerView.setLayoutManager(layoutManager);
-                        RecyclerView.Adapter adapter = new MainAdapter(getApplicationContext(), subActivityList, subActivityIdList);
-                        mRecyclerView.setAdapter(adapter);
+                            String URLs = Constant.API + "/rest/photos/getSubActivityImagesBySubActivityId?subActivityId="+subActivityId;
+                        StringRequest request = new StringRequest(Request.Method.GET, URLs, new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+                                String imagess = String.valueOf(response);
+                                byte[] images = Base64.decode(imagess, Base64.DEFAULT);
+                                Bitmap bitmap = BitmapFactory.decodeByteArray(images, 0, images.length);
+
+                                subActivityImageHashMap.put(subActivityId,bitmap);
+
+                                subActivityImageList.add(bitmap);
 
 
+                                        if(subActivityImageList.size()==subActivityIdList.size()){
+
+                                        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 3);
+                                        mRecyclerView.setLayoutManager(layoutManager);
+                                        RecyclerView.Adapter adapter = new MainAdapter(MainActivity.this, subActivityList, subActivityIdList,subActivityImageList,subActivityImageHashMap);
+                                        mRecyclerView.setAdapter(adapter);}
+
+
+                        }
+
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                                mprogressBar.setVisibility(View.GONE);
+
+                                if (error instanceof NetworkError) {
+                                    noInternetLayout.setVisibility(View.VISIBLE);
+                                    allViewLayout.setVisibility(View.GONE);
+                                    Button button = findViewById(R.id.TryAgain);
+                                    button.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            recreate();
+                                        }
+                                    });
+                                } else if (error instanceof ServerError) {
+                                    mainLayout =  findViewById(R.id. mainLayout);
+                                    View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                                    view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                                    mainLayout.addView(view);
+                                    Button button =view.findViewById(R.id.SomethingTryAgain1);
+                                    button.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            recreate();
+                                        }
+                                    });
+                                } else if (error instanceof ParseError) {
+                                    Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
+
+                                }  else if (error instanceof TimeoutError) {
+
+                                    mainLayout =  findViewById(R.id. mainLayout);
+                                    View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                                    view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                                    mainLayout.addView(view);
+                                    Button button =view.findViewById(R.id.SomethingTryAgain1);
+                                    button.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            recreate();
+                                        }
+                                    });
+                                }
+                            }
+                        }) {
+
+                        };
+                     /* mRequestQueue= Volley.newRequestQueue(getApplicationContext());
+                         mRequestQueue.add(request);*/
+                         VolleySingleton.getInstance(MainActivity.this).addToRequestQueue(request);
+
+
+
+
+                        }
+                    if(subActivityList.size()<7){
+                       ViewGroup.LayoutParams params = mRecyclerView.getLayoutParams();
+                        params.height = 395;
+                        mRecyclerView.setLayoutParams(params);
+                        mViewMore.setVisibility(View.GONE);
+                    }else{
+                        ViewGroup.LayoutParams params = mRecyclerView.getLayoutParams();
+                        params.height = 395;
+                        mRecyclerView.setLayoutParams(params);
+                        mViewMore.setVisibility(View.VISIBLE);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -363,7 +675,7 @@ public class MainActivity extends AppCompatActivity
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("bsduf", String.valueOf(error));
+
                 mprogressBar.setVisibility(View.GONE);
 
                 if (error instanceof NetworkError) {
@@ -377,15 +689,27 @@ public class MainActivity extends AppCompatActivity
                         }
                     });
                 } else if (error instanceof ServerError) {
-
-                    Log.d("heuiwirhu1", String.valueOf(error));
+                    mainLayout =  findViewById(R.id. mainLayout);
+                    View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                    view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    mainLayout.addView(view);
+                    Button button =view.findViewById(R.id.SomethingTryAgain1);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            recreate();
+                        }
+                    });
                 } else if (error instanceof ParseError) {
                     Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
                 }  else if (error instanceof TimeoutError) {
-                    noInternetLayout.setVisibility(View.VISIBLE);
-                    allViewLayout.setVisibility(View.GONE);
-                    Button button = findViewById(R.id.TryAgain);
+
+                    mainLayout =  findViewById(R.id. mainLayout);
+                    View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                    view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    mainLayout.addView(view);
+                    Button button =view.findViewById(R.id.SomethingTryAgain1);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -398,8 +722,9 @@ public class MainActivity extends AppCompatActivity
         }) {
 
         };
-        RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
-        requestQueue1.add(request1);
+
+        VolleySingleton.getInstance(MainActivity.this).addToRequestQueue(request300);
+
 
 
         if (!mToken.isEmpty()) {
@@ -408,7 +733,7 @@ public class MainActivity extends AppCompatActivity
             StringRequest request = new StringRequest(Request.Method.GET, URL1, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.d("mvefn1", String.valueOf(response));
+
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         muserId = jsonObject.getString("userId");
@@ -425,22 +750,46 @@ public class MainActivity extends AppCompatActivity
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.d("miremio", String.valueOf(error));
 
-                 /*   if (error instanceof NetworkError) {
-                        Toast.makeText(getApplicationContext(), "Cannot connect to Internet...Please check your connection!", Toast.LENGTH_SHORT).show();
+                    if (error instanceof NetworkError) {
+                        noInternetLayout.setVisibility(View.VISIBLE);
+                        allViewLayout.setVisibility(View.GONE);
+                        Button button = findViewById(R.id.TryAgain);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                recreate();
+                            }
+                        });
                     } else if (error instanceof ServerError) {
-
-                        Log.d("heuiwirhu1", String.valueOf(error));
+                        mainLayout =  findViewById(R.id. mainLayout);
+                        View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                        view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                        mainLayout.addView(view);
+                        Button button =view.findViewById(R.id.SomethingTryAgain1);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                recreate();
+                            }
+                        });
                     } else if (error instanceof ParseError) {
                         Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
-                    } else if (error instanceof NoConnectionError) {
-                        Toast.makeText(getApplicationContext(), "NoConnectionError", Toast.LENGTH_SHORT).show();
-                    } else if (error instanceof TimeoutError) {
-                        Toast.makeText(getApplicationContext(), "Connection TimeOut! Please check your internet connection.", Toast.LENGTH_SHORT).show();
+                    }  else if (error instanceof TimeoutError) {
 
-                    }*/
+                        mainLayout =  findViewById(R.id. mainLayout);
+                        View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                        view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                        mainLayout.addView(view);
+                        Button button =view.findViewById(R.id.SomethingTryAgain1);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                recreate();
+                            }
+                        });
+                    }
                 }
             }) {
                 @Override
@@ -452,38 +801,48 @@ public class MainActivity extends AppCompatActivity
 
                 }
             };
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            requestQueue.add(request);
+
+            VolleySingleton.getInstance(MainActivity.this).addToRequestQueue(request);
 
         }
-        if (intialLong != null) {
-            Log.d("fjiewjfiw", intialLong);
-            Log.d("fjiewjfiw1", initialLat);
+
+
+        if (!searchLat.equals("")) {
+            lat = searchLat.replace(" ","");
+            lon = searchLong.replace(" ","");
+        }else{
+            lat = initialLat;
+            lon = intialLong;
         }
-        String URL5 = Constant.API + "/user/getVendorsByNearingYou?&lat=" + initialLat + "&long=" + intialLong + "&offset=0&limit=5";
+
+
+        String URL5 = Constant.API + "/user/getVendorsByNearingYou?&lat=" + lat + "&long=" + lon + "&offset=0&limit=5";
 
 
         StringRequest request5 = new StringRequest(Request.Method.GET, URL5, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("hgerithjiow", String.valueOf(response));
-
 
                 try {
                     JSONArray jsonArray = new JSONArray(response);
                     if (jsonArray.length() == 0) {
-                        Log.d("hgerithjiow", String.valueOf(response));
-                        nearYouLayout.setVisibility(View.GONE);
+                        nearingYou();
+                     /*
+                        ViewGroup.LayoutParams params1 = mRecyclerView.getLayoutParams();
+                        params1.height = 800;
+                        mRecyclerView.setLayoutParams(params1);
+                        nearYouLayout.setVisibility(View.GONE);*/
                     } else {
-
+                        nearYouLayout.setVisibility(View.VISIBLE);
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             String vendorName = jsonObject.getString("vendorName");
                             Integer vendorId = jsonObject.getInt("vendorId");
                             String area = jsonObject.getString("area");
                             String subActivityId = jsonObject.getString("subActivityId");
+                            String vendorShopImage = jsonObject.getString("vendorShopImage");
 
-                            subActivityModels.add(new SubActivityModel(vendorName, area, vendorId,subActivityId));
+                            subActivityModels.add(new SubActivityModel(vendorName, area, vendorId,subActivityId,vendorShopImage));
                             nearYouAdapter.notifyDataSetChanged();
 
                         }
@@ -496,7 +855,8 @@ public class MainActivity extends AppCompatActivity
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("frwgtw", String.valueOf(error));
+
+
 
 
                 if (error instanceof NetworkError) {
@@ -510,27 +870,37 @@ public class MainActivity extends AppCompatActivity
                         }
                     });
                 } else if (error instanceof ServerError) {
-
-                    Log.d("heuiwirhu1", String.valueOf(error));
-                } else if (error instanceof ParseError) {
-                    Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
-
-                }  else if (error instanceof TimeoutError) {
-                    noInternetLayout.setVisibility(View.VISIBLE);
-                    allViewLayout.setVisibility(View.GONE);
-                    Button button = findViewById(R.id.TryAgain);
+                    mainLayout =  findViewById(R.id. mainLayout);
+                    View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                    view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    mainLayout.addView(view);
+                    Button button =view.findViewById(R.id.SomethingTryAgain1);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             recreate();
                         }
                     });
+                } else if (error instanceof ParseError) {
+                    Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
+                }  else if (error instanceof TimeoutError) {
+
+                    mainLayout =  findViewById(R.id. mainLayout);
+                    View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                    view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    mainLayout.addView(view);
+                    Button button =view.findViewById(R.id.SomethingTryAgain1);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            recreate();
+                        }
+                    });
                 }
             }
         });
-        RequestQueue requestQueue5 = Volley.newRequestQueue(getApplicationContext());
-        requestQueue5.add(request5);
+        VolleySingleton.getInstance(MainActivity.this).addToRequestQueue(request5);
 
 
         if (!mToken.isEmpty()) {
@@ -550,7 +920,6 @@ public class MainActivity extends AppCompatActivity
             StringRequest request = new StringRequest(Request.Method.GET, URL1, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.d("frgergertdf", String.valueOf(response));
                     try {
                         JSONArray jsonArray = new JSONArray(response);
                         if (jsonArray.length() == 0) {
@@ -575,9 +944,7 @@ public class MainActivity extends AppCompatActivity
                                 String contactNo = jsonObject.getString("contactNo");
                                 String otp = jsonObject.getString("otp");
                                 String notes = jsonObject.getString("notes");
-                                Log.d("grgrwgwrw",startTime);
-                                Log.d("grgrwgwrw1",endTime);
-                                Log.d("grgrwgwrw2",otp);
+
 
 
                                 rememberVendorName.add(vendorName);
@@ -608,7 +975,46 @@ public class MainActivity extends AppCompatActivity
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.d("fddgrgerg", String.valueOf(error));
+
+                    if (error instanceof NetworkError) {
+                        noInternetLayout.setVisibility(View.VISIBLE);
+                        allViewLayout.setVisibility(View.GONE);
+                        Button button = findViewById(R.id.TryAgain);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                recreate();
+                            }
+                        });
+                    } else if (error instanceof ServerError) {
+                        mainLayout =  findViewById(R.id. mainLayout);
+                        View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                        view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                        mainLayout.addView(view);
+                        Button button =view.findViewById(R.id.SomethingTryAgain1);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                recreate();
+                            }
+                        });
+                    } else if (error instanceof ParseError) {
+                        Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
+
+                    }  else if (error instanceof TimeoutError) {
+
+                        mainLayout =  findViewById(R.id. mainLayout);
+                        View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                        view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                        mainLayout.addView(view);
+                        Button button =view.findViewById(R.id.SomethingTryAgain1);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                recreate();
+                            }
+                        });
+                    }
 
 
                 }
@@ -622,28 +1028,25 @@ public class MainActivity extends AppCompatActivity
 
                 }
             };
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            requestQueue.add(request);
+            VolleySingleton.getInstance(MainActivity.this).addToRequestQueue(request);
 
         }
         if (!mToken.isEmpty()) {
 
-            String URL1 = Constant.APIONE + "/general/checkFeedback ";
+            String URL1 = Constant.APIONE + "/general/checkFeedback";
 
             StringRequest request = new StringRequest(Request.Method.GET, URL1, new Response.Listener<String>() {
                 @SuppressLint("InflateParams")
                 @Override
                 public void onResponse(String response) {
-                    Log.d("vdferer", String.valueOf(response));
+
                     try {
                         JSONArray jsonArray = new JSONArray(response);
 
-
-                        Log.d("fjwuifjwi1", String.valueOf(jsonArray));
                         for (int i = 0; i < jsonArray.length(); i++) {
                             objects = jsonArray.getJSONObject(i);
                              bookingId=objects.getString("bookingId");
-                            Log.d("fdsfw", String.valueOf(bookingId));
+
                         }
 
                         if (bookingId!=null) {
@@ -682,7 +1085,7 @@ public class MainActivity extends AppCompatActivity
                                         final String rating = String.valueOf(simpleRatingBar.getRating());
                                         final String ratings = rating.substring(0, rating.indexOf("."));
 
-                                        Log.d("fnrinfi", ratings);
+
                                       //  String rating1 = "Rating :: " + simpleRatingBar.getRating();
                                         // Toast.makeText(getApplicationContext(),  rating1, Toast.LENGTH_SHORT).show();
 
@@ -690,7 +1093,7 @@ public class MainActivity extends AppCompatActivity
                                         StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                                             @Override
                                             public void onResponse(String response) {
-                                                Log.d("fsgdsgfd", response);
+
                                                 Toast.makeText(getApplicationContext(), "Thanks for your feedback", Toast.LENGTH_SHORT).show();
                                                 mPopupWindow.dismiss();
                                                 tinyDB.putString(Constant.STATUS, "Success");
@@ -699,8 +1102,47 @@ public class MainActivity extends AppCompatActivity
                                         }, new Response.ErrorListener() {
                                             @Override
                                             public void onErrorResponse(VolleyError error) {
-                                                Log.d("vdwfewq32", error.toString());
+
                                                 mPopupWindow.dismiss();
+                                                if (error instanceof NetworkError) {
+                                                    noInternetLayout.setVisibility(View.VISIBLE);
+                                                    allViewLayout.setVisibility(View.GONE);
+                                                    Button button = findViewById(R.id.TryAgain);
+                                                    button.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            recreate();
+                                                        }
+                                                    });
+                                                } else if (error instanceof ServerError) {
+                                                    mainLayout =  findViewById(R.id. mainLayout);
+                                                    View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                                                    view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                                                    mainLayout.addView(view);
+                                                    Button button =view.findViewById(R.id.SomethingTryAgain1);
+                                                    button.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            recreate();
+                                                        }
+                                                    });
+                                                } else if (error instanceof ParseError) {
+                                                    Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
+
+                                                }  else if (error instanceof TimeoutError) {
+
+                                                    View view = getLayoutInflater().inflate(R.layout.something_went_wrong, null);
+                                                    mainLayout =  findViewById(R.id. mainLayout);
+                                                    view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                                                    mainLayout.addView(view);
+                                                    Button button =view.findViewById(R.id.SomethingTryAgain1);
+                                                    button.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            recreate();
+                                                        }
+                                                    });
+                                                }
 
 
                                             }
@@ -710,13 +1152,14 @@ public class MainActivity extends AppCompatActivity
 
                                                 HashMap<String, Object> hashMap = new HashMap<>();
 
-                                                hashMap.put("rating", ratings);
-                                                hashMap.put("feedback", feedback);
+
                                                 //  hashMap.put("subActivityId", popsubActivityId);
                                                 //  hashMap.put("userId", popuserId);
                                                 //  hashMap.put("vendorId", popVendorId);
+                                                hashMap.put("rating", ratings);
+                                                hashMap.put("feedback", feedback);
                                                 hashMap.put("bookingId", String.valueOf(bookingId));
-                                                Log.d("fjwuifjwi", String.valueOf(bookingId));
+
 
 
                                                 return new JSONObject(hashMap).toString().getBytes();
@@ -756,8 +1199,7 @@ public class MainActivity extends AppCompatActivity
                                             }
                                         });
 
-                                        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                                        requestQueue.add(request);
+                                        VolleySingleton.getInstance(MainActivity.this).addToRequestQueue(request);
 
 
                                     }
@@ -783,7 +1225,46 @@ public class MainActivity extends AppCompatActivity
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.d("cwfewfe", String.valueOf(error));
+
+                    if (error instanceof NetworkError) {
+                        noInternetLayout.setVisibility(View.VISIBLE);
+                        allViewLayout.setVisibility(View.GONE);
+                        Button button = findViewById(R.id.TryAgain);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                recreate();
+                            }
+                        });
+                    } else if (error instanceof ServerError) {
+                        mainLayout =  findViewById(R.id. mainLayout);
+                        View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                        view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                        mainLayout.addView(view);
+                        Button button =view.findViewById(R.id.SomethingTryAgain1);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                recreate();
+                            }
+                        });
+                    } else if (error instanceof ParseError) {
+                        Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
+
+                    }  else if (error instanceof TimeoutError) {
+
+                        mainLayout =  findViewById(R.id. mainLayout);
+                        View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                        view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                        mainLayout.addView(view);
+                        Button button =view.findViewById(R.id.SomethingTryAgain1);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                recreate();
+                            }
+                        });
+                    }
 
 
                 }
@@ -797,11 +1278,134 @@ public class MainActivity extends AppCompatActivity
 
                 }
             };
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            requestQueue.add(request);
+            VolleySingleton.getInstance(MainActivity.this).addToRequestQueue(request);
 
 
         }
+    }
+
+    public void showProgressingView() {
+
+        if (!isProgressShowing) {
+            isProgressShowing = true;
+          /*  progressView = (ViewGroup) getLayoutInflater().inflate(R.layout.progressbar_layout, null);
+            View v = MainActivity.this.findViewById(android.R.id.content).getRootView();
+            ViewGroup viewGroup = (ViewGroup) v;
+            viewGroup.addView(progressView);*/
+            mainLayout =  findViewById(R.id. mainLayout);
+            view = getLayoutInflater().inflate(R.layout.progressbar_layout,mainLayout,false);
+            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            mainLayout.addView(view);
+
+
+        }
+    }
+
+    public void hideProgressingView() {
+        mainLayout.removeView(view);
+        isProgressShowing = false;
+    }
+    private void bannerImage() {
+
+    }
+
+    private void nearingYou() {
+        mOffset=temp;
+        mLimit=temp+5;
+        temp=mLimit;
+
+        String URL5 = Constant.API + "/user/getVendorsByNearingYou?&lat=" + lat + "&long=" + lon + "&offset="+String.valueOf(mOffset)+"&limit="+String.valueOf(mLimit);
+
+        StringRequest request5 = new StringRequest(Request.Method.GET, URL5, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    if (jsonArray.length() == 0) {
+                        if(temp==25){
+                        ViewGroup.LayoutParams params1 = mRecyclerView.getLayoutParams();
+                        params1.height = 600;
+                        mRecyclerView.setLayoutParams(params1);
+                        nearYouLayout.setVisibility(View.GONE);}else{
+                            nearingYou();
+                        }
+                    } else {
+                        nearYouLayout.setVisibility(View.VISIBLE);
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String vendorName = jsonObject.getString("vendorName");
+                            Integer vendorId = jsonObject.getInt("vendorId");
+                            String area = jsonObject.getString("area");
+                            String subActivityId = jsonObject.getString("subActivityId");
+                            String vendorShopImage = jsonObject.getString("vendorShopImage");
+
+                            subActivityModels.add(new SubActivityModel(vendorName, area, vendorId,subActivityId,vendorShopImage));
+                            nearYouAdapter.notifyDataSetChanged();
+
+
+                      /*      subActivityModels.add(new SubActivityModel(vendorName, area, vendorId,subActivityId));
+                            nearYouAdapter.notifyDataSetChanged();*/
+
+                        }
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+
+
+                if (error instanceof NetworkError) {
+                    noInternetLayout.setVisibility(View.VISIBLE);
+                    allViewLayout.setVisibility(View.GONE);
+                    Button button = findViewById(R.id.TryAgain);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            recreate();
+                        }
+                    });
+                } else if (error instanceof ServerError) {
+                    mainLayout =  findViewById(R.id. mainLayout);
+                    View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                    view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    mainLayout.addView(view);
+                    Button button =view.findViewById(R.id.SomethingTryAgain1);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            recreate();
+                        }
+                    });
+                } else if (error instanceof ParseError) {
+                    Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
+
+                }  else if (error instanceof TimeoutError) {
+                    mainLayout =  findViewById(R.id. mainLayout);
+
+                    View view = getLayoutInflater().inflate(R.layout.something_went_wrong, mainLayout,false);
+                    view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    mainLayout.addView(view);
+                    Button button =view.findViewById(R.id.SomethingTryAgain1);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            recreate();
+                        }
+                    });
+                }
+            }
+        });
+        VolleySingleton.getInstance(MainActivity.this).addToRequestQueue(request5);
+
+
     }
 
     private void runAnimation(RecyclerView mRecyclerView) {
@@ -810,7 +1414,7 @@ public class MainActivity extends AppCompatActivity
         controller = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_fall_down);
 
         mRecyclerView.setLayoutAnimation(controller);
-        mRecyclerView.getAdapter().notifyDataSetChanged();
+       // mRecyclerView.getAdapter().notifyDataSetChanged();
         mRecyclerView.scheduleLayoutAnimation();
     }
 
@@ -832,14 +1436,22 @@ public class MainActivity extends AppCompatActivity
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+
                     LoginManager.getInstance().logOut();
-                    Intent i = new Intent();
+                    tinyDB.putString(Constant.LATITUDE, "");
+                    tinyDB.putString(Constant.LONGITUDE, "");
+                    finishAffinity();
+                  //  finish();
+                    System.exit(0);
+
+                 /*   Intent i = new Intent();
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     i.setAction(Intent.ACTION_MAIN);
                     i.addCategory(Intent.CATEGORY_HOME);
                     MainActivity.this.startActivity(i);
+                    finish();*/
 
 
                 }
@@ -848,7 +1460,7 @@ public class MainActivity extends AppCompatActivity
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
+                   dialog.dismiss();
                 }
             });
             AlertDialog alert = builder.create();
@@ -881,9 +1493,7 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-      /*  if (id == R.id.mlocation) {
 
-        }*/
 
 
         //noinspection SimplifiableIfStatement
@@ -910,7 +1520,9 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
-
+        }else if (id == R.id.signIns) {
+            Intent intent = new Intent(this, LoginFrontPage.class);
+            startActivity(intent);
         } else if (id == R.id.BookingHistory) {
             if (!mToken.equals("")) {
                 Intent intent = new Intent(this, BookingHistoryActivity.class);
@@ -929,11 +1541,11 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
 
-        } else if (id == R.id.Notifications) {
+        } /*else if (id == R.id.Notifications) {
             Intent intent = new Intent(this, NotificationActivitys.class);
             startActivity(intent);
 
-        } else if (id == R.id.Memberships) {
+        }*/ else if (id == R.id.Memberships) {
 
             if (!mToken.equals("")) {
                 Intent intent = new Intent(this, MembershipActivity.class);
@@ -991,19 +1603,63 @@ public class MainActivity extends AppCompatActivity
             MainActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+
                     if (viewPager.getCurrentItem() == 0) {
                         viewPager.setCurrentItem(1);
                     } else if (viewPager.getCurrentItem() == 1) {
                         viewPager.setCurrentItem(2);
                     } else if (viewPager.getCurrentItem() == 2) {
-                        viewPager.setCurrentItem(3);
+                        if(viewPagerAdapter.getCount()>=3){
+
+                            viewPager.setCurrentItem(3);
+                        }else{
+
+                            viewPager.setCurrentItem(0);}
                     } else if (viewPager.getCurrentItem() == 3) {
-                        viewPager.setCurrentItem(4);
+                                 if(viewPagerAdapter.getCount()>=4){
+
+                                     viewPager.setCurrentItem(4);
+                                   }else{
+
+                                       viewPager.setCurrentItem(0);}
                     } else if (viewPager.getCurrentItem() == 4) {
-                        viewPager.setCurrentItem(0);
+                               if(viewPagerAdapter.getCount()>=5){
+
+                                  viewPager.setCurrentItem(5);
+                               }else{
+
+                                  viewPager.setCurrentItem(0);}
+
                     }
+                    else if (viewPager.getCurrentItem() == 5) {
+                        if(viewPagerAdapter.getCount()>=6){
+                            viewPager.setCurrentItem(6);
+                        }else{
+                            viewPager.setCurrentItem(0);}
+
+                    }
+                    else if (viewPager.getCurrentItem() == 6) {
+                        if(viewPagerAdapter.getCount()>=7){
+                            viewPager.setCurrentItem(7);
+                        }else{
+                            viewPager.setCurrentItem(0);}
+
+                    }
+                    else if (viewPager.getCurrentItem() == 7) {
+                            viewPager.setCurrentItem(0);
+                    }
+
                 }
             });
         }
+
+
+
     }
+  /*  public  RequestQueue getRequestQueue() {
+        if (mRequestQueue == null) {
+            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+        }
+        return mRequestQueue;
+    }*/
 }

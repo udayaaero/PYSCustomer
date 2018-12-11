@@ -23,14 +23,14 @@ import android.widget.Toast;
 import com.android.volley.NetworkError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
+import com.coeuz.pyscustomer.Requiredclass.LoginFrontPage;
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,14 +41,13 @@ import java.util.Objects;
 public class SignUpActivity extends AppCompatActivity {
 
 
-
-
     private EditText muserName,mphoneNumber,mEmailId,mPassword;
 
     private String iUserName,iPhoneNumber,iEmailId,iPassword;
 
     private LinearLayout noInternetLayout;
     private ScrollView allViewLayout;
+    private  String fromMainPage;
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +56,9 @@ public class SignUpActivity extends AppCompatActivity {
 
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        fromMainPage= Objects.requireNonNull(getIntent().getExtras()).getString("mainpage");
+
 
         muserName = findViewById(R.id.Username);
         mphoneNumber = findViewById(R.id.PhoneNumber);
@@ -124,22 +126,27 @@ public class SignUpActivity extends AppCompatActivity {
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Log.d("qqqqqlllllqqqq1", response);
+
 
                             try {
                                 JSONObject jsonObject = new JSONObject(response);
                                 String Successfull = jsonObject.getString("status");
 
                                 if (Successfull.equals("SUCCESS")) {
-                                    SharedPreferences sharedpreferences = getApplicationContext().getSharedPreferences(LoginActivity.MyPREFERENCES, Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = sharedpreferences.edit();
-                                    editor.clear();
-                                    editor.apply();
-                                    finish();
+
                                     Toast.makeText(getApplicationContext(), "Successful ", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                                    startActivity(intent);
-                                    finish();
+
+                                        if ( fromMainPage.equalsIgnoreCase("MainPage")) {
+
+                                            Intent intent = new Intent(getApplicationContext(), LoginFrontPage.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }else{
+
+                                            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }
                                 } else {
                                     Toast.makeText(SignUpActivity.this, "Already Exists!\n Please Change Your MobileNumber or Email", Toast.LENGTH_SHORT).show();
                                 }
@@ -153,8 +160,7 @@ public class SignUpActivity extends AppCompatActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
 
-                            Log.d("ooo2", error.toString());
-                         //   Log.d("dfewfewrf", String.valueOf(error.networkResponse.statusCode));
+
 
                             if (error instanceof NetworkError) {
                                 noInternetLayout.setVisibility(View.VISIBLE);
@@ -165,10 +171,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     public void onClick(View view) {
                                         recreate();
                                     }});
-                            } else if (error instanceof ServerError) {
-
-                                Log.d("heuiwirhu1", String.valueOf(error));
-                            } else if (error instanceof ParseError) {
+                            }else if (error instanceof ParseError) {
                                 Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
                             } else if (error instanceof TimeoutError) {
@@ -200,8 +203,8 @@ public class SignUpActivity extends AppCompatActivity {
                         }
                     };
 
-                    RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                    requestQueue.add(stringRequest);
+
+                    VolleySingleton.getInstance(SignUpActivity.this).addToRequestQueue(stringRequest);
 
                 }
             }
@@ -211,6 +214,8 @@ public class SignUpActivity extends AppCompatActivity {
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
             if (id == android.R.id.home) {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
                 this.finish();
             }
 

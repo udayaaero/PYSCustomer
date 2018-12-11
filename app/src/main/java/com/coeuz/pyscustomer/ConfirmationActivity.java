@@ -95,7 +95,6 @@ public class ConfirmationActivity extends AppCompatActivity {
                 final String rating= String.valueOf(simpleRatingBar.getRating());
                 final String ratings = rating.substring(0, rating.indexOf("."));
 
-                Log.d("fnrinfi",ratings);
                 String rating1 = "Rating :: " + simpleRatingBar.getRating();
                // Toast.makeText(getApplicationContext(),  rating1, Toast.LENGTH_SHORT).show();
 
@@ -103,7 +102,7 @@ public class ConfirmationActivity extends AppCompatActivity {
                 StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("fsgdsgfd", response);
+
                         Toast.makeText(getApplicationContext(),  "Thanks for your feedback", Toast.LENGTH_SHORT).show();
                         mPopupWindow.dismiss();
                         mTinyDb.putString(Constant.STATUS,"Success");
@@ -112,7 +111,7 @@ public class ConfirmationActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("ewrerewr", error.toString());
+
                         mPopupWindow.dismiss();
 
 

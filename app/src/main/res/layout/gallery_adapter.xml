@@ -9,8 +9,8 @@
     >
 
 <ImageView
-    android:background="@drawable/gym"
-    android:scaleType = "centerInside"
+
+    android:scaleType="fitXY"
     android:layout_centerVertical="true"
     android:layout_centerHorizontal="true"
     android:gravity="center"

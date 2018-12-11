@@ -8,16 +8,15 @@
     >
 
 <ImageView
-    android:src="@drawable/spa_"
     android:scaleType="fitXY"
     android:layout_centerVertical="true"
     android:layout_centerHorizontal="true"
     android:gravity="center"
     android:layout_gravity="center"
-   android:padding="5dp"
+   android:padding="@dimen/padding_5dp"
     android:id="@+id/imageview100"
-    android:layout_width="50dp"
-    android:layout_height="50dp"
+    android:layout_width="@dimen/subactivity_icon"
+    android:layout_height="@dimen/subactivity_icon"
     tools:ignore="ContentDescription" />
  <TextView
      android:paddingStart="1dp"
@@ -25,7 +24,7 @@
      android:layout_below="@+id/imageview100"
      android:textColor="@color/block"
      android:textStyle="italic"
-     android:textSize="12sp"
+     android:textSize="@dimen/text_size_12sp"
      android:layout_centerHorizontal="true"
      android:id="@+id/nameofActivity"
      android:layout_width="wrap_content"

@@ -36,6 +36,7 @@ public class SelectCourseAdapter extends RecyclerView.Adapter<SelectCourseAdapte
     private ArrayList<String> ncourseRegistrationEndDateList;
     private ArrayList<String> nCourseCostList;
     private ArrayList<String> nCourseDurationList;
+    private ArrayList<String> nCoursePersonList;
 
 
 
@@ -43,7 +44,7 @@ public class SelectCourseAdapter extends RecyclerView.Adapter<SelectCourseAdapte
     public SelectCourseAdapter(Context applicationContext, ArrayList<String> mslotidsList, ArrayList<String> mslotStartTimeList,
                                ArrayList<String> mslotEndTimeList, ArrayList<String> mmaxAllowedList,
                                ArrayList<String> mslotReccurenceList, ArrayList<String> mcourseStartDateList, ArrayList<String> mcourseEndDateList,
-                               ArrayList<String> mcourseRegistrationEndDateList, ArrayList<String> mCourseCostList, ArrayList<String> mCourseDurationList) {
+                               ArrayList<String> mcourseRegistrationEndDateList, ArrayList<String> mCourseCostList, ArrayList<String> mCourseDurationList, ArrayList<String> mCoursePersonList) {
         mcontext=applicationContext;
         this.mcontext=applicationContext;
         this.nslotId=mslotidsList;
@@ -56,7 +57,8 @@ public class SelectCourseAdapter extends RecyclerView.Adapter<SelectCourseAdapte
         this.ncourseRegistrationEndDateList=mcourseRegistrationEndDateList;
         this.nCourseCostList=mCourseCostList;
         this.nCourseDurationList=mCourseDurationList;
-        Log.d("fhwuhfw", String.valueOf(nCourseCostList.size()));
+        this.nCoursePersonList=mCoursePersonList;
+
 
         mtinyDb=new TinyDB(mcontext);
 
@@ -115,7 +117,8 @@ public class SelectCourseAdapter extends RecyclerView.Adapter<SelectCourseAdapte
                 String courseRegistrationEndDate=ncourseRegistrationEndDateList.get(position);
                 String courseBookinCost=nCourseCostList.get(position);
                 String courseDuration=nCourseDurationList.get(position);
-
+                String personCount=nCoursePersonList.get(position);
+                mtinyDb.putString(Constant.PERSONCOUNT,personCount);
                 mtinyDb.putString(Constant.PAYMENTSTARTTIME,courseStartTime);
                 mtinyDb.putString(Constant.PAYMENTENDTIME,courseendTime);
 

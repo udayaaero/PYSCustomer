@@ -9,7 +9,6 @@
     >
 
 <ImageView
-    android:background="@drawable/ac_icon"
     android:scaleType="fitXY"
    android:layout_centerHorizontal="true"
     android:id="@+id/imageview300"

@@ -34,6 +34,7 @@ import com.coeuz.pyscustomer.ModelClass.CourseBookingHistoryModel;
 import com.coeuz.pyscustomer.R;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 import com.pnikosis.materialishprogress.ProgressWheel;
 
 import org.json.JSONArray;
@@ -76,6 +77,7 @@ public class ACTIVE2 extends Fragment{
     int mOffset=0;
     int mLimit=5;
     int temp=5;
+    private RelativeLayout mainLayout;
 
     public ACTIVE2() {
 
@@ -96,7 +98,7 @@ public class ACTIVE2 extends Fragment{
         mToken = mtinyTb.getString(Constant.TOKEN);
 
         button=view.findViewById(R.id.TryAgain);
-
+        mainLayout=view.findViewById(R.id.courseLayout);
 
         noValuesLayout=view.findViewById(R.id.noValuesLayout);
         noValuesLayout.setVisibility(View.GONE);
@@ -154,14 +156,15 @@ public class ACTIVE2 extends Fragment{
         StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("fdsffre", String.valueOf(response));
+
                 mprogressBar.setVisibility(View.GONE);
                 itShouldLoadMore = true;
                 try {
                     JSONArray jsonArray = new JSONArray(response);
                     if (jsonArray.length() == 0) {
-                        noValuesLayout.setVisibility(View.VISIBLE);
-                        allViewLayout.setVisibility(View.GONE);
+                        View view = getLayoutInflater().inflate(R.layout.no_values_booking, mainLayout,false);
+                        view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                        mainLayout.addView(view);
                        /* Toast toast = Toast.makeText(getActivity(), "No History", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();*/
@@ -193,7 +196,6 @@ public class ACTIVE2 extends Fragment{
                                     Date _24HourDt = _24HourSDF.parse(bookingtimeStamp);
                                     bookingtimeStamp=_12HourSDF.format(_24HourDt);
                                     bookingtimeStamp=bookingtimeStamp.replaceAll("\\.","");
-                                    Log.d("fewfewfew",bookingtimeStamp);
                                 } catch (final ParseException e) {
                                     e.printStackTrace();
                                 }
@@ -205,7 +207,6 @@ public class ACTIVE2 extends Fragment{
                                     Date date = formatter.parse(bookedforDate);
                                     SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
                                     bookedforDate = sdf.format(date);
-                                    Log.d("fewrwerw1",bookedforDate);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -230,7 +231,6 @@ public class ACTIVE2 extends Fragment{
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("cdssdd", String.valueOf(error));
 
                 itShouldLoadMore = true;
                 mprogressBar.setVisibility(View.GONE);
@@ -251,7 +251,6 @@ public class ACTIVE2 extends Fragment{
                         }});
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
                 }  else if (error instanceof ParseError) {
                     Toast.makeText(getActivity(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -282,8 +281,7 @@ public class ACTIVE2 extends Fragment{
 
             }
         };
-        RequestQueue requestQueue1 = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
-        requestQueue1.add(request1);
+        VolleySingleton.getInstance(getActivity()).addToRequestQueue(request1);
 
     }
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -304,7 +302,7 @@ public class ACTIVE2 extends Fragment{
         StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("hgerithjiow", String.valueOf(response));
+
 
                 progressWheel.setVisibility(View.GONE);
 
@@ -346,7 +344,7 @@ public class ACTIVE2 extends Fragment{
                                     Date _24HourDt = _24HourSDF.parse(bookingtimeStamp);
                                     bookingtimeStamp=_12HourSDF.format(_24HourDt);
                                     bookingtimeStamp=bookingtimeStamp.replaceAll("\\.","");
-                                    Log.d("fewfewfew",bookingtimeStamp);
+
                                 } catch (final ParseException e) {
                                     e.printStackTrace();
                                 }
@@ -358,7 +356,7 @@ public class ACTIVE2 extends Fragment{
                                     Date date = formatter.parse(bookedforDate);
                                     SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
                                     bookedforDate = sdf.format(date);
-                                    Log.d("fewrwerw1",bookedforDate);
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -382,7 +380,7 @@ public class ACTIVE2 extends Fragment{
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("frwgtw", String.valueOf(error));
+
                 progressWheel.setVisibility(View.GONE);
 
                 itShouldLoadMore = true;
@@ -404,7 +402,6 @@ public class ACTIVE2 extends Fragment{
                         }});
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
                 }  else if (error instanceof ParseError) {
                     Toast.makeText(getActivity(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -435,8 +432,7 @@ public class ACTIVE2 extends Fragment{
 
             }
         };
-        RequestQueue requestQueue1 = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
-        requestQueue1.add(request1);
+        VolleySingleton.getInstance(getActivity()).addToRequestQueue(request1);
 
     }
   /*  @Override

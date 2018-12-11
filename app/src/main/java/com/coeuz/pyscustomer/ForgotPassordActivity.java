@@ -30,6 +30,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,7 +74,7 @@ public class ForgotPassordActivity extends AppCompatActivity {
                 String MobilePattern = "[0-9]{10}";
 
                 mEmail = mEmails.getText().toString().trim();
-                Log.d("fwifjiow",mEmail);
+
 
                 if (!mEmails.getText().toString().trim().matches(emailPattern)&&!mEmails.getText().toString().matches(MobilePattern)) {
                     mEmails.setError("Please enter valid input ");
@@ -86,7 +87,7 @@ public class ForgotPassordActivity extends AppCompatActivity {
                     StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Log.d("cnjenfir", String.valueOf(response));
+
 
                             try {
                                 JSONObject jsonObject= new JSONObject(response);
@@ -106,7 +107,7 @@ public class ForgotPassordActivity extends AppCompatActivity {
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.d("ppwsewwpp123", String.valueOf(error));
+
 
                             if (error instanceof NetworkError) {
                                 Toast.makeText(getApplicationContext(), "Cannot connect to Internet...Please check your connection!", Toast.LENGTH_SHORT).show();
@@ -140,8 +141,7 @@ public class ForgotPassordActivity extends AppCompatActivity {
 
                         }
                     });
-                    RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                    requestQueue.add(request);
+                    VolleySingleton.getInstance(ForgotPassordActivity.this).addToRequestQueue(request);
                 }
 
 
@@ -175,7 +175,7 @@ public class ForgotPassordActivity extends AppCompatActivity {
                     StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Log.d("ctfctct", String.valueOf(response));
+
                           if(response.equals("true")){
                               Intent intent=new Intent(getApplicationContext(),UpdatePasswordActivity.class);
                               startActivity(intent);
@@ -189,7 +189,7 @@ public class ForgotPassordActivity extends AppCompatActivity {
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.d("ppwsewwpp123", String.valueOf(error));
+
 
                             if (error instanceof NetworkError) {
                                 Toast.makeText(getApplicationContext(), "Cannot connect to Internet...Please check your connection!", Toast.LENGTH_SHORT).show();
@@ -223,8 +223,7 @@ public class ForgotPassordActivity extends AppCompatActivity {
 
                         }
                     });
-                    RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                    requestQueue.add(request);
+                    VolleySingleton.getInstance(ForgotPassordActivity.this).addToRequestQueue(request);
 
                 }
             }

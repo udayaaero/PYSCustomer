@@ -28,13 +28,20 @@
     <color name="block">#000000</color>
     <color name="white">#ffffff</color>
     <color name="Ash">#c0c0c0</color>
+    <color name="Ash1">#d7d7d7</color>
     <color name="green">#228B22</color>
+    <color name ="lightGreen">#348068</color>
 
     <color name="grey">#BEBEBE</color>
     <color name="twitter">#23C4FF</color>
     <color name="trans">#00000000</color>
 
     <color name="black_overlay">#66000000</color>
+
+    <color name="color_preloader_start">#000000</color>
+    <color name="color_preloader_center">#000000</color>
+    <color name="color_preloader_end">#ff56a9c7</color>
+    <color name="color_roseLite">#fffbe7</color>
 
 
 </resources>

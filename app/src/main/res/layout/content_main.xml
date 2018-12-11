@@ -4,32 +4,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/mainLayout"
     android:layout_height="match_parent">
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:scrollbars="none"
-    android:overScrollMode="never"
-    android:orientation="vertical"
-    android:fillViewport="true"
     android:layout_above="@+id/rememberlayout"
     android:id="@+id/nestedScrollview"
+    android:fillViewport="true"
+    android:focusableInTouchMode="true"
+    android:fitsSystemWindows="true"
     android:background="@drawable/backgroundmain"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/app_bar_main">
     <RelativeLayout
-        android:descendantFocusability="blocksDescendants"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        >
-
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
     <RelativeLayout
-        android:descendantFocusability="blocksDescendants"
        android:id="@+id/allViewlayout"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="@dimen/margin_50dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -42,10 +38,10 @@
         <android.support.v4.view.ViewPager
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
-            android:layout_height="190dp">
+            android:layout_height="@dimen/viewpager_image">
         </android.support.v4.view.ViewPager>
         <LinearLayout
-            android:layout_marginTop="170dp"
+            android:layout_marginTop="@dimen/viewpager_dot"
             android:id="@+id/SliderDots"
             android:orientation="horizontal"
             android:gravity="center_vertical|center_horizontal"
@@ -53,34 +49,35 @@
             android:layout_height="wrap_content"/>
     </RelativeLayout>
 
-
     <ProgressBar
         android:id="@+id/progressbar100"
         android:visibility="gone"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:indeterminateDrawable="@drawable/circleimage"
-        android:layout_height="100dp"
-        android:layout_width="100dp">
+        android:layout_height="@dimen/progressbar_100dp"
+        android:layout_width="@dimen/progressbar_100dp">
     </ProgressBar>
 
 
-    <LinearLayout
+    <RelativeLayout
         android:orientation="vertical"
         android:layout_below="@+id/shedowimage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
         <TextView
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="10dp"
+            android:id="@+id/textHeading"
+            android:layout_marginStart="@dimen/margin_5dp"
+            android:layout_marginTop="@dimen/margin_10dp"
             android:text="Select your categories"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:ignore="HardcodedText" />
         <android.support.v7.widget.RecyclerView
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_below="@id/textHeading"
+            android:layout_marginBottom="@dimen/margin_10dp"
+            android:layout_marginTop="@dimen/margin_10dp"
             android:id="@+id/recycler"
             android:scrollbars="none"
             android:clipToPadding="false"
@@ -88,8 +85,10 @@
             android:layout_height="wrap_content"
             />
         <LinearLayout
+            android:layout_below="@id/recycler"
+            android:visibility="gone"
             android:id="@+id/viewMore"
-            android:padding="5dp"
+            android:padding="@dimen/padding_5dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -104,11 +103,11 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:src="@drawable/morecategories"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_width="@dimen/viewmore_icon"
+            android:layout_height="@dimen/viewmore_icon"
             tools:ignore="ContentDescription" />
         <TextView
-         android:layout_marginStart="10dp"
+         android:layout_marginStart="@dimen/margin_10dp"
             android:background="@color/white"
             android:gravity="center"
             android:layout_gravity="center"
@@ -119,6 +118,8 @@
             android:layout_height="wrap_content" />
         </LinearLayout>
         </LinearLayout>
+
+
       <!--  <ViewFlipper
             android:id="@+id/flipper1"
             android:layout_width="fill_parent"
@@ -147,11 +148,13 @@
             </LinearLayout>
         </ViewFlipper>-->
         <LinearLayout
+            android:layout_below="@+id/viewMore"
+            android:visibility="gone"
             android:id="@+id/nearyouLayouts"
-            android:padding="5dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <LinearLayout
                 android:background="@color/colorPrimary"
                 android:gravity="center"
@@ -160,24 +163,24 @@
                 android:layout_height="wrap_content"
                 tools:ignore="UselessParent">
                 <LinearLayout
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="@dimen/margin_2dp"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     tools:ignore="UseCompoundDrawables">
                     <ImageView
-                        android:layout_marginStart="5dp"
+                        android:layout_marginStart="@dimen/margin_5dp"
                         android:gravity="center"
                         android:layout_gravity="center"
                         android:src="@drawable/near_you_icon"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="@dimen/service_near_icon"
+                        android:layout_height="@dimen/service_near_icon"
                         tools:ignore="ContentDescription" />
                 <TextView
-                    android:layout_marginStart="5dp"
+                    android:layout_marginStart="@dimen/margin_5dp"
                     android:textStyle="bold"
                     android:textColor="@color/white"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/text_size_14sp"
                     android:gravity="center"
                     android:layout_gravity="center"
                     android:text="Service Near you"
@@ -193,10 +196,12 @@
                     android:layout_height="wrap_content">
                 </android.support.v7.widget.RecyclerView>
             </LinearLayout>
+
         </LinearLayout>
 
-    </LinearLayout>
     </RelativeLayout>
+    </RelativeLayout>
+
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>
 
@@ -206,7 +211,7 @@
         android:background="@color/white"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="@dimen/remember_layout_height">
         <android.support.v7.widget.RecyclerView
             android:fillViewport="true"
             android:id="@+id/BookingRememberRecycle"
@@ -235,14 +240,16 @@
 
             </ImageView>
             <TextView
+                android:typeface="serif"
                 android:textStyle="bold"
                 android:textColor="#ffffff"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:text="No  Internet  Connection"
                 tools:ignore="HardcodedText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <Button
+                android:typeface="serif"
                 android:id="@+id/TryAgain"
                 android:layout_marginTop="30dp"
                 android:paddingStart="30dp"

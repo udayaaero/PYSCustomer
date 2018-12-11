@@ -25,6 +25,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,7 +68,7 @@ public class UpdatePasswordActivity extends AppCompatActivity {
                 StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("nnvfuii", String.valueOf(response));
+
 
                         try {
                             JSONObject jsonObject= new JSONObject(response);
@@ -88,7 +89,7 @@ public class UpdatePasswordActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("ppwsewwpp123", String.valueOf(error));
+
 
                         if (error instanceof NetworkError) {
                             Toast.makeText(getApplicationContext(), "Cannot connect to Internet...Please check your connection!", Toast.LENGTH_SHORT).show();
@@ -122,8 +123,7 @@ public class UpdatePasswordActivity extends AppCompatActivity {
 
                     }
                 });
-                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                requestQueue.add(request);
+                    VolleySingleton.getInstance(UpdatePasswordActivity.this).addToRequestQueue(request);
             }
             }
         });

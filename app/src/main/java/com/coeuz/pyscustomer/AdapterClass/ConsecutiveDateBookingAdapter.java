@@ -30,6 +30,7 @@ public class ConsecutiveDateBookingAdapter extends RecyclerView.Adapter<Consecut
     private ArrayList<String> consecutiveSlotModelsCost;
     private ArrayList<String> consecutiveSlotModelsTime;
     private ArrayList<String> sendconsecutiveSlotModelsTime;
+    private ArrayList<String> consecutiveSlotModelsPersonCount;
 
 
 
@@ -38,12 +39,13 @@ public class ConsecutiveDateBookingAdapter extends RecyclerView.Adapter<Consecut
 
     public ConsecutiveDateBookingAdapter(Context applicationContext, ArrayList<String> consecutiveslotModel,
                                          ArrayList<String> consecutiveslotModelCost, ArrayList<String> consecutiveslotModelTiming,
-                                         ArrayList<String> sendconsecutiveslotModelTiming) {
+                                         ArrayList<String> sendconsecutiveslotModelTiming, ArrayList<String>  consecutivePersonModel) {
         this.context=applicationContext;
         this.consecutiveSlotModels=consecutiveslotModel;
         this.consecutiveSlotModelsTime=consecutiveslotModelTiming;
         this.consecutiveSlotModelsCost=consecutiveslotModelCost;
         this.sendconsecutiveSlotModelsTime=sendconsecutiveslotModelTiming;
+        this.consecutiveSlotModelsPersonCount=consecutivePersonModel;
         tinyDB=new TinyDB(context);
     }
 
@@ -82,7 +84,7 @@ public class ConsecutiveDateBookingAdapter extends RecyclerView.Adapter<Consecut
         }else {
         holder.startTime.setText(consecutiveSlotModelsTime.get(position));
        // holder.Endtime.setText(String.valueOf(consecutiveSlotModelsTime.get(position).getEndTime()));
-       Log.d("vregre,", String.valueOf(consecutiveSlotModelsTime.get(position)));
+
        holder.cost.setText(String.valueOf(consecutiveSlotModelsCost.get(position)));
 
 
@@ -94,11 +96,13 @@ public class ConsecutiveDateBookingAdapter extends RecyclerView.Adapter<Consecut
                 String sendbookingTime= String.valueOf(sendconsecutiveSlotModelsTime.get(position));
                 String bookingCost=String.valueOf(consecutiveSlotModelsCost.get(position));
                 String slotIds=String.valueOf(consecutiveSlotModels.get(position));
+                String personCount=String.valueOf(consecutiveSlotModelsPersonCount.get(position));
+                tinyDB.putString(Constant.PERSONCOUNT, String.valueOf(personCount));
           /*      try {
                     final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                     final Date dateObj = sdf.parse(bookingTime );
                     String timein12Format=new SimpleDateFormat("hh:mmaa").format(dateObj);
-                    Log.d("mcmcemciqc", String.valueOf(timein12Format));
+
                     bookingTime=String.valueOf(timein12Format);
                     bookingTime = bookingTime.replace(".", "");
                 } catch (final ParseException e) {
@@ -121,8 +125,7 @@ public class ConsecutiveDateBookingAdapter extends RecyclerView.Adapter<Consecut
 
     @Override
     public int getItemCount() {
-        Log.d("hshdhgwiogjow", String.valueOf(consecutiveSlotModelsTime.size()));
-        Log.d("hshdhgwiogjow1", String.valueOf(consecutiveSlotModels.size()));
+
         return consecutiveSlotModelsTime.size();
     }
 
@@ -176,7 +179,7 @@ if(row_index==position){
             selectedEndTime.add(slotModels.get(position).getSlotEndTime());
             String Date66=slotModels.get(position).getSlotStartTime();
             String Start66=slotModels.get(position).getSlotEndTime();
-            Log.d("hfiwrjfiw",Date66);
+
 
             //holder.layout.setBackgroundColor(Color.parseColor("#567845"));
 

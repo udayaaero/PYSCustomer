@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:tools="http://schemas.android.com/tools"
     android:padding="5dp"
-
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -11,7 +10,7 @@
     <LinearLayout
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
-        android:background="@drawable/backtiming"
+        android:background="@drawable/backtimingborder"
         android:id="@+id/timemorning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,7 +21,7 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:orientation="horizontal"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageView
                 android:layout_marginEnd="3dp"
@@ -53,7 +52,7 @@
             android:id="@+id/Endtimee"
             android:textColor="#ffffff"
             android:textSize="12sp"
-            android:text=""
+            android:text="09:00am"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

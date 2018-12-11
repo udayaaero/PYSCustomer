@@ -24,7 +24,6 @@
             android:layout_height="wrap_content">
             <ImageView
                 android:textStyle="bold"
-                android:background="@drawable/circlemanimg"
                 android:gravity="start"
                 android:textSize="14sp"
                 android:layout_width="50dp"
@@ -109,7 +108,6 @@
             android:layout_height="wrap_content">
             <ImageView
                 android:textStyle="bold"
-                android:background="@drawable/circlemanimg"
                 android:gravity="start"
                 android:textSize="14sp"
                 android:layout_width="50dp"
@@ -194,7 +192,7 @@
             android:layout_height="wrap_content">
             <ImageView
                 android:textStyle="bold"
-                android:background="@drawable/circlemanimg"
+
                 android:gravity="start"
                 android:textSize="14sp"
                 android:layout_width="50dp"

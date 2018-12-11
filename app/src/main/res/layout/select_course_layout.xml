@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/select_course"
+    android:padding="5dp"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <LinearLayout
+    android:background="@drawable/backedittexit"
+        android:padding="2dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <LinearLayout
+       android:padding="5dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="UselessParent">
+
+    <LinearLayout
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:weightSum="2"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="DisableBaselineAlignment">
+        <LinearLayout
+            android:weightSum="2"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_weight="1"
+                android:text="StartDate"
+                tools:ignore="HardcodedText,NestedWeights"
+                android:textColor="@color/block"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/cStartDates"
+                android:layout_weight="1"
+                android:text=""
+                android:textColor="@color/colorPrimary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:weightSum="2"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_weight="1"
+                tools:ignore="HardcodedText,NestedWeights"
+                android:text="EndDate"
+                android:textColor="@color/block"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/cEndDates"
+                android:text=""
+                android:textColor="@color/colorPrimary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:weightSum="2"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="DisableBaselineAlignment">
+        <LinearLayout
+            android:weightSum="2"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_weight="1"
+                tools:ignore="HardcodedText,NestedWeights"
+                android:text="Timings"
+                android:textColor="@color/block"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/cStartTime"
+                android:layout_weight="1"
+                android:text=""
+                android:textColor="@color/colorPrimary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:weightSum="2"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_weight="1"
+                android:text="Duration"
+                tools:ignore="HardcodedText,NestedWeights"
+                android:textColor="@color/block"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/cEndTime"
+                android:text=""
+                android:textColor="@color/colorPrimary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:weightSum="2"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false">
+        <LinearLayout
+            android:weightSum="2"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_weight="1"
+                android:text="Cost"
+                tools:ignore="HardcodedText,NestedWeights"
+                android:textColor="@color/block"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/cbookCost"
+                android:layout_weight="1"
+                android:text=""
+                android:textColor="@color/colorPrimary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:weightSum="2"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_weight="1"
+                android:text="@string/Registration"
+                android:textColor="@color/block"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="NestedWeights" />
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/cRegEndDate"
+                android:text=""
+                android:textColor="@color/colorPrimary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
+</LinearLayout>
+</android.support.v7.widget.CardView>

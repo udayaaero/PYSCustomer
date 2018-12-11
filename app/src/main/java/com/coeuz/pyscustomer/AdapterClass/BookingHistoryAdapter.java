@@ -3,8 +3,11 @@ package com.coeuz.pyscustomer.AdapterClass;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,10 +24,13 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.coeuz.pyscustomer.BookingHistoryActivity;
 import com.coeuz.pyscustomer.ModelClass.BookingHistoryModel;
 import com.coeuz.pyscustomer.R;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -72,8 +78,6 @@ public class BookingHistoryAdapter extends RecyclerView.Adapter<BookingHistoryAd
             @Override
             public void onClick(View view) {
                 final String bookingid=BookingHistory.get(position).getBookingid();
-                Log.d("fnuifwr",bookingid);
-
                 final ProgressDialog mProgressDialog;
                 mProgressDialog = new ProgressDialog(mcontext);
                 mProgressDialog.setMessage("Loading........");
@@ -81,12 +85,17 @@ public class BookingHistoryAdapter extends RecyclerView.Adapter<BookingHistoryAd
                 mProgressDialog.setCancelable(false);
                 mProgressDialog.show();
 
-                String URL = Constant.APIONE +"/slot/cancelBooking";
+                String URL = Constant.APIONE +"/slot/cancelBooking?bookingId="+bookingid;
                 StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         mProgressDialog.dismiss();
-                        Log.d("cdsfsfwe", response);
+                    /*    BookingHistory.remove(position);
+                        notifyDataSetChanged();*/
+
+                        Intent intent = new Intent(mcontext, BookingHistoryActivity.class);
+                        mcontext.startActivity(intent);
+                        ((Activity)mcontext).finish();
                     /*    try {
                             JSONObject jsonObject=new JSONObject(response);
                             String status=jsonObject.getString("status");
@@ -99,32 +108,13 @@ public class BookingHistoryAdapter extends RecyclerView.Adapter<BookingHistoryAd
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("vfdvdfdsv", error.toString());
-                        Log.d("vfdvdfdsv", String.valueOf(error.networkResponse.statusCode));
 
                         mProgressDialog.dismiss();
 
 
-                    }
-                }) {
-                    @Override
-                    public byte[] getBody() {
-
-                        HashMap<String, Object> hashMap = new HashMap<>();
+                    }}){
 
 
-
-                        hashMap.put("bookingId", bookingid);
-
-
-                        return new JSONObject(hashMap).toString().getBytes();
-
-                    }
-
-                    @Override
-                    public String getBodyContentType() {
-                        return "application/json";
-                    }
 
 
 
@@ -153,8 +143,7 @@ public class BookingHistoryAdapter extends RecyclerView.Adapter<BookingHistoryAd
 
                     }
                 });
-                RequestQueue requestQueue = Volley.newRequestQueue(mcontext);
-                requestQueue.add(request);
+                VolleySingleton.getInstance(mcontext).addToRequestQueue(request);
 
 
             }

@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:fitsSystemWindows="true"
+    android:id="@+id/detailsMainLayout"
     android:background="@drawable/backgroundmain"
     android:layout_height="match_parent">
     <ScrollView
@@ -33,12 +34,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <ImageView
-                    android:id="@+id/vendorImage"
+                    android:id="@+id/vendorBackImage"
                     android:scaleType="fitXY"
                     android:fitsSystemWindows="true"
                     android:src="@drawable/aspa"
                     android:layout_width="match_parent"
-                    android:layout_height="180dp"
+                    android:layout_height="@dimen/vendor_main_image"
                     tools:ignore="ContentDescription" />
 
                     <LinearLayout
@@ -50,13 +51,13 @@
                             android:textColor="@color/white"
                             android:textStyle="bold"
                             android:text="Timings:"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_size_14sp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             tools:ignore="HardcodedText" />
 
                         <LinearLayout
-                            android:layout_marginBottom="10dp"
+                            android:layout_marginBottom="@dimen/margin_10dp"
                             android:orientation="horizontal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
@@ -64,33 +65,33 @@
                                 android:textColor="@color/white"
                                 android:textStyle="bold"
                                 android:text="Open from"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_size_14sp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 tools:ignore="HardcodedText" />
                             <TextView
                                 android:textColor="@color/white"
-                                android:layout_marginStart="5dp"
+                                android:layout_marginStart="@dimen/margin_5dp"
                                 android:textStyle="bold"
                                 android:id="@+id/from"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_size_14sp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" />
                             <TextView
                                 android:textColor="@color/white"
-                                android:layout_marginStart="5dp"
+                                android:layout_marginStart="@dimen/margin_5dp"
                                 android:textStyle="bold"
                                 android:text="to"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_size_14sp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 tools:ignore="HardcodedText" />
                             <TextView
                                 android:textColor="@color/white"
-                                android:layout_marginStart="5dp"
+                                android:layout_marginStart="@dimen/margin_5dp"
                                 android:textStyle="bold"
                                 android:id="@+id/to"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_size_14sp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" />
                         </LinearLayout>
@@ -100,16 +101,16 @@
                     android:id="@+id/offerDetails"
                     android:layout_above="@+id/detailss"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginTop="10dp"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
+                    android:layout_marginTop="@dimen/margin_5dp"
+                    android:layout_width="@dimen/gallery_image_size"
+                    android:layout_height="@dimen/gallery_image_size"
                     android:background="@drawable/offerss"
                     tools:ignore="ContentDescription" />
                 <LinearLayout
                     android:weightSum="2"
                     android:id="@+id/detailss"
                     android:background="@color/white"
-                    android:layout_below="@+id/vendorImage"
+                    android:layout_below="@+id/vendorBackImage"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -120,22 +121,22 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content">
                     <TextView
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginStart="@dimen/margin_5dp"
+                        android:layout_marginTop="@dimen/margin_5dp"
                         android:id="@+id/NameOfVendor"
                         android:text="Name Of Vendor"
                         android:textStyle="bold"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/text_size_15sp"
                         android:textColor="@color/colorPrimary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:ignore="HardcodedText" />
                     <TextView
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginStart="5dp"
+                        android:layout_marginBottom="@dimen/margin_5dp"
+                        android:layout_marginStart="@dimen/margin_5dp"
                         android:id="@+id/AdressOfVendor"
                         android:text="Adress Of Vendor"
-                        android:textSize="12sp"
+                        android:textSize="@dimen/text_size_12sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:ignore="HardcodedText" />
@@ -182,11 +183,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                         <TextView
-                            android:layout_marginStart="5dp"
+                            android:layout_marginStart="@dimen/margin_5dp"
                             android:textColor="@color/block"
                             android:textStyle="bold"
                             android:text="Gallery"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_size_14sp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             tools:ignore="HardcodedText,TooDeepLayout" />
@@ -194,6 +195,7 @@
                             android:id="@+id/galleryrecycle"
                             android:orientation="horizontal"
                             app:reverseLayout="true"
+                            android:scrollbars="vertical"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
                         </android.support.v7.widget.RecyclerView>
@@ -208,18 +210,18 @@
                     android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/ServiceForYou"
-                    android:layout_marginStart="5dp"
+                    android:layout_marginStart="@dimen/margin_5dp"
                     android:textColor="@color/block"
                     android:textStyle="bold"
                     android:text="Service for you"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/text_size_14sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:ignore="HardcodedText" />
                 <android.support.v7.widget.RecyclerView
                     android:layout_below="@+id/ServiceForYou"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
                     android:id="@+id/recycler"
                     android:scrollbars="none"
                     android:clipToPadding="false"
@@ -241,12 +243,51 @@
                     android:background="@color/colorPrimary"
                     app:textColorSelected="#FFFF"
                     tools:ignore="RtlHardcoded" />
-</LinearLayout>
+    </LinearLayout>
                 <RelativeLayout
-
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+                 <LinearLayout
+                     android:visibility="gone"
+                     android:orientation="vertical"
+                     android:id="@+id/noSlotAvailableLayout"
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content">
+                   <android.support.v7.widget.CardView
+                       android:layout_marginTop="@dimen/margin_10dp"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content">
+                       <LinearLayout
+                           android:gravity="center"
+                           android:weightSum="2"
+                           android:orientation="horizontal"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content">
+                       <LinearLayout
+                           android:gravity="center"
+                           android:layout_weight="0.7"
+                           android:orientation="horizontal"
+                           android:layout_width="0dp"
+                           android:layout_height="wrap_content">
+                           <ImageView
+                               android:background="@drawable/no_record_found"
+                               android:layout_width="@dimen/no_Slot_available_image"
+                               android:layout_height="@dimen/no_Slot_available_image"
+                               tools:ignore="ContentDescription" />
+                       </LinearLayout>
+                           <TextView
+                               android:textSize="@dimen/text_size_12sp"
+                               android:layout_weight="1.3"
+                               android:text="No slots are available for the opted date!"
+                               android:layout_width="0dp"
+                               android:layout_height="wrap_content" >
+
+                           </TextView>
+                       </LinearLayout>
+                   </android.support.v7.widget.CardView>
+                 </LinearLayout>
                 <android.support.v7.widget.RecyclerView
+                    android:layout_below="@+id/noSlotAvailableLayout"
                     android:layout_centerHorizontal="true"
                     android:id="@+id/RecyclerDateBooking"
                     android:layout_width="match_parent"
@@ -258,10 +299,7 @@
 
 
                 <android.support.v7.widget.CardView
-
-                    android:layout_marginTop="10dp"
-                android:layout_below="@+id/RecyclerDateBooking"
-                    android:layout_marginBottom="5dp"
+                     android:layout_below="@+id/RecyclerDateBooking"
                     android:id="@+id/membershibBtn"
                   android:visibility="gone"
                     android:layout_width="match_parent"
@@ -277,7 +315,7 @@
                             android:layout_gravity="center"
                             android:background="@drawable/splashscreen"
                             android:layout_width="0dp"
-                            android:layout_height="60dp"
+                            android:layout_height="@dimen/membership_image_size"
                             tools:ignore="ContentDescription" />
                         <TextView
                             android:id="@+id/membershipText"
@@ -296,7 +334,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content">
                             <ImageView
-                                android:layout_marginStart="20dp"
+                                android:layout_marginStart="@dimen/margin_20dp"
                                 android:background="@drawable/ic_arrow_drop_down_black_24dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -306,19 +344,21 @@
                 </android.support.v7.widget.CardView>
                 </RelativeLayout>
                 <LinearLayout
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="@dimen/margin_5dp"
                     android:id="@+id/CourseBtn"
                     android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <LinearLayout
+                        android:id="@+id/courese"
+                        android:layout_gravity="center"
                         android:weightSum="3"
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         tools:ignore="DisableBaselineAlignment">
                         <LinearLayout
-                            android:padding="5dp"
+                            android:padding="@dimen/padding_5dp"
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="wrap_content">
@@ -329,11 +369,11 @@
                             android:background="@drawable/coursebtnbg1"
                             android:text="All days"
                             android:layout_width="match_parent"
-                            android:layout_height="30dp"
+                            android:layout_height="@dimen/button_height30"
                             tools:ignore="HardcodedText" />
                         </LinearLayout>
                         <LinearLayout
-                            android:padding="5dp"
+                            android:padding="@dimen/padding_5dp"
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="wrap_content">
@@ -344,11 +384,11 @@
                             android:id="@+id/weekday"
                             android:text="Week days"
                             android:layout_width="match_parent"
-                            android:layout_height="30dp"
+                            android:layout_height="@dimen/button_height30"
                             tools:ignore="HardcodedText" />
                         </LinearLayout>
                             <LinearLayout
-                                android:padding="5dp"
+                                android:padding="@dimen/padding_5dp"
                                 android:layout_width="0dp"
                                 android:layout_weight="1"
                                 android:layout_height="wrap_content">
@@ -359,7 +399,7 @@
                             android:id="@+id/weekEnd"
                             android:text="Week end"
                             android:layout_width="match_parent"
-                            android:layout_height="30dp"
+                            android:layout_height="@dimen/button_height30"
                             tools:ignore="HardcodedText" />
                             </LinearLayout>
 
@@ -371,32 +411,63 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                 <LinearLayout
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="@dimen/margin_10dp"
                     android:visibility="gone"
                     android:id="@+id/noCourseData"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <TextView
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:textColor="@color/block"
-                        android:textStyle="bold"
-                        android:text="no data available"
+
+                    <LinearLayout
+                        android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:ignore="HardcodedText" />
+                        android:layout_height="wrap_content">
+                        <android.support.v7.widget.CardView
+                            android:layout_marginTop="@dimen/margin_10dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                        <LinearLayout
+                            android:gravity="center"
+                            android:weightSum="2"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <LinearLayout
+                                android:gravity="center"
+                                android:layout_weight="0.7"
+                                android:orientation="horizontal"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content">
+                                <ImageView
+                                    android:background="@drawable/no_record_found"
+                                    android:layout_width="@dimen/no_Slot_available_image"
+                                    android:layout_height="@dimen/no_Slot_available_image"
+                                    tools:ignore="ContentDescription" />
+                            </LinearLayout>
+                            <TextView
+                                android:textSize="@dimen/text_size_12sp"
+                                android:layout_weight="1.3"
+                                android:text="No slot Available! please select another!"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content" >
+
+                            </TextView>
+                        </LinearLayout>
+                        </android.support.v7.widget.CardView>
+
+
+                    </LinearLayout>
                 </LinearLayout>
                 <LinearLayout
                     android:visibility="gone"
                     android:id="@+id/memberslayout"
-                    android:padding="10dp"
+                    android:padding="@dimen/padding_5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                <android.support.v7.widget.CardView
+                   app:cardCornerRadius="@dimen/padding_5dp"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content">
                 <android.support.v7.widget.RecyclerView
-                    android:padding="5dp"
                     android:id="@+id/recycle_memberCourse"
                     android:scrollbars="none"
                     android:clipToPadding="false"
@@ -407,7 +478,7 @@
                 </LinearLayout>
                 </RelativeLayout>
                 <RelativeLayout
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="@dimen/margin_5dp"
                     android:visibility="gone"
                     android:id="@+id/RecommendedLayout"
                     android:layout_width="match_parent"
@@ -423,10 +494,10 @@
 
                 <TextView
                     android:id="@+id/recommendedText"
-                    android:layout_marginStart="5dp"
+                    android:layout_marginStart="@dimen/margin_5dp"
                     android:textStyle="bold"
                     android:textColor="@color/white"
-                    android:textSize="14dp"
+                    android:textSize="@dimen/text_size_14sp"
                     android:gravity="center"
                     android:layout_gravity="center"
                     android:text="Recommended for you"
@@ -445,13 +516,14 @@
                 </android.support.v7.widget.CardView>
                 </RelativeLayout>
                 <RelativeLayout
+                    android:visibility="gone"
                     android:id="@+id/amenities"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                 <android.support.v7.widget.CardView
 
-                    android:padding="10dp"
+                    android:padding="@dimen/padding_10dp"
                     android:id="@+id/card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -460,11 +532,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <TextView
-                            android:layout_marginTop="5dp"
+                            android:padding="@dimen/padding_5dp"
                             android:textColor="@color/block"
                             android:textStyle="bold"
                             android:text="Amenities"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_size_14sp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             tools:ignore="HardcodedText" />
@@ -475,13 +547,12 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
                         </android.support.v7.widget.RecyclerView>
-
                     </LinearLayout>
                 </android.support.v7.widget.CardView>
                 </RelativeLayout>
 
                 <android.support.v7.widget.CardView
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/margin_10dp"
                 android:id="@+id/chartLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -492,16 +563,14 @@
                     android:layout_height="wrap_content">
                     <TextView
                         android:textColor="@color/block"
-                        android:padding="5dp"
+                        android:padding="@dimen/padding_5dp"
                         android:textStyle="bold"
                         android:text="Statistics"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_14sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:ignore="HardcodedText" />
                     <LinearLayout
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:layout_gravity="center"
                         android:orientation="horizontal"
@@ -516,17 +585,17 @@
                         </HorizontalScrollView>
                     </LinearLayout>
                     <com.github.mikephil.charting.charts.BarChart
-                        android:layout_marginBottom="30dp"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="@dimen/margin_30dp"
+                        android:layout_marginTop="@dimen/margin_5dp"
                         android:id="@+id/barchart"
                         android:layout_width="match_parent"
-                        android:layout_height="120dp"/>
+                        android:layout_height="@dimen/chart_height"/>
 
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
     <LinearLayout
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/margin_10dp"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:visibility="gone"
@@ -541,93 +610,94 @@
         android:id="@+id/map"
         class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="@dimen/map_hight"
         android:name="com.coeuz.pyscustomer.SubActivity"
         />
     <Button
         android:id="@+id/getDirection"
         android:padding="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:drawablePadding="5dp"
+        android:layout_marginTop="@dimen/margin_5dp"
+        android:layout_marginBottom="@dimen/margin_5dp"
+        android:drawablePadding="@dimen/margin_5dp"
         android:background="#92bf85"
+        android:textColor="@color/white"
         android:textAllCaps="false"
-        android:text="Map $ Direction"
+        android:text="@string/MapDirection"
         android:textStyle="bold"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="@dimen/button_height30"
         tools:ignore="HardcodedText" />
     <android.support.v7.widget.CardView
-
         android:layout_marginBottom="50dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     <LinearLayout
-        android:padding="5dp"
-        android:layout_marginBottom="10dp"
+        android:padding="@dimen/padding_5dp"
+        android:layout_marginBottom="@dimen/margin_10dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:drawablePadding="10dp"
+            android:layout_marginTop="@dimen/margin_10dp"
+            android:layout_marginBottom="@dimen/margin_10dp"
+            android:drawablePadding="@dimen/padding_10dp"
             android:drawableStart="@drawable/location"
             android:id="@+id/mArea"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <LinearLayout
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="@dimen/margin_30dp"
             android:background="#c0c0c0"
             android:layout_width="match_parent"
             android:layout_height="2dp"/>
         <TextView
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="@dimen/margin_10dp"
+            android:layout_marginBottom="@dimen/margin_10dp"
             android:drawablePadding="10dp"
             android:drawableStart="@drawable/citylocation"
             android:id="@+id/mCity"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <LinearLayout
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="@dimen/margin_30dp"
             android:background="#c0c0c0"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             tools:ignore="TooManyViews" />
         <TextView
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:drawablePadding="10dp"
+            android:layout_marginTop="@dimen/margin_10dp"
+            android:layout_marginBottom="@dimen/margin_10dp"
+            android:drawablePadding="@dimen/padding_10dp"
             android:drawableStart="@drawable/phone"
             android:id="@+id/mMobile"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <LinearLayout
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="@dimen/margin_30dp"
             android:background="#c0c0c0"
             android:layout_width="match_parent"
             android:layout_height="2dp"/>
+        <!--
         <TextView
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:drawablePadding="10dp"
+            android:layout_marginTop="@dimen/margin_10dp"
+            android:layout_marginBottom="@dimen/margin_10dp"
+            android:drawablePadding="@dimen/padding_10dp"
             android:drawableStart="@drawable/mail"
             android:id="@+id/mEmails"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <LinearLayout
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="@dimen/margin_30dp"
             android:background="#c0c0c0"
             android:layout_width="match_parent"
             android:layout_height="2dp"/>
-
+-->
 
     </LinearLayout>
 </android.support.v7.widget.CardView>
@@ -684,11 +754,10 @@
             tools:ignore="HardcodedText,RtlHardcoded" />
     </LinearLayout>
     <android.support.v7.widget.Toolbar
-        android:layout_marginTop="23dp"
         android:id="@+id/toolbar1"
         android:layout_width="match_parent"
         android:background="@color/colorTrans"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="?android:attr/actionBarSize"
         app:popupTheme="@style/AppTheme10" />
 </RelativeLayout>
 

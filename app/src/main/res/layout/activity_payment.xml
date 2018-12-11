@@ -447,14 +447,16 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:layout_weight="1"
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content">
+
                     <Button
+
                         android:paddingStart="5dp"
                         android:paddingEnd="5dp"
                         android:textColor="@color/white"
-                        android:background="@color/colorPrimary"
+                        android:background="@drawable/backbuttonyellow"
                         android:layout_gravity="center"
                         android:id="@+id/buttonConfirm"
                         android:layout_width="wrap_content"

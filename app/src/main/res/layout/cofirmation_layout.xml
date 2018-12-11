@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+   <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#EBF4FA"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+        tools:context="com.coeuz.pyscustomer.PaymentActivity">
+    <TextView
+        android:id="@+id/okBtn"
+        android:textColor="@color/green"
+        android:layout_gravity="end"
+        android:text="Skip"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        tools:ignore="HardcodedText" />
+    <LinearLayout
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <TextView
+        android:text="We hope you enjoyed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText" />
+    <RatingBar
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:stepSize="1"
+        android:id="@+id/simpleRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+       />
+        <android.support.design.widget.TextInputLayout
+            android:textColorHint="#070508"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+            <EditText
+
+                android:textSize="12sp"
+                android:id="@+id/textFeedback"
+                android:textColor="#000000"
+                android:hint="Type your feedback"
+                android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,"
+                android:inputType="textVisiblePassword"
+                android:singleLine="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="HardcodedText" />
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:id="@+id/sub"
+            android:text="Send Feedback"
+            android:background="@drawable/backbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            tools:ignore="HardcodedText" />
+
+</LinearLayout>
+
+</LinearLayout>
+

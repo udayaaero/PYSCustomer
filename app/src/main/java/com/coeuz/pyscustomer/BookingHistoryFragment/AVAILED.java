@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,18 +21,17 @@ import android.widget.Toast;
 import com.android.volley.NetworkError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.coeuz.pyscustomer.AdapterClass.BookingHistoryAdapter;
 import com.coeuz.pyscustomer.ModelClass.BookingHistoryModel;
 import com.coeuz.pyscustomer.R;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 import com.pnikosis.materialishprogress.ProgressWheel;
 
 import org.json.JSONArray;
@@ -69,6 +69,9 @@ public class AVAILED extends Fragment{
     private RelativeLayout allViewLayout;
     private LinearLayout noInternetLayout;
     Button button;
+    RelativeLayout mainLayout;
+    View view;
+    boolean isProgressShowing = false;
 
 
     public AVAILED() {
@@ -90,7 +93,7 @@ public class AVAILED extends Fragment{
         if(Objects.requireNonNull(getActivity()).getIntent().getStringExtra("var")!=null)
         {
             String var_value=getActivity().getIntent().getStringExtra("var");
-            Log.d("fuifhui",var_value);
+
         }
 
 
@@ -99,6 +102,7 @@ public class AVAILED extends Fragment{
 
         noValuesLayout= view.findViewById(R.id.noValuesLayout);
         noValuesLayout.setVisibility(View.GONE);
+        mainLayout =view.findViewById(R.id.mainLayouts);
 
         allViewLayout = view.findViewById(R.id.allViewlayout);
         noInternetLayout = view.findViewById(R.id.NoInternetLayout);
@@ -115,6 +119,7 @@ public class AVAILED extends Fragment{
 
         recyclerView.setAdapter(recyclerAdapter);
         firstLoadData();
+        //showProgressingView();
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -151,14 +156,15 @@ public class AVAILED extends Fragment{
         StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("fwfewrfrew", String.valueOf(response));
+
                 mprogressBar.setVisibility(View.GONE);
                 itShouldLoadMore = true;
                 try {
                     JSONArray jsonArray = new JSONArray(response);
                     if (jsonArray.length() == 0) {
-                        noValuesLayout.setVisibility(View.VISIBLE);
-                        allViewLayout.setVisibility(View.GONE);
+                        View view = getLayoutInflater().inflate(R.layout.no_values_booking, mainLayout,false);
+                        view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                        mainLayout.addView(view);
                        /* Toast toast = Toast.makeText(getActivity(), "No History", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();*/
@@ -186,7 +192,7 @@ public class AVAILED extends Fragment{
                                 Date _24HourDt = _24HourSDF.parse(bookingtimeStamp);
                                 bookingtimeStamp=_12HourSDF.format(_24HourDt);
                                 bookingtimeStamp=bookingtimeStamp.replaceAll("\\.","");
-                                Log.d("fewfewfew",bookingtimeStamp);
+
                             } catch (final ParseException e) {
                                 e.printStackTrace();
                             }
@@ -198,7 +204,7 @@ public class AVAILED extends Fragment{
                                 Date date = formatter.parse(booedforDate);
                                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
                                 booedforDate = sdf.format(date);
-                                Log.d("fewrwerw1",booedforDate);
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -220,7 +226,6 @@ public class AVAILED extends Fragment{
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("frwgtw", String.valueOf(error));
 
                 itShouldLoadMore = true;
                 mprogressBar.setVisibility(View.GONE);
@@ -239,7 +244,6 @@ public class AVAILED extends Fragment{
                         }});
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
                 }  else if (error instanceof ParseError) {
                     Toast.makeText(getActivity(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -269,8 +273,7 @@ public class AVAILED extends Fragment{
 
             }
         };
-        RequestQueue requestQueue1 = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
-        requestQueue1.add(request1);
+        VolleySingleton.getInstance(getActivity()).addToRequestQueue(request1);
 
     }
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -279,9 +282,7 @@ public class AVAILED extends Fragment{
         mOffset=temp;
         mLimit=temp+5;
         temp=mLimit;
-        Log.d("fhruifhr1", String.valueOf(mOffset));
-        Log.d("fhruifhr2", String.valueOf(mLimit));
-        Log.d("fhruifhr3", String.valueOf(temp));
+
 
 
         String URL = Constant.APIONE+"/slot/getFutureBookings?offset="+String.valueOf(mOffset)+"&limit="+String.valueOf(mLimit);
@@ -295,7 +296,6 @@ public class AVAILED extends Fragment{
         StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("hgerithjiow", String.valueOf(response));
 
                 progressWheel.setVisibility(View.GONE);
 
@@ -306,7 +306,6 @@ public class AVAILED extends Fragment{
                 try {
                     JSONArray jsonArray = new JSONArray(response);
                     if (jsonArray.length() == 0) {
-                        Log.d("hgerithjiow", String.valueOf(response));
 
                     }else{
                         for(int i=0;i<jsonArray.length();i++){
@@ -332,7 +331,7 @@ public class AVAILED extends Fragment{
                                 Date _24HourDt = _24HourSDF.parse(bookingtimeStamp);
                                 bookingtimeStamp=_12HourSDF.format(_24HourDt);
                                 bookingtimeStamp=bookingtimeStamp.replaceAll("\\.","");
-                                Log.d("fewfewfew",bookingtimeStamp);
+
                             } catch (final ParseException e) {
                                 e.printStackTrace();
                             }
@@ -344,7 +343,6 @@ public class AVAILED extends Fragment{
                                 Date date = formatter.parse(booedforDate);
                                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
                                 booedforDate = sdf.format(date);
-                                Log.d("fewrwerw1",booedforDate);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -363,7 +361,7 @@ public class AVAILED extends Fragment{
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("frwgtw", String.valueOf(error));
+
                 progressWheel.setVisibility(View.GONE);
 
                 itShouldLoadMore = true;
@@ -384,7 +382,6 @@ public class AVAILED extends Fragment{
                         }});
                 } else if (error instanceof ServerError) {
 
-                    Log.d("heuiwirhu1", String.valueOf(error));
                 }  else if (error instanceof ParseError) {
                     Toast.makeText(getActivity(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -414,10 +411,35 @@ public class AVAILED extends Fragment{
 
             }
         };
-        RequestQueue requestQueue1 = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
-        requestQueue1.add(request1);
+        VolleySingleton.getInstance(getActivity()).addToRequestQueue(request1);
 
     }
+    public void showProgressingView() {
+
+        if (!isProgressShowing) {
+            isProgressShowing = true;
+            view = getLayoutInflater().inflate(R.layout.something_went_wrong, null);
+
+            view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            Button button=view.findViewById(R.id.SomethingTryAgain1);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.detach(AVAILED.this).attach(AVAILED.this).commit();               }
+            });
+
+            mainLayout.addView(view);
+
+
+        }
+    }
+
+    public void hideProgressingView() {
+        mainLayout.removeView(view);
+        isProgressShowing = false;
+    }
+
  /*   @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);

@@ -2,6 +2,7 @@ package com.coeuz.pyscustomer;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -37,6 +38,7 @@ import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
 
 
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -46,7 +48,9 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.squareup.leakcanary.LeakCanary;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,7 +66,6 @@ public class StartUpActivity extends AppCompatActivity implements ConnectionCall
         OnConnectionFailedListener, LocationListener {
 
     private Handler mHandler = new Handler();
-    private String locatonValues;
 
     TinyDB mtinyDb;
     private String mToken, muserId, mcustomerName;
@@ -89,9 +92,16 @@ String notRun="true";
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_up);
 
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+
+            return;
+        }
+        LeakCanary.install((Application) getApplicationContext());
+
 
         mtinyDb = new TinyDB(getApplicationContext());
         mToken = mtinyDb.getString(Constant.TOKEN);
+        mtinyDb.putInt(Constant.FIRSTTIME,1);
 
 
         if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -113,6 +123,34 @@ String notRun="true";
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)
                 .setFastestInterval(1000);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                if (ActivityCompat.checkSelfPermission(StartUpActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(StartUpActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    return;
+                }
+                location100 = task.getResult();
+                if(location100!=null){
+                double lat = location100.getLatitude();
+                double lon = location100.getLongitude();
+
+                mtinyDb.putString(Constant.INITIALLAT, String.valueOf(lat));
+                mtinyDb.putString(Constant.INITIALLONG, String.valueOf(lon));}
+
+            }
+        });
+        fusedLocationProviderClient.getLastLocation()
+                .addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // GPS location can be null if GPS is switched off
+                        if (location != null) {
+                            onLocationChanged(location);
+                        }
+                    }
+                });
 
 
        mHandler.postDelayed(new Runnable() {
@@ -123,24 +161,29 @@ String notRun="true";
     }
 
     private void doStuff() {
+
         mtinyDb.putString(Constant.LATITUDE, "");
         mtinyDb.putString(Constant.LONGITUDE, "");
         gps = new GpsTracker(StartUpActivity.this);
 
         if (gps.canGetLocation()) {
-            Log.d("fjrijfri2", "hfiewuhfi");
+
             double latitude = gps.getLatitude();
             double longitude = gps.getLongitude();
             String lati = String.valueOf(latitude);
-            Log.d("feuihiuer", String.valueOf(latitude));
+           // getFromLocations(latitude,longitude);
+           hereLocattion(latitude, longitude);
             if (!lati.equals("0.0")) {
-                Log.d("feuihiuerccfdf10", String.valueOf(longitude));
                 mtinyDb.putString(Constant.INITIALLAT, String.valueOf(latitude));
                 mtinyDb.putString(Constant.INITIALLONG, String.valueOf(longitude));
-                hereLocattion(latitude, longitude);
+                mtinyDb.putDouble("INITIALLAT", latitude);
+                mtinyDb.putDouble("NITIALLONG", longitude);
+              //  hereLocattion(latitude, longitude);
             } else {
                 notRun="false";
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
+                        (this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -151,22 +194,7 @@ String notRun="true";
                     return;
                 }
 
-                    fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        if (ActivityCompat.checkSelfPermission(StartUpActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(StartUpActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            // TODO: Consider calling
-                            return;
-                        }
-                        location100 = task.getResult();
-                        double lat = location100.getLatitude();
-                        double lon = location100.getLongitude();
-                        Log.d("fhewuihfw", String.valueOf(lat+lon));
-                        mtinyDb.putString(Constant.INITIALLAT, String.valueOf(lat));
-                        mtinyDb.putString(Constant.INITIALLONG, String.valueOf(lon));
 
-                    }
-                });
             }
 
 
@@ -200,6 +228,7 @@ String notRun="true";
                         finish();
                     }
                 });
+                builder.setCancelable(false);
                 builder.show();
             }
         }
@@ -211,7 +240,7 @@ String notRun="true";
             StringRequest request = new StringRequest(Request.Method.GET, URL1, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.d("mvefn", String.valueOf(response));
+
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         muserId = jsonObject.getString("userId");
@@ -229,10 +258,11 @@ String notRun="true";
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.d("miremio", String.valueOf(error));
+
 
                     if (error instanceof NetworkError) {
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(StartUpActivity.this);
+
+                      /*  final AlertDialog.Builder builder = new AlertDialog.Builder(StartUpActivity.this);
 
                         builder.setTitle("Internet Permission");
                         builder.setMessage("The app needs Internet permissions. Please grant this permission to continue using the features of the app.");
@@ -244,10 +274,9 @@ String notRun="true";
                             }
                         });
                         builder.setNegativeButton(android.R.string.no, null);
-                        builder.show();
+                        builder.show();*/
                     } else if (error instanceof ServerError) {
 
-                        Log.d("heuiwirhu1", String.valueOf(error));
                     } else if (error instanceof ParseError) {
                         Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -266,8 +295,7 @@ String notRun="true";
 
                 }
             };
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            requestQueue.add(request);
+            VolleySingleton.getInstance(StartUpActivity.this).addToRequestQueue(request);
 
         }
 
@@ -275,28 +303,28 @@ String notRun="true";
 
 
     public void hereLocattion(double lat, double lon) {
+
+
 la=lat;
 lo=lon;
-        Log.d("feuihiuerccfdf11", String.valueOf(lat));
-        Log.d("ttwrtfrefr", "tret3t5");
+        if (!String.valueOf(la).equals("0.0")) {
+            la=currentLatitude;
+            lo=currentLongitude;
+        }
+
         String curCity;
         Geocoder geocoder = new Geocoder(StartUpActivity.this, Locale.getDefault());
-        Log.d("feuihiuerccfdf12","run1");
         List<Address> addressList;
         try {
-            addressList = geocoder.getFromLocation(lat, lon, 2);
+            addressList = geocoder.getFromLocation(la, lo, 1);
+            String locatonValues;
             if (addressList.size() > 0) {
                 curCity = addressList.get(0).getLocality();
                 locatonValues = curCity.toLowerCase();
-                Log.d("yfhuewir", locatonValues);
-
-
-                Log.d("feuihiuerccfdf13","run2");
             }
             List<Address> addressList1 = geocoder.getFromLocation(
                     lat, lon, 1);
             if (addressList1 != null && addressList1.size() > 0) {
-
                 Address address = addressList1.get(0);
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
@@ -310,30 +338,35 @@ lo=lon;
                 sb.append(address.getLocality()).append("\n");*/
                 /*sb.append(address.getPostalCode()).append("\n");
                 sb.append(address.getCountryName());*/
-                Log.d("feuihiuerccfdf14","run3");
-                locatonValues = sb.toString() + System.getProperty("line.separator") + sb1;
+
+                if(sb.toString().equalsIgnoreCase("null")){
+                    locatonValues =sb1;
+                }else{
+                locatonValues = sb.toString() + System.getProperty("line.separator") + sb1;}
 
                 if (!locatonValues.equals("")) {
+
                     mtinyDb.putString(Constant.INITIALLOCATION, locatonValues);
                 }
                 notWorking=false;
-
+                mtinyDb.putString(Constant.INITIALLAT, String.valueOf(la));
+                mtinyDb.putString(Constant.INITIALLONG, String.valueOf(lo));
                 Intent intent = new Intent(StartUpActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("EXTRA_SESSION_ID", locatonValues);
                 startActivity(intent);
                 finish();
-                Log.d("fhrwuihejriytruuwei", sb.toString());
+
             }
         } catch (IOException e) {
             e.printStackTrace();
+
         }
-        Log.d("feuihiuerccfdf16","run5");
+
         if(notWorking){
-            Log.d("feuihiuerccfdf17","run6");
-            getFromLocations(lat,lon);
-            Log.d("fhuwifhi","fhuwhe");
+
+            getFromLocations(la,lo);
+
         }
 
     }
@@ -350,11 +383,10 @@ lo=lon;
                     public void run() {
                         doStuff();
                     }
-                }, 500);
-                Log.d("tyerye", "trytery");
-
+                }, 50);
 
                 break;
+
         }
 
     }
@@ -409,6 +441,7 @@ lo=lon;
 
 
 
+
         }
     }
 
@@ -440,58 +473,75 @@ lo=lon;
         currentLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
 
+
     }
 
 
 
-        public  void getFromLocations(double lat, double lng) {
-            Log.d("feuihiuerccfdf18","run7");
+        public  void getFromLocations(final double lat, final double lng) {
 
-            String address = String.format(Locale.US,
-                    "https://maps.googleapis.com/maps/api/geocode/json?latlng=%1$f,%2$f&sensor=false&language="
-                            + Locale.getDefault().getCountry(), lat,lng);
 
+
+          /* String address = String.format(Locale.getDefault(),
+                    "https://maps.googleapis.com/maps/api/geocode/json?latlng=%1$f,%2$f&sensor=false&language=&key=AIzaSyDA2L67fZwztMdooFr5eakRmpNdTFEhVjQ"
+                            + Locale.getDefault().getCountry(), lat,lng);*/
+          /*  String address ="https://maps.googleapis.com/maps/api/" +
+                    "/json?latlng="+String.valueOf(lat)+","+String.valueOf(lng)+"&sensor=true&key=AIzaSyDziFGBS1ef_vIY89Dd-9N9nzfgM7HsjYs";*/
+
+            String address="https://maps.googleapis.com/maps/api/geocode/json?latlng="+String.valueOf(lat)+","+String.valueOf(lng)+
+                    "&sensor=true&key=AIzaSyD1UyGih4OiotMUDnHvjbcp0LlsRTGG9Pc";
 
             StringRequest request45 = new StringRequest(Request.Method.GET, address, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.d("fdssfrfer", String.valueOf(response));
-                    Log.d("feuihiuerccfdf19","run8");
+
+
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         JSONArray valuess=jsonObject.getJSONArray("results");
-                        Log.d("fiuwhwiufrew1", String.valueOf(valuess));
+
                         JSONArray jsonArray = null;
                         for(int i=0;i<valuess.length();i++){
-                            JSONObject valuess1= valuess.getJSONObject(0);
+                            JSONObject valuess1= valuess.getJSONObject(1);
                             jsonArray=valuess1.getJSONArray("address_components");
                         }
-                        Log.d("fiuwhwiufrew2", String.valueOf(jsonArray));
+
                         String areaName = null;
+                        String areaName1 = null;
 
 
                         if (jsonArray != null) {
                             for(int i = 0; i<jsonArray.length(); i++){
-                                JSONObject jsonObject2= jsonArray.getJSONObject(1);
+                                JSONObject jsonObject2= jsonArray.getJSONObject(3);
+                                JSONObject jsonObject3= jsonArray.getJSONObject(2);
                                 areaName=jsonObject2.getString("long_name");
+                                areaName1=jsonObject3.getString("long_name");
 
                             }
                         }
                         if(areaName!=null){
-                            mtinyDb.putString(Constant.INITIALLOCATION, areaName);
+                            String allAreaname=areaName1+ System.getProperty("line.separator") + areaName;
+                            mtinyDb.putString(Constant.INITIALLOCATION, allAreaname);
+                            mtinyDb.putString(Constant.INITIALLAT, String.valueOf(lat));
+                            mtinyDb.putString(Constant.INITIALLONG, String.valueOf(lng));
                             Intent intent = new Intent(StartUpActivity.this, MainActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra("EXTRA_SESSION_ID", locatonValues);
-                            intent.putExtra("UserName", mcustomerName);
                             startActivity(intent);
                             finish();
 
+                        }else{
+
+                            String allAreaname="Chennai";
+                            mtinyDb.putString(Constant.INITIALLOCATION, allAreaname);
+                            mtinyDb.putString(Constant.INITIALLAT, String.valueOf(lat));
+                            mtinyDb.putString(Constant.INITIALLONG, String.valueOf(lng));
+                            Intent intent = new Intent(StartUpActivity.this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            finish();
                         }
-                        Log.d("fiuwhwiufrew3", areaName);
-
-
-
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -501,7 +551,7 @@ lo=lon;
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.d("dfeterte", String.valueOf(error));
+
 
                     if (error instanceof NetworkError) {
                   final AlertDialog.Builder builder = new AlertDialog.Builder(StartUpActivity.this);
@@ -511,15 +561,16 @@ lo=lon;
                         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Intent intent = new Intent(getApplicationContext(), StartUpActivity.class);
+                                Intent intent = new Intent(getApplicationContext(), StartActivity.class);
                                 startActivity(intent);
+
                             }
                         });
                         builder.setNegativeButton(android.R.string.no, null);
                         builder.show();
                     } else if (error instanceof ServerError) {
 
-                        Log.d("heuiwirhu1", String.valueOf(error));
+
                     } else if (error instanceof ParseError) {
                         Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -538,8 +589,9 @@ lo=lon;
 
                 }
             };
-            RequestQueue requestQueue45 = Volley.newRequestQueue(getApplicationContext());
-            requestQueue45.add(request45);
+            RequestQueue requestQueue=Volley.newRequestQueue(getApplicationContext());
+            requestQueue.add(request45);
+           // VolleySingleton.getInstance(StartUpActivity.this).addToRequestQueue(request45);
 
 
 

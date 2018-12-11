@@ -5,9 +5,12 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -32,6 +35,7 @@ import com.coeuz.pyscustomer.ModelClass.SubActivityModel;
 import com.coeuz.pyscustomer.R;
 import com.coeuz.pyscustomer.Requiredclass.Constant;
 import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,8 +62,11 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
     @Override
     public NearYouAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
+if(subActivityModel.size()==1){
+    return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.near_you_adapter1, parent, false));
+}else{
         return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.near_you_adapter, parent, false));
-    }
+    }}
 
     @Override
     public void onBindViewHolder(NearYouAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
@@ -67,10 +74,18 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
 
         holder.nNameOfVendor.setText(subActivityModel.get(position).getVendorName());
         holder.nAdressOfvendor.setText(subActivityModel.get(position).getArea());
+        String backGroundImage=subActivityModel.get(position).getVendorShopImage();
+        if(!backGroundImage.equals("")){
+            byte[] images= Base64.decode(backGroundImage,Base64.DEFAULT);
+            Bitmap bitmap= BitmapFactory.decodeByteArray(images,0,images.length);
+             holder.mImage.setImageBitmap(bitmap);
+        }
+
 
         holder.mLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final String backGroundImages=subActivityModel.get(position).getVendorShopImage();
                  final ProgressDialog mProgressDialog;
                 mProgressDialog = new ProgressDialog(mcontext);
                 mProgressDialog.setMessage("Loading........");
@@ -83,7 +98,7 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
                 final String  mArea=subActivityModel.get(position).getArea();
                 final Integer  mVendorIds=subActivityModel.get(position).getVendorId();
                 final String  subActivityId= String.valueOf(subActivityModel.get(position).getSubActivityId());
-                Log.d("fnruiferui",subActivityId);
+
 
                 final String vendorId= String.valueOf(mVendorIds);
 
@@ -92,7 +107,7 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
                 StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("ewrtttty", String.valueOf(response));
+
 
                         try {
                             JSONObject jsonObject = new JSONObject(response);
@@ -113,8 +128,6 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
                                 mtinyDb.putString(Constant.VENDORAREA,mArea);
                                 mtinyDb.putString("activityId",subActivityId);
                                 String msubActivityId=mtinyDb.getString("activityId");
-                                Log.d("fnrjnf",msubActivityId);
-
 
 
 
@@ -124,18 +137,20 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
                                 StringRequest request10 = new StringRequest(Request.Method.GET, URL10, new Response.Listener<String>() {
                                     @Override
                                     public void onResponse(String response) {
-                                        Log.d("bfhfbfjdew", String.valueOf(response));
+
+                                        mtinyDb.putString(Constant.BACKGROUNDIMAGE,backGroundImages);
 
                                         try {
                                             JSONArray jsonArray = new JSONArray(response);
 
                                             if (jsonArray.length() == 0) {
-                                                Log.d("rtrews", String.valueOf(response));
+
                                                 mProgressDialog.dismiss();
                                                 mBookingType="";
                                                 mtinyDb.putString(Constant.BOOKINGTYPE,mBookingType);
                                                 mcBookingType="";
                                                 mtinyDb.putString(Constant.MCBOOKINGTYPE,mcBookingType);
+
                                                 Intent intent=new Intent(mcontext, AfterSelectVendor.class);
                                                 Bundle bundle = new Bundle();
                                                 bundle.putString("positionValue",clickedItem);
@@ -149,7 +164,7 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
                                             } else {
                                                 for (int i = 0; i < jsonArray.length(); i++) {
                                                     String slotTypes = String.valueOf(jsonArray.get(i));
-                                                    Log.d("fsdfw", String.valueOf(slotTypes));
+
 
                                                     slotTypeList.add(slotTypes);
                                                 }
@@ -157,7 +172,7 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
                                                 mtinyDb.putString(Constant.BOOKINGTYPE,mBookingType);
                                                 mcBookingType="";
                                                 mtinyDb.putString(Constant.MCBOOKINGTYPE,mcBookingType);
-                                                Log.d("fdsfger1", String.valueOf(slotTypeList));
+
 
                                                 if(slotTypeList.contains("PRE_DEFINED_SLOT")){
                                                     mBookingType="PRE_DEFINED_SLOT";
@@ -198,13 +213,13 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
                                 }, new Response.ErrorListener() {
                                     @Override
                                     public void onErrorResponse(VolleyError error) {
-                                        Log.d("ewqreqw", String.valueOf(error));
+
                                         mProgressDialog.dismiss();
                                         if (error instanceof NetworkError) {
                                             Toast.makeText(mcontext, "Cannot connect to Internet...Please check your connection!", Toast.LENGTH_SHORT).show();
                                         } else if (error instanceof ServerError) {
 
-                                            Log.d("heuiwirhu1", String.valueOf(error));
+
                                         }  else if (error instanceof ParseError) {
                                             Toast.makeText(mcontext, "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -214,8 +229,7 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
                                         }
                                     }
                                 });
-                                RequestQueue requestQueue10 = Volley.newRequestQueue(mcontext);
-                                requestQueue10.add(request10);
+                                VolleySingleton.getInstance(mcontext).addToRequestQueue(request10);
 
 
                             }
@@ -227,13 +241,12 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("eqwrwq", String.valueOf(error));
+
                         mProgressDialog.dismiss();
                         if (error instanceof NetworkError) {
                             Toast.makeText(mcontext, "Cannot connect to Internet...Please check your connection!", Toast.LENGTH_SHORT).show();
                         } else if (error instanceof ServerError) {
 
-                            Log.d("heuiwirhu1", String.valueOf(error));
                         }  else if (error instanceof ParseError) {
                             Toast.makeText(mcontext, "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
 
@@ -244,8 +257,7 @@ public class NearYouAdapter extends RecyclerView.Adapter<NearYouAdapter.MyViewHo
 
                     }
                 });
-                RequestQueue requestQueue1 = Volley.newRequestQueue(mcontext);
-                requestQueue1.add(request1);
+                VolleySingleton.getInstance(mcontext).addToRequestQueue(request1);
 
 
 

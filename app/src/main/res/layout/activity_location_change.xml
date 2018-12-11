@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
+    android:padding="@dimen/padding_10dp"
     android:background="@drawable/backgroundmain"
     tools:context="com.coeuz.pyscustomer.LocationChangeActivity">
 <RelativeLayout
@@ -13,7 +13,6 @@
 
 <android.support.v7.widget.CardView
     android:id="@+id/cardFirst"
-
     android:background="#ffffff"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -28,15 +27,15 @@
       android:drawableStart="@drawable/ic_location_on_black_24dp"
       android:textColor="@color/colorPrimary"
       android:textStyle="bold"
-      android:layout_marginTop="10dp"
-      android:layout_marginBottom="10dp"
+      android:layout_marginTop="@dimen/margin_10dp"
+      android:layout_marginBottom="@dimen/margin_10dp"
       android:id="@+id/currentlocation"
       android:text="Auto-detect Current location"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       tools:ignore="HardcodedText" />
   <ImageView
-      android:layout_marginTop="10dp"
+      android:layout_marginTop="@dimen/margin_10dp"
       android:layout_weight="0.3"
       android:src="@drawable/ic_gps_fixed_black_24dp"
       android:layout_width="0dp"
@@ -52,21 +51,21 @@
   <Button
       android:layout_centerHorizontal="true"
       android:gravity="center"
-      android:background="#ffffff"
-      android:layout_marginTop="30dp"
+      android:background="@drawable/backbuttons"
+      android:layout_marginTop="@dimen/margin_30dp"
       android:layout_below="@+id/cardFirst"
       android:id="@+id/findPlace"
-      android:layout_width="200dp"
+      android:layout_width="@dimen/distance_200dp"
+
       android:layout_height="wrap_content"
       android:text="Search by Places"
-      android:onClick="findPlace"
       tools:ignore="HardcodedText" />
   <ImageView
-      android:layout_marginTop="20dp"
+      android:layout_marginTop="@dimen/margin_30dp"
       android:layout_below="@+id/findPlace"
       android:background="@drawable/smartcity"
       android:layout_width="match_parent"
-      android:layout_height="150dp"
+      android:layout_height="@dimen/location_change_image_size"
       tools:ignore="ContentDescription" />
 </RelativeLayout>
 
@@ -77,8 +76,8 @@
       android:layout_centerVertical="true"
       android:layout_centerHorizontal="true"
       android:indeterminateDrawable="@drawable/circleimage"
-      android:layout_height="100dp"
-      android:layout_width="100dp">
+      android:layout_height="@dimen/progressbar_100dp"
+      android:layout_width="@dimen/progressbar_100dp">
   </ProgressBar>
   <RelativeLayout
       android:visibility="gone"
@@ -95,15 +94,15 @@
         android:layout_centerHorizontal="true"
         android:background="@color/colorPrimary"
         android:id="@+id/chooseAnother"
-        android:layout_width="250dp"
-        android:layout_height="35dp"
+        android:layout_width="@dimen/button_distance_250"
+        android:layout_height="@dimen/distance_35dp"
         android:text="Choose another location"
         android:onClick="findPlace"
         tools:ignore="HardcodedText" />
     <TextView
         android:layout_below="@+id/chooseAnother"
        android:id="@+id/not"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/margin_10dp"
         android:layout_centerHorizontal="true"
         android:textColor="@color/block"
         android:text="We are not in your city"
@@ -115,11 +114,10 @@
         android:id="@+id/smartcity"
         android:background="@drawable/smartcity"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="@dimen/location_change_image_size"
         tools:ignore="ContentDescription" />
     <TextView
         android:id="@+id/explore"
-        android:layout_marginTop="10dp"
         android:layout_below="@+id/smartcity"
         android:layout_centerHorizontal="true"
         android:textColor="@color/block"
@@ -128,12 +126,13 @@
         android:layout_height="wrap_content"
         tools:ignore="HardcodedText" />
     <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_marginTop="@dimen/margin_10dp"
         android:layout_centerHorizontal="true"
         android:id="@+id/chennai"
         android:layout_below="@+id/explore"
         android:src="@drawable/chennai"
-        android:layout_width="100dp"
-        android:layout_height="100dp" />
+        android:layout_width="@dimen/location_round_image"
+        android:layout_height="@dimen/location_round_image" />
     <TextView
         android:textStyle="bold"
         android:layout_below="@+id/chennai"

@@ -64,7 +64,6 @@ public class DateBookingAdapter extends RecyclerView.Adapter<DateBookingAdapter.
 
         holder.startTime.setText(slotModels.get(position).getSlotStartTime());
         holder.Endtime.setText(slotModels.get(position).getSlotEndTime());
-        Log.d("fhewuifhew,", String.valueOf(slotModels.get(position).getBookingCost()));
         holder.cost.setText(String.valueOf(slotModels.get(position).getBookingCost()));
 
 
@@ -75,11 +74,13 @@ public class DateBookingAdapter extends RecyclerView.Adapter<DateBookingAdapter.
                 String bookingEndTime=slotModels.get(position).getSlotEndTime();
                 String bookingCost= String.valueOf(slotModels.get(position).getBookingCost());
                 String slotIds= String.valueOf(slotModels.get(position).getSlotId());
+                Integer personCount=slotModels.get(position).getPersonCount();
                 tinyDB.putString("SlotbookingStartTime",bookingStartTime);
                 tinyDB.putString("SlotbookingEndTime",bookingEndTime);
                 tinyDB.putString("SlotbookingCost",bookingCost);
                 tinyDB.putString(Constant.PRESLOTID,slotIds);
                 tinyDB.putString(Constant.SELECTEDTYPE,"PRE-DEFINED");
+                tinyDB.putString(Constant.PERSONCOUNT, String.valueOf(personCount));
 
                 tinyDB.putString(Constant.PAYMENTSTARTTIME,bookingStartTime);
                 tinyDB.putString(Constant.PAYMENTENDTIME,bookingEndTime);
@@ -143,7 +144,7 @@ if(row_index==position){
             selectedEndTime.add(slotModels.get(position).getSlotEndTime());
             String Date66=slotModels.get(position).getSlotStartTime();
             String Start66=slotModels.get(position).getSlotEndTime();
-            Log.d("hfiwrjfiw",Date66);
+
 
             //holder.layout.setBackgroundColor(Color.parseColor("#567845"));
 
@@ -178,7 +179,7 @@ if(row_index==position){
             else if(selectedSlotIdList.size()==0){
                 Toast.makeText(SlotPages.this, "Please select any slot", Toast.LENGTH_SHORT).show();
             }else {
-                Log.d("hureitr", personCounts);
+
 
 
                 selectedSlotId = selectedSlotIdList.toString();
@@ -190,7 +191,7 @@ if(row_index==position){
                 selectedSlotCost = selectedSlotCost.replace("[", "");
                 selectedSlotCost = selectedSlotCost.replace("]", "");
                 selectedSlotCost = selectedSlotCost.replace(" ", "");
-                Log.d("jfwiejfiwre", selectedSlotCost);
+
 
                 selectedStarttime = selectedStartList.toString();
                 selectedStarttime = selectedStarttime.replace("[", "");

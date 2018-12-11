@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
@@ -20,36 +21,49 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission
+        android:name="android.permission.WRITE_SECURE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
 
-    <uses-feature android:name="android.hardware.location.gps" />
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="true" />
     <uses-feature android:name="android.hardware.location.network" />
 
     <application
-        android:name=".NotificationApplication"
+
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:hardwareAccelerated="false"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:name="android.support.multidex.MultiDexApplication"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity
             android:name=".StartActivity"
+            android:configChanges="orientation|screenSize"
             android:noHistory="true"
             android:theme="@style/AppTheme1">
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
         <activity
             android:name=".StartUpActivity"
             android:configChanges="orientation|screenSize"
@@ -69,7 +83,7 @@
         <activity
             android:name=".LocationChangeActivity"
             android:configChanges="orientation|screenSize"
-            android:label="Location Change"
+            android:label="Preferred Location"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".NotificationActivitys"
@@ -83,10 +97,10 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".BookingHistoryActivity"
-                android:configChanges="orientation|screenSize"
-                android:label="Booking History"
-                android:theme="@style/AppTheme.NoActionBar"
-                android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+            android:configChanges="orientation|screenSize"
+            android:label="Booking History"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".MembershipActivity"
             android:configChanges="orientation|screenSize"
@@ -96,18 +110,17 @@
         <activity
             android:name=".SubActivity"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="adjustPan"
-            />
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".FilterActivity"
             android:configChanges="orientation|screenSize"
             android:label="Filter"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
-
             android:name=".AfterSelectVendor"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar1" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".SlotPages"
             android:configChanges="orientation|screenSize"
@@ -121,7 +134,10 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCPWBYpf0rn1UXGXco1GVGxWY4qVzGLjYI" />
+            android:value="AIzaSyDA2L67fZwztMdooFr5eakRmpNdTFEhVjQ" />
+        <meta-data
+            android:name="firebase_performance_logcat_enabled"
+            android:value="true" />
 
         <!--
             <meta-data
@@ -140,6 +156,11 @@
             android:label="SignUp"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
+            android:name=".Requiredclass.LoginFrontPage"
+            android:configChanges="orientation|screenSize"
+            android:label="Login"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
             android:name=".ForgotPassordActivity"
             android:configChanges="orientation|screenSize"
             android:label="Forgot Password"
@@ -154,13 +175,15 @@
             android:configChanges="orientation|screenSize"
             android:label="Update Password"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
         <meta-data
             android:name="com.onesignal.NotificationOpened.DEFAULT"
-            android:value="DISABLE"
-           />
-        <service android:name="MyNotificationExtenderService"
+            android:value="DISABLE" />
+
+        <service
+            android:name=".MyNotificationExtenderService"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -174,7 +197,7 @@
 
         <meta-data
             android:name="com.razorpay.ApiKey"
-            android:value="rzp_test_yK5eGiWLYOfcaz"
+            android:value="rzp_test_lOsVoCyrlJxEmD"
             tools:replace="android:value" />
 
         <activity
@@ -217,8 +240,18 @@
         <activity
             android:name=".ConfirmationActivity"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
+        </activity>
+        <activity
+            android:name=".ApplyOffer"
+            android:configChanges="orientation|screenSize"
+            android:label="Apply Offer"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity android:name=".AddPlayer"
+            android:configChanges="orientation|screenSize"
+            android:label="Add Player"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
         </activity>
     </application>
 
