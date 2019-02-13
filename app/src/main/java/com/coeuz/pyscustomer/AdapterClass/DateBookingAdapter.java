@@ -3,7 +3,7 @@ package com.coeuz.pyscustomer.AdapterClass;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +13,8 @@ import android.widget.TextView;
 
 import com.coeuz.pyscustomer.ModelClass.SlotModel;
 import com.coeuz.pyscustomer.R;
-import com.coeuz.pyscustomer.Requiredclass.Constant;
-import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.requiredclass.Constant;
+import com.coeuz.pyscustomer.requiredclass.TinyDB;
 import com.coeuz.pyscustomer.SlotPages;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class DateBookingAdapter extends RecyclerView.Adapter<DateBookingAdapter.
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private TextView startTime,Endtime,cost;
+        private TextView startTime,Endtime,cost,mOFFERS;
         private LinearLayout layout;
         public int position=0;
         public MyViewHolder(View itemView) {
@@ -49,6 +49,7 @@ public class DateBookingAdapter extends RecyclerView.Adapter<DateBookingAdapter.
             Endtime=itemView.findViewById(R.id.Endtimee);
             cost=itemView.findViewById(R.id.cost);
             layout=itemView.findViewById(R.id.timemorning);
+            mOFFERS=itemView.findViewById(R.id.OFFERS);
         }
     }
 
@@ -65,7 +66,16 @@ public class DateBookingAdapter extends RecyclerView.Adapter<DateBookingAdapter.
         holder.startTime.setText(slotModels.get(position).getSlotStartTime());
         holder.Endtime.setText(slotModels.get(position).getSlotEndTime());
         holder.cost.setText(String.valueOf(slotModels.get(position).getBookingCost()));
-
+     Log.d("fsgfrgr", String.valueOf(slotModels.get(position).getBookingCost()));
+        Log.d("fsgfrgr1", String.valueOf(slotModels.get(position).getOfferPercentage()));
+        String offerPersentage=String.valueOf(slotModels.get(position).getOfferPercentage());
+        Log.d("gergtrg",offerPersentage);
+       if(!offerPersentage.equalsIgnoreCase("")) {
+            holder.mOFFERS.setText(offerPersentage+"Offer");
+            holder.mOFFERS.setBackgroundResource(R.color.green);
+        }else{
+           holder.mOFFERS.setBackgroundResource(R.color.colorPrimary);
+       }
 
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,6 +84,7 @@ public class DateBookingAdapter extends RecyclerView.Adapter<DateBookingAdapter.
                 String bookingEndTime=slotModels.get(position).getSlotEndTime();
                 String bookingCost= String.valueOf(slotModels.get(position).getBookingCost());
                 String slotIds= String.valueOf(slotModels.get(position).getSlotId());
+                Log.d("betntrt",bookingStartTime+"---"+bookingEndTime);
                 Integer personCount=slotModels.get(position).getPersonCount();
                 tinyDB.putString("SlotbookingStartTime",bookingStartTime);
                 tinyDB.putString("SlotbookingEndTime",bookingEndTime);

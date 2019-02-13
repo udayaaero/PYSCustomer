@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:id="@+id/mainLayout"
     android:layout_height="match_parent">
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -35,11 +35,11 @@
         android:id="@+id/shedowimage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <android.support.v4.view.ViewPager
+        <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="@dimen/viewpager_image">
-        </android.support.v4.view.ViewPager>
+        </androidx.viewpager.widget.ViewPager>
         <LinearLayout
             android:layout_marginTop="@dimen/viewpager_dot"
             android:id="@+id/SliderDots"
@@ -74,7 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:ignore="HardcodedText" />
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_below="@id/textHeading"
             android:layout_marginBottom="@dimen/margin_10dp"
             android:layout_marginTop="@dimen/margin_10dp"
@@ -188,13 +188,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 </LinearLayout>
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/galleryrecycle"
                     android:orientation="horizontal"
                     app:reverseLayout="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                </android.support.v7.widget.RecyclerView>
+                </androidx.recyclerview.widget.RecyclerView>
             </LinearLayout>
 
         </LinearLayout>
@@ -203,7 +203,7 @@
     </RelativeLayout>
 
     </RelativeLayout>
-</android.support.v4.widget.NestedScrollView>
+</androidx.core.widget.NestedScrollView>
 
     <RelativeLayout
         android:visibility="gone"
@@ -212,13 +212,13 @@
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="@dimen/remember_layout_height">
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:fillViewport="true"
             android:id="@+id/BookingRememberRecycle"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        </android.support.v7.widget.RecyclerView>
+        </androidx.recyclerview.widget.RecyclerView>
 
     </RelativeLayout>
 
@@ -262,7 +262,5 @@
                 android:layout_height="35dp"
                 android:paddingLeft="20dp" />
         </LinearLayout>
-
-
 
 </RelativeLayout>

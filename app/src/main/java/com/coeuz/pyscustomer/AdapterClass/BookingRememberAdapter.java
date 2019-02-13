@@ -9,7 +9,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Handler;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,7 +84,7 @@ public class BookingRememberAdapter extends RecyclerView.Adapter<BookingRemember
             @SuppressWarnings("deprecation")
             @Override
             public void onClick(View v) {
-
+Log.d("ergtert","rt35t3");
 
                 LayoutInflater inflater = (LayoutInflater) mcontext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -115,6 +116,8 @@ public class BookingRememberAdapter extends RecyclerView.Adapter<BookingRemember
                 TextView subActivityType1 = customView.findViewById(R.id.subActivityType1);
                 TextView area1 = customView.findViewById(R.id.area1);
                 TextView contactNo1 = customView.findViewById(R.id.contactNo1);
+                LinearLayout mContactNumberLayout = customView.findViewById(R.id.ContactNumberLayout);
+                LinearLayout notesLayout = customView.findViewById(R.id.notesLayout);
                 TextView note = customView.findViewById(R.id.note);
                 vendorName1.setText(rememberVendorName1.get(position));
                 personCounts.setText(rememberpersonCount1.get(position));
@@ -130,8 +133,21 @@ public class BookingRememberAdapter extends RecyclerView.Adapter<BookingRemember
                 endTime1.setText(rememberendtime1.get(position));}
                 subActivityType1.setText(rememberType1.get(position));
                 area1.setText(rememberArea1.get(position));
-                contactNo1.setText(remembercontactno1.get(position));
-                note.setText(rememberNotes1.get(position));
+                String contactNumber=remembercontactno1.get(position);
+                if(contactNumber!=null && !contactNumber.isEmpty() && !contactNumber.equalsIgnoreCase("0")){
+                    mContactNumberLayout.setVisibility(View.VISIBLE);
+                    contactNo1.setText(contactNumber);
+                }else{
+                    mContactNumberLayout.setVisibility(View.GONE);
+                }
+                String notes=rememberNotes1.get(position);
+                if(notes!=null && !notes.isEmpty()&& !notes.equalsIgnoreCase("null")){
+                    note.setText(notes);
+                    notesLayout.setVisibility(View.VISIBLE);
+                }else{
+                    notesLayout.setVisibility(View.GONE);
+
+                }
 
 
                 skipButton.setOnClickListener(new View.OnClickListener() {

@@ -2,17 +2,19 @@ package com.coeuz.pyscustomer;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 
+import android.content.Context;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
+import androidx.core.content.ContextCompat;
+
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View.OnClickListener;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,42 +27,38 @@ import android.widget.Toast;
 import com.android.volley.NetworkError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
-import com.coeuz.pyscustomer.AdapterClass.OfferAdapterBookSummary;
-import com.coeuz.pyscustomer.Requiredclass.Constant;
-import com.coeuz.pyscustomer.Requiredclass.TinyDB;
-import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
+import com.coeuz.pyscustomer.requiredclass.Constant;
+import com.coeuz.pyscustomer.requiredclass.TinyDB;
+import com.coeuz.pyscustomer.requiredclass.VolleySingleton;
 
 
 import org.apache.commons.lang3.time.DateUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 
 import java.util.Date;
 import java.util.HashMap;
 
 import java.util.Locale;
 
+import java.util.Map;
 import java.util.Objects;
 
 
 public class SlotPages extends AppCompatActivity implements View.OnClickListener {
 
-
+    private AlertDialog alert;
     private String msubActivityId;
     private String selectedSlotIds;
     private String personCounts;
@@ -68,41 +66,26 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
 
 
     private RadioButton mfivedays,mtwodays,mNextSevendays,mNextThirtyDays;
-
     private TinyDB tinyDB;
-
-
     private LinearLayout noInternetLayout;
     private RelativeLayout allViewLayout;
-
-
     private  Integer firstCost,totalCost;
-
-
     String mBookingType;
-
-
-
-
-    TextView mSessionBookedFor,mSessionDate,mSessionDateEnd,mSessionStartTime,mSessionEndTime,mAddress,mbookCosts;
+    private String  mToken,membershipAvailability;
+    TextView mSessionBookedFor,mSessionDate,mSessionDateEnd,mSessionStartTime,mSessionEndTime,mAddress,mbookCosts,applyText,offerRemove;
     String vvendorName,vvendorArea,vsessionDate,vsessionStartTime,vsessionEndTime,vsessionCost,newDates;
-    String newvsessionStartTime,newvsessionEndTime;
+   // String newvsessionStartTime,newvsessionEndTime;
 
 
-    RecyclerView offerRecycler;
-    private String offerStart,offerEnd;
-    ArrayList<String> offerStartList=new ArrayList<>();
-    ArrayList<String> offerEndList=new ArrayList<>();
-    ArrayList<String> offerTypeList=new ArrayList<>();
-    ArrayList<String> offerBenefits=new ArrayList<>();
-    ArrayList<Integer> offerDiscount=new ArrayList<>();
-    TextView mTotalDiscount;
+
+
+
     Integer sum=0;
     private Button btnOne,btnTwo,btnThree,btnFour,btnFive;
     Date date11;
     private LinearLayout goOffer;
     private Button proceed;
-    private String mpersonCount;
+    private String mpersonCount, mVendorId;
 
 
     @SuppressLint("SetTextI18n")
@@ -114,14 +97,15 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
 
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        membershipAvailability="false";
         tinyDB=new TinyDB(getApplicationContext());
         tinyDB.putString(Constant.HISTORYPAGE,"PRE");
+        mToken=tinyDB.getString(Constant.TOKEN);
        // String mToken = tinyDB.getString(Constant.TOKEN);
         mpersonCount=tinyDB.getString(Constant.PERSONCOUNT);
         msubActivityId=tinyDB.getString(Constant.PREDEFINEDSUBACTIVITYID);
         selectedSlotIds=tinyDB.getString(Constant.PRESLOTID);
-        String mVendorId = tinyDB.getString(Constant.VENDORID);
+         mVendorId = tinyDB.getString(Constant.VENDORID);
         mBookingType=tinyDB.getString(Constant.BOOKINGTYPE);
         vvendorName=tinyDB.getString(Constant.VENDORNAME);
         vvendorArea=tinyDB.getString(Constant.VENDORAREA);
@@ -129,15 +113,18 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
         vsessionStartTime=tinyDB.getString("SlotbookingStartTime");
         vsessionEndTime=tinyDB.getString("SlotbookingEndTime");
         vsessionCost=tinyDB.getString("SlotbookingCost");
+
         tinyDB.putString(Constant.PAYMENTPAGESUBID,msubActivityId);
         tinyDB.putString(Constant.PAYMENTPAGESLOTID,selectedSlotIds);
         personCounts="1";
-        days="0";
+        days="1";
 
-        try {
+        checkPersonMemberships();
+
+    /*    try {
             final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.getDefault());
             final Date dateObj = sdf.parse(vsessionStartTime);
-            String timein12Format=new SimpleDateFormat("hh:mmaa",Locale.getDefault()).format(dateObj);
+            String timein12Format=new SimpleDateFormat("hh:mm aa",Locale.getDefault()).format(dateObj);
             newvsessionStartTime=String.valueOf(timein12Format);
             newvsessionStartTime = newvsessionStartTime.replace(".", "");
         } catch (final ParseException e) {
@@ -146,18 +133,14 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
         try {
             final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.getDefault());
             final Date dateObj = sdf.parse(vsessionEndTime );
-            String timein12Format=new SimpleDateFormat("hh:mmaa",Locale.getDefault()).format(dateObj);
+            String timein12Format=new SimpleDateFormat("hh:mm a",Locale.getDefault()).format(dateObj);
             newvsessionEndTime=String.valueOf(timein12Format);
             newvsessionEndTime = newvsessionEndTime.replace(".", "");
         } catch (final ParseException e) {
             e.printStackTrace();
         }
+*/
 
-
-
-
-        offerRecycler=findViewById(R.id.RecyclerOffer);
-        mTotalDiscount=findViewById(R.id.TotalDiscount);
          proceed = findViewById(R.id.nBookings1);
         proceed.setOnClickListener(new OnClickListener() {
             @Override
@@ -194,8 +177,8 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
 
         mSessionBookedFor.setText(vvendorName);
         mSessionDate.setText(newDates);
-        mSessionStartTime.setText(newvsessionStartTime);
-        mSessionEndTime.setText("-"+newvsessionEndTime);
+        mSessionStartTime.setText(vsessionStartTime);
+        mSessionEndTime.setText("-"+vsessionEndTime);
         mAddress.setText(vvendorArea);
         mbookCosts.setText(vsessionCost);
      /*   TextView text=(TextView)findViewById(R.id.tex);
@@ -208,6 +191,9 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
         mtwodays= findViewById(R.id.twoDays);
         mNextSevendays= findViewById(R.id.nextseven);
         mNextThirtyDays= findViewById(R.id.nextthirty);
+        applyText=findViewById(R.id.ApplyText);
+        offerRemove=findViewById(R.id.offerRemove);
+        offerRemove.setOnClickListener(this);
 
         mfivedays.setOnClickListener(this);
         mtwodays.setOnClickListener(this);
@@ -230,126 +216,10 @@ public class SlotPages extends AppCompatActivity implements View.OnClickListener
 
 
 
-        offerStartList.clear();
-        offerEndList.clear();
-        offerTypeList.clear();
-        offerBenefits.clear();
 
-        String URL3 = Constant.API +"/general/viewOffers?vendorId="+ mVendorId;
-
-        StringRequest request3 = new StringRequest(Request.Method.GET, URL3, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-
-                try {
-
-                    JSONArray jsonArray = new JSONArray(response);
-                    if (jsonArray.length() == 0) {
-
-
-                    } else {
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            String startDate = jsonObject.getString("startDate");
-                            String expiryDate = jsonObject.getString("expiryDate");
-                            String discount = jsonObject.getString("discount");
-                            String category = jsonObject.getString("category");
-                          //  String type = jsonObject.getString("type");
-
-                            Integer discount1 = jsonObject.getInt("discount");
-
-                            Long timestamp10 = Long.parseLong(startDate);
-                            Long timestamp20 = Long.parseLong(expiryDate);
-                            try {
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
-                                Date netDate = (new Date(timestamp10));
-                                offerStart = sdf.format(netDate);
-
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            try {
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
-                                Date netDate = (new Date(timestamp20));
-                                offerEnd = sdf.format(netDate);
-
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            offerDiscount.add(discount1);
-                            offerStartList.add(offerStart);
-                            offerEndList.add(offerEnd);
-                            offerTypeList.add(category);
-                            offerBenefits.add(discount);
-                         int s=0;
-                         s+=discount1;
-
-
-
-                            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(SlotPages.this);
-                            offerRecycler.setLayoutManager(layoutManager);
-                            RecyclerView.Adapter adapter = new OfferAdapterBookSummary(getApplicationContext(),offerTypeList,offerBenefits);
-                            offerRecycler.setAdapter(adapter);
-
-
-
-
-                        }
-
-
-
-                                for(int j = 0; j < offerDiscount.size(); j++){
-                                if(offerDiscount.get(j)!=null){
-                                sum += offerDiscount.get(j);}}
-
-                            mTotalDiscount.setText(String.valueOf(sum));
-
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-
-                if (error instanceof NetworkError) {
-
-                    noInternetLayout.setVisibility(View.VISIBLE);
-                    allViewLayout.setVisibility(View.GONE);
-                    Button button= findViewById(R.id.TryAgain);
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            recreate();
-                        }});
-                } else if (error instanceof ServerError) {
-
-                } else if (error instanceof ParseError) {
-                    Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
-
-                } else if (error instanceof TimeoutError) {
-
-                    noInternetLayout.setVisibility(View.VISIBLE);
-                    allViewLayout.setVisibility(View.GONE);
-                    Button button= findViewById(R.id.TryAgain);
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            recreate();
-                        }});
-
-                }
-            }
-        });
-        VolleySingleton.getInstance(SlotPages.this).addToRequestQueue(request3);
 
     }
+
 
 
     public void bookingSlot() {
@@ -392,7 +262,8 @@ if(!days.equals("0")){
                         }
                         String eDate=mSessionDateEnd.getText().toString();
                         if(!eDate.isEmpty()){
-
+                            eDate = eDate.substring(1);
+                            eDate = eDate.substring(1);
                             tinyDB.putString(Constant.PAYEDATE,eDate);
                         }else{
                             tinyDB.putString(Constant.PAYEDATE,"");
@@ -403,10 +274,10 @@ if(!days.equals("0")){
                             tinyDB.putString(Constant.PAYCOST, String.valueOf(totalCost));
 
                         }
-                        String offer= mTotalDiscount.getText().toString();
+                      /*  String offer= mTotalDiscount.getText().toString();
                         if(!offer.isEmpty()){
                             tinyDB.putString(Constant.PAYOFFER, offer);
-                        }
+                        }*/
                         String sTime= mSessionStartTime.getText().toString();
                         if(!sTime.isEmpty()){
                             tinyDB.putString(Constant.PAYSTIME, sTime);
@@ -415,9 +286,15 @@ if(!days.equals("0")){
                         if(!eTime.isEmpty()){
                             tinyDB.putString(Constant.PAYETIME, eTime);
                         }
+                        if(membershipAvailability.equalsIgnoreCase("true")){
 
+                            Intent refresh = new Intent(SlotPages.this, ConfirmationActivity.class);
+                            startActivity(refresh);
+
+                        }else{
                         Intent refresh = new Intent(SlotPages.this, PaymentActivity.class);
                         startActivity(refresh);
+                        }
                             }else{
                                 Toast.makeText(SlotPages.this, "Please Select another slot", Toast.LENGTH_LONG).show();
                             }
@@ -783,8 +660,14 @@ if(!days.equals("0")){
                 checkPersonCount();
                 final int a1 = Integer.parseInt(vsessionCost);
                     int count1=Integer.parseInt(personCounts);
+
+                if(days.equalsIgnoreCase("1")){
+                    Integer AddingBookCost1=a1*count1*(Integer.valueOf(days));
+                    mbookCosts.setText(String.valueOf(AddingBookCost1));}
+                    else{
                     Integer AddingBookCost1=a1*count1*(Integer.valueOf(days)+1);
                     mbookCosts.setText(String.valueOf(AddingBookCost1));
+                }
                 final int sdk1 = android.os.Build.VERSION.SDK_INT;
                 if(sdk1 < android.os.Build.VERSION_CODES.JELLY_BEAN) {
                     btnOne.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.back_person_count1));
@@ -811,8 +694,13 @@ if(!days.equals("0")){
                 checkPersonCount();
                 final int a2 = Integer.parseInt(vsessionCost);
                 int count2=Integer.parseInt(personCounts);
-                Integer AddingBookCost2=a2*count2*(Integer.valueOf(days)+1);
-                mbookCosts.setText(String.valueOf(AddingBookCost2));
+                if(days.equalsIgnoreCase("1")){
+                Integer AddingBookCost2=a2*count2*(Integer.valueOf(days));
+                mbookCosts.setText(String.valueOf(AddingBookCost2));}
+                else{
+                    Integer AddingBookCost2=a2*count2*(Integer.valueOf(days)+1);
+                    mbookCosts.setText(String.valueOf(AddingBookCost2));
+                }
                 final int sdk2 = android.os.Build.VERSION.SDK_INT;
                 if(sdk2 < android.os.Build.VERSION_CODES.JELLY_BEAN) {
                     btnOne.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.back_person_count));
@@ -837,8 +725,13 @@ if(!days.equals("0")){
                 checkPersonCount();
                 final int a3 = Integer.parseInt(vsessionCost);
                 int count3=Integer.parseInt(personCounts);
+
+                if(days.equalsIgnoreCase("1")){
+                    Integer AddingBookCost3=a3*count3*(Integer.valueOf(days));
+                    mbookCosts.setText(String.valueOf(AddingBookCost3));
+                }else{
                 Integer AddingBookCost3=a3*count3*(Integer.valueOf(days)+1);
-                mbookCosts.setText(String.valueOf(AddingBookCost3));
+                mbookCosts.setText(String.valueOf(AddingBookCost3));}
 
                 final int sdk3 = android.os.Build.VERSION.SDK_INT;
                 if(sdk3 < android.os.Build.VERSION_CODES.JELLY_BEAN) {
@@ -865,8 +758,15 @@ if(!days.equals("0")){
                 checkPersonCount();
                 final int a4 = Integer.parseInt(vsessionCost);
                 int count4=Integer.parseInt(personCounts);
-                Integer AddingBookCost4=a4*count4*(Integer.valueOf(days)+1);
-                mbookCosts.setText(String.valueOf(AddingBookCost4));
+
+                if(days.equalsIgnoreCase("1")){
+                    Integer AddingBookCost4=a4*count4*(Integer.valueOf(days));
+                    mbookCosts.setText(String.valueOf(AddingBookCost4));
+                }else{
+                    Integer AddingBookCost4=a4*count4*(Integer.valueOf(days)+1);
+                    mbookCosts.setText(String.valueOf(AddingBookCost4));}
+
+
                 final int sdk4 = android.os.Build.VERSION.SDK_INT;
                 if(sdk4 < android.os.Build.VERSION_CODES.JELLY_BEAN) {
                     btnOne.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.back_person_count));
@@ -891,8 +791,14 @@ if(!days.equals("0")){
                 checkPersonCount();
                 final int a5 = Integer.parseInt(vsessionCost);
                 int count5=Integer.parseInt(personCounts);
-                Integer AddingBookCost5=a5*count5*(Integer.valueOf(days)+1);
-                mbookCosts.setText(String.valueOf(AddingBookCost5));
+
+                if(days.equalsIgnoreCase("1")){
+                    Integer AddingBookCost5=a5*count5*(Integer.valueOf(days));
+                    mbookCosts.setText(String.valueOf(AddingBookCost5));
+                }else{
+                    Integer AddingBookCost5=a5*count5*(Integer.valueOf(days)+1);
+                    mbookCosts.setText(String.valueOf(AddingBookCost5));}
+
 
                 final int sdk5 = android.os.Build.VERSION.SDK_INT;
                 if(sdk5 < android.os.Build.VERSION_CODES.JELLY_BEAN) {
@@ -916,6 +822,42 @@ if(!days.equals("0")){
             case R.id.goOffer:
              Intent intent=new Intent(SlotPages.this,ApplyOffer.class);
              startActivity(intent);
+                break;
+
+            case R.id.offerRemove:
+                AlertDialog.Builder builder = new AlertDialog.Builder(SlotPages.this);
+                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View customView = inflater.inflate(R.layout.remove_offer_alert, null);
+                builder.setView(customView);
+
+                builder.setCancelable(true);
+                builder.setInverseBackgroundForced(true);
+
+                Button mDialogNo = customView.findViewById(R.id.frmNo);
+                Button mDialogOk = customView.findViewById(R.id.frmOk);
+
+                mDialogOk.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        tinyDB.putString("APPLIED","");
+                        tinyDB.putString(Constant.OFFERCODE, "");
+                        tinyDB.putString(Constant.OFFERAMOUNT, "");
+                        tinyDB.putString(Constant.OFFERPERCENTAGE, "");
+                        alert.dismiss();
+                        recreate();
+                    }
+                });
+
+                mDialogNo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        alert.dismiss();
+                    }
+                });
+                alert = builder.create();
+
+                alert.show();
                 break;
 
 
@@ -1046,5 +988,100 @@ if(!days.equals("0")){
             VolleySingleton.getInstance(SlotPages.this).addToRequestQueue(request);
 
         }
+
+    }
+    private void checkPersonMemberships() {
+
+
+    String URL10 = Constant.APIONE +"/slot/checkMembershipAvailability?vendorId="+mVendorId+"&subActivityId="+msubActivityId+"&date="+vsessionDate;
+
+        StringRequest request10 = new StringRequest(Request.Method.GET, URL10, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+
+
+                membershipAvailability=response;
+
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                membershipAvailability="false";
+
+
+                if (error instanceof NetworkError) {
+                    Toast.makeText(getApplicationContext(), "Cannot connect to Internet...Please check your connection!", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ServerError) {
+
+                }  else if (error instanceof ParseError) {
+                    Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
+
+                }  else if (error instanceof TimeoutError) {
+                    Toast.makeText(getApplicationContext(), "Connection TimeOut! Please check your internet connection.", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        }){   @Override
+        public Map<String, String> getHeaders() {
+            HashMap<String, String> headers1 = new HashMap<>();
+
+            headers1.put("X-Auth-Token", String.valueOf(mToken).replaceAll("\"", ""));
+            return headers1;
+
+        }};
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request10);
+
+
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        String applied=tinyDB.getString("APPLIED");
+        String malert=tinyDB.getString("ALERT");
+        String offerPercentage=tinyDB.getString(Constant.OFFERPERCENTAGE);
+        if(applied.equalsIgnoreCase("true")){
+            applyText.setText(offerPercentage+" Off is Applied");
+            offerRemove.setVisibility(View.VISIBLE);
+
+        }else{
+            offerRemove.setVisibility(View.GONE);
+            applyText.setText("Apply Offer");
+        }
+        if(!malert.equalsIgnoreCase("")){
+
+            tinyDB.putString("ALERT","");
+            AlertDialog.Builder builder = new AlertDialog.Builder(SlotPages.this);
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View customView = inflater.inflate(R.layout.offer_alert, null);
+            builder.setView(customView);
+
+            builder.setCancelable(true);
+            builder.setInverseBackgroundForced(true);
+
+
+            Button cancel = customView.findViewById(R.id.frmOk);
+            TextView offerDetails = customView.findViewById(R.id.text1);
+
+
+            offerDetails.setText("your cashback coupon  Rs."+malert+" is Successfully applied!");
+
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    alert.dismiss();
+                }
+            });
+            alert = builder.create();
+
+            alert.show();
+
+        }
+        super.onResume();
     }
 }

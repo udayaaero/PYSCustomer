@@ -12,25 +12,25 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.PagerSnapHelper;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SnapHelper;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.navigation.NavigationView;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -44,7 +44,6 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,10 +64,10 @@ import com.coeuz.pyscustomer.AdapterClass.NearYouAdapter;
 import com.coeuz.pyscustomer.AdapterClass.ViewPagerAdapter;
 
 import com.coeuz.pyscustomer.ModelClass.SubActivityModel;
-import com.coeuz.pyscustomer.Requiredclass.Constant;
-import com.coeuz.pyscustomer.Requiredclass.LoginFrontPage;
-import com.coeuz.pyscustomer.Requiredclass.TinyDB;
-import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
+import com.coeuz.pyscustomer.requiredclass.Constant;
+import com.coeuz.pyscustomer.requiredclass.LoginFrontPage;
+import com.coeuz.pyscustomer.requiredclass.TinyDB;
+import com.coeuz.pyscustomer.requiredclass.VolleySingleton;
 import com.facebook.login.LoginManager;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -213,9 +212,11 @@ public class MainActivity extends AppCompatActivity
         rememberlayout = findViewById(R.id.rememberlayout);
 
 
-
         ViewGroup.LayoutParams params1 = mRecyclerView.getLayoutParams();
-        params1.height = 395;
+
+        int height_Dp = (int) (getResources().getDimension(R.dimen.Recycler_Height) / getResources().getDisplayMetrics().density);
+        Log.d("fergetg", String.valueOf(height_Dp));
+        params1.height =height_Dp;
         mRecyclerView.setLayoutParams(params1);
 
        /* final ViewFlipper flipper = (ViewFlipper)findViewById(R.id.flipper1);
@@ -251,7 +252,10 @@ public class MainActivity extends AppCompatActivity
                     mviewMoretext.setText("View Less Categories");
                 } else {
                     ViewGroup.LayoutParams params = mRecyclerView.getLayoutParams();
-                    params.height = 395;
+                    int height_Dp = (int) (getResources().getDimension(R.dimen.Recycler_Height) / getResources().getDisplayMetrics().density);
+Log.d("frwgerg", String.valueOf(height_Dp));
+                    params.height = height_Dp;
+                    //  params.height = (int) getResources().getDimension(R.dimen.Recycler_Height);
                     mRecyclerView.setLayoutParams(params);
                     showingFirst[0] = true;
                     mviewMoretext.setText("View More Categories");
@@ -330,7 +334,7 @@ public class MainActivity extends AppCompatActivity
         sliderDotspanel = findViewById(R.id.SliderDots);
         bannerImage();
 
-
+        bitmapsLists.clear();
 
         String URL=Constant.API+"/rest/photos/getHomeBannerImageKeys";
 
@@ -355,7 +359,6 @@ public class MainActivity extends AppCompatActivity
 
                                 byte[] imageBytes = Base64.decode(imagess, Base64.DEFAULT);
                                 Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-
                                 bitmapsLists.add(decodedImage);
 
                                 if(bitmapsLists.size()==keyList.size()) {
@@ -659,12 +662,14 @@ public class MainActivity extends AppCompatActivity
                         }
                     if(subActivityList.size()<7){
                        ViewGroup.LayoutParams params = mRecyclerView.getLayoutParams();
-                        params.height = 395;
+                        int height_Dp = (int) (getResources().getDimension(R.dimen.Recycler_Height) / getResources().getDisplayMetrics().density);
+                        params.height = height_Dp;
                         mRecyclerView.setLayoutParams(params);
                         mViewMore.setVisibility(View.GONE);
                     }else{
                         ViewGroup.LayoutParams params = mRecyclerView.getLayoutParams();
-                        params.height = 395;
+                        int height_Dp = (int) (getResources().getDimension(R.dimen.Recycler_Height) / getResources().getDisplayMetrics().density);
+                        params.height = height_Dp;
                         mRecyclerView.setLayoutParams(params);
                         mViewMore.setVisibility(View.VISIBLE);
                     }
@@ -920,6 +925,7 @@ public class MainActivity extends AppCompatActivity
             StringRequest request = new StringRequest(Request.Method.GET, URL1, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
+                    Log.d("rfgrg",response);
                     try {
                         JSONArray jsonArray = new JSONArray(response);
                         if (jsonArray.length() == 0) {
@@ -975,6 +981,7 @@ public class MainActivity extends AppCompatActivity
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+
 
                     if (error instanceof NetworkError) {
                         noInternetLayout.setVisibility(View.VISIBLE);
@@ -1326,7 +1333,8 @@ public class MainActivity extends AppCompatActivity
                     if (jsonArray.length() == 0) {
                         if(temp==25){
                         ViewGroup.LayoutParams params1 = mRecyclerView.getLayoutParams();
-                        params1.height = 600;
+                            int height_Dp = (int) (getResources().getDimension(R.dimen.Recycler_Height1) / getResources().getDisplayMetrics().density);
+                            params1.height = height_Dp;
                         mRecyclerView.setLayoutParams(params1);
                         nearYouLayout.setVisibility(View.GONE);}else{
                             nearingYou();
@@ -1541,11 +1549,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
 
-        } /*else if (id == R.id.Notifications) {
-            Intent intent = new Intent(this, NotificationActivitys.class);
-            startActivity(intent);
-
-        }*/ else if (id == R.id.Memberships) {
+        }  else if (id == R.id.Memberships) {
 
             if (!mToken.equals("")) {
                 Intent intent = new Intent(this, MembershipActivity.class);
@@ -1639,13 +1643,17 @@ public class MainActivity extends AppCompatActivity
 
                     }
                     else if (viewPager.getCurrentItem() == 6) {
+
                         if(viewPagerAdapter.getCount()>=7){
-                            viewPager.setCurrentItem(7);
+
+                            viewPager.setCurrentItem(0);
                         }else{
+
                             viewPager.setCurrentItem(0);}
 
                     }
                     else if (viewPager.getCurrentItem() == 7) {
+
                             viewPager.setCurrentItem(0);
                     }
 
@@ -1662,4 +1670,14 @@ public class MainActivity extends AppCompatActivity
         }
         return mRequestQueue;
     }*/
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }

@@ -1,122 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginTop="10dp"
+<RelativeLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginBottom="10dp"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
+        cardview:cardCornerRadius="10dp"
+        cardview:cardElevation="0dp"
         xmlns:cardview="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         cardview:cardUseCompatPadding="true">
     <LinearLayout
+        android:background="@color/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:orientation="vertical">
+
+
         <LinearLayout
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:gravity="center"
-            android:weightSum="2"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:ignore="DisableBaselineAlignment,UselessParent">
-        <LinearLayout
-            android:layout_weight="0.4"
-            android:orientation="vertical"
-            android:layout_width="0dp"
             android:layout_height="wrap_content">
-        <ImageView
-            android:background="@drawable/offerss"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            tools:ignore="ContentDescription" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:gravity="center"
-            android:layout_weight="1.6"
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <TextView
-                    android:text="All User"
-                    tools:ignore="HardcodedText"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
-                    android:id="@+id/offerCategorytype"
-                    android:textSize="16sp"
+                    android:id="@+id/benefits"
+                    android:textSize="18sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-                <LinearLayout
-                    android:layout_marginTop="5dp"
-                    android:orientation="horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:textColor="@color/colorPrimary"
-                        android:textStyle="bold"
-                        android:id="@+id/benefits"
-                        android:textSize="14sp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:textColor="@color/colorPrimary"
-                        android:layout_weight="1"
-                        android:textStyle="bold"
-                        android:text=" % discount"
-                        android:textSize="14sp"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        tools:ignore="HardcodedText" />
-                </LinearLayout>
-                    <LinearLayout
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:layout_marginTop="5dp"
-                        android:orientation="horizontal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-                        <TextView
-                            android:textColor="@color/colorPrimary"
-                            android:textStyle="bold"
-                            android:text="From - "
-                            tools:ignore="HardcodedText"
-                            android:textSize="14sp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                        <TextView
-                            android:textColor="@color/colorPrimary"
-                            android:layout_marginStart="5dp"
-                            android:textStyle="bold"
-                            android:id="@+id/offerfrom"
-                            android:textSize="14sp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
 
-                        <TextView
-                            android:textColor="@color/colorPrimary"
-                            android:textStyle="bold"
-                            android:text=",To - "
-                            tools:ignore="HardcodedText"
-                            android:textSize="14sp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                        <TextView
-
-                            android:textColor="@color/colorPrimary"
-                            android:textStyle="bold"
-                            android:id="@+id/offerto"
-                            android:textSize="14sp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </LinearLayout>
-                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+            <LinearLayout
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:id="@+id/offerCategorytype"
+                    android:textSize="13sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
-    </android.support.v7.widget.CardView>
+            <LinearLayout
+              android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:id="@+id/offerto"
+                    android:textSize="12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        <LinearLayout
+            android:layout_gravity="end"
+            android:gravity="end"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_marginStart="50dp"
+                android:background="@drawable/icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:text="To get more offer use pys..."
+                android:textSize="10sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+           android:background="@drawable/bus_offer"
+            android:orientation="vertical">
+
+        </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+    </androidx.cardview.widget.CardView>
     </RelativeLayout>

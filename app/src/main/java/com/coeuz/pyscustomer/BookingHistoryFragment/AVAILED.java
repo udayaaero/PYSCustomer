@@ -3,11 +3,12 @@ package com.coeuz.pyscustomer.BookingHistoryFragment;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,9 +30,9 @@ import com.android.volley.toolbox.StringRequest;
 import com.coeuz.pyscustomer.AdapterClass.BookingHistoryAdapter;
 import com.coeuz.pyscustomer.ModelClass.BookingHistoryModel;
 import com.coeuz.pyscustomer.R;
-import com.coeuz.pyscustomer.Requiredclass.Constant;
-import com.coeuz.pyscustomer.Requiredclass.TinyDB;
-import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
+import com.coeuz.pyscustomer.requiredclass.Constant;
+import com.coeuz.pyscustomer.requiredclass.TinyDB;
+import com.coeuz.pyscustomer.requiredclass.VolleySingleton;
 import com.pnikosis.materialishprogress.ProgressWheel;
 
 import org.json.JSONArray;
@@ -156,6 +157,7 @@ public class AVAILED extends Fragment{
         StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                Log.d("rehfurfr",response);
 
                 mprogressBar.setVisibility(View.GONE);
                 itShouldLoadMore = true;
@@ -180,6 +182,9 @@ public class AVAILED extends Fragment{
                                 String personcount = jsonObject.getString("personcount");
                                 String amount1 = jsonObject.getString("amount1");
                                 String slotid = jsonObject.getString("slotid");
+                            String startTime = jsonObject.getString("startTime");
+                            String endTime = jsonObject.getString("endTime");
+
                                 String subActivityType = jsonObject.getString("subActivityType");
                                 String vendorName = jsonObject.getString("vendorName");
                             String otp = jsonObject.getString("otp");
@@ -209,9 +214,8 @@ public class AVAILED extends Fragment{
                                 e.printStackTrace();
                             }
 
-
                                 recyclerModels.add(new BookingHistoryModel(bookingStatus, bookingType, booedforDate, bookingtimeStamp, bookingid
-                                        , personcount, amount1, slotid, subActivityType, vendorName,otp));
+                                        , personcount, amount1, slotid, subActivityType, vendorName,otp,startTime,endTime));
                                 recyclerAdapter.notifyDataSetChanged();
 
 
@@ -322,6 +326,8 @@ public class AVAILED extends Fragment{
                             String subActivityType = jsonObject.getString("subActivityType");
                             String vendorName = jsonObject.getString("vendorName");
                             String otp = jsonObject.getString("otp");
+                            String startTime = jsonObject.getString("startTime");
+                            String endTime = jsonObject.getString("endTime");
                             bookingtimeStamp = bookingtimeStamp.substring(11, 16);
 
 
@@ -348,7 +354,7 @@ public class AVAILED extends Fragment{
                             }
 
                             recyclerModels.add(new BookingHistoryModel(bookingStatus, bookingType, booedforDate, bookingtimeStamp, bookingid
-                                    , personcount, amount1, slotid, subActivityType, vendorName,otp));
+                                    , personcount, amount1, slotid, subActivityType, vendorName,otp,startTime,endTime));
                             recyclerAdapter.notifyDataSetChanged();
 
                         }

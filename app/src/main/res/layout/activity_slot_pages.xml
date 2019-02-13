@@ -15,12 +15,13 @@
         android:id="@+id/allViewlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <android.support.v4.widget.NestedScrollView
+        <androidx.core.widget.NestedScrollView
+            android:layout_above="@id/nBookings1"
+            android:layout_marginBottom="2dp"
             android:fillViewport="true"
             android:fitsSystemWindows="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:layout_above="@+id/nBooking1"
             android:scrollbars="none"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -32,7 +33,7 @@
                 android:id="@+id/VendorDetails"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-          <android.support.v7.widget.CardView
+          <androidx.cardview.widget.CardView
 
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
@@ -206,7 +207,7 @@
                   </LinearLayout>
 
               </LinearLayout>
-          </android.support.v7.widget.CardView>
+          </androidx.cardview.widget.CardView>
     </RelativeLayout>
     <RelativeLayout
         android:layout_below="@+id/VendorDetails"
@@ -308,7 +309,7 @@
 
         </LinearLayout>
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
        <LinearLayout
@@ -377,7 +378,7 @@
                android:layout_height="1dp">
            </LinearLayout>
     </LinearLayout>
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
         </LinearLayout>
             <LinearLayout
                 android:layout_marginBottom="10dp"
@@ -409,6 +410,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent">
                 <TextView
+                    android:id="@+id/ApplyText"
                   android:layout_gravity="start|center"
                     android:textStyle="bold"
                     android:text="Apply Offer"
@@ -429,97 +431,42 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                      />
-                    </LinearLayout>
-                </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
-                    android:layout_marginBottom="5dp"
-                    android:scrollbars="none"
-                    android:clipToPadding="false"
-                    android:id="@+id/RecyclerOffer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </android.support.v7.widget.RecyclerView>
-                <LinearLayout
-                    android:layerType="software"
-                    android:background="@drawable/dotted"
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    >
+                    </LinearLayout>
+
                 </LinearLayout>
-                <LinearLayout
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:weightSum="2"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/offerRemove"
+                    android:visibility="gone"
+                    android:padding="5dp"
+                   android:textSize="13sp"
+                    android:layout_gravity="end|center"
+                    android:textStyle="bold"
+                    android:text="Remove"
+                    android:textColor="@color/green"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:orientation="horizontal"
-                    tools:ignore="DisableBaselineAlignment">
-                    <LinearLayout
-                        android:layout_weight="1.5"
-                        android:orientation="horizontal"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content">
+                    tools:ignore="HardcodedText" />
 
-                        <TextView
-                            android:textColor="@color/block"
-                            android:layout_weight="1"
-                            android:textStyle="bold"
-                            android:text="Total Discount"
-                            android:textSize="15sp"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            tools:ignore="HardcodedText,NestedWeights" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:gravity="end"
-                        android:layout_weight="0.5"
-                        android:orientation="horizontal"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:text="0"
-                            android:textColor="@color/colorPrimary"
-                            android:textStyle="bold"
-                            android:id="@+id/TotalDiscount"
-                            android:textSize="14sp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            tools:ignore="HardcodedText" />
-                        <TextView
-                            android:layout_gravity="end"
-                            android:textColor="@color/colorPrimary"
-                            android:textStyle="bold"
-                            android:text=" %"
-                            android:textSize="14sp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            tools:ignore="HardcodedText" />
-                    </LinearLayout>
-
-                </LinearLayout>
                 <LinearLayout
+                    android:layout_marginTop="@dimen/distance_5dp"
                     android:layerType="software"
-                    android:background="@drawable/dotted"
+                    android:background="@color/Ash"
                     android:layout_width="match_parent"
-                    android:layout_height="2dp"
+                    android:layout_height="1dp"
                     >
-
                 </LinearLayout>
+
+
 
             </LinearLayout>
  </LinearLayout>
 </RelativeLayout>
 </RelativeLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
         <Button
-
+            android:background="@drawable/ripple"
             android:layout_alignParentBottom="true"
-            android:background="@color/colorPrimary"
             android:layout_gravity="center"
             android:textColor="@color/white"
             android:text="Proceed"
@@ -592,6 +539,8 @@
             android:paddingLeft="20dp"
             tools:ignore="HardcodedText,RtlHardcoded" />
     </LinearLayout>
+
+
 
     </RelativeLayout>
 

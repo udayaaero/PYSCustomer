@@ -131,7 +131,8 @@ public class BookingHistoryModel
 
 
         public BookingHistoryModel(String bookingStatus, String bookingType, String booedforDate, String bookingtimeStamp,
-                                   String bookingid, String personcount, String amount1, String slotid, String subActivityType, String vendorName) {
+                                   String bookingid, String personcount, String amount1, String slotid, String subActivityType,
+                                   String vendorName,String startTime,String endTime) {
             this.bookingStatus=bookingStatus;
             this.bookingType=bookingType;
             this.booedforDate=booedforDate;
@@ -142,12 +143,16 @@ public class BookingHistoryModel
             this.slotid=slotid;
             this.subActivityType=subActivityType;
             this.vendorName=vendorName;
+            this.startTime=startTime;
+            this.endTime=endTime;
 
         }
 
+
+
         public BookingHistoryModel(String bookingStatus, String bookingType, String booedforDate, String bookingtimeStamp,
                                    String bookingid, String personcount, String amount1, String slotid, String subActivityType,
-                                   String vendorName, String otp) {
+                                   String vendorName, String otp, String startTime,String endTime) {
             this.bookingStatus=bookingStatus;
             this.bookingType=bookingType;
             this.booedforDate=booedforDate;
@@ -159,7 +164,10 @@ public class BookingHistoryModel
             this.subActivityType=subActivityType;
             this.vendorName=vendorName;
             this.otp=otp;
+            this.startTime=startTime;
+            this.endTime=endTime;
         }
+
         public Integer getBookingId() {
             return bookingId;
         }

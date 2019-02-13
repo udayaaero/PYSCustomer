@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 
 
-public class SubActivityModel {@SerializedName("vendorId")
+public class    SubActivityModel {@SerializedName("vendorId")
 @Expose
 private Integer vendorId;
     @SerializedName("vendorName")

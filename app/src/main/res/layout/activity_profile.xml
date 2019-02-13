@@ -17,10 +17,10 @@
             android:id="@+id/profile_image"
             android:layout_width="96dp"
             android:layout_height="96dp"
-            android:src="@drawable/backgroundimg"
+            android:src="@drawable/head"
            />
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_marginTop="10dp"
         app:cardBackgroundColor="#ffffff"
         android:layout_width="match_parent"
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content">
 
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:textColorHint="#070508"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
@@ -46,8 +46,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     tools:ignore="HardcodedText" />
-            </android.support.design.widget.TextInputLayout>
-            <android.support.design.widget.TextInputLayout
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
                 android:textColorHint="#070508"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
@@ -62,8 +62,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     tools:ignore="HardcodedText" />
-            </android.support.design.widget.TextInputLayout>
-            <android.support.design.widget.TextInputLayout
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
                 android:textColorHint="#070508"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
@@ -76,10 +76,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     tools:ignore="HardcodedText,TextFields" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:textColorHint="#070508"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
@@ -93,8 +93,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     tools:ignore="HardcodedText" />
-            </android.support.design.widget.TextInputLayout>
-            <android.support.design.widget.TextInputLayout
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
                 android:textColorHint="#070508"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
@@ -108,9 +108,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     tools:ignore="HardcodedText" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
     <LinearLayout
         android:layout_marginTop="20dp"
         android:orientation="vertical"

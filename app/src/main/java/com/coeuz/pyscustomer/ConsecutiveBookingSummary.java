@@ -1,16 +1,16 @@
 package com.coeuz.pyscustomer;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -20,30 +20,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.android.volley.NetworkError;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.coeuz.pyscustomer.AdapterClass.OfferAdapterBookSummary;
-import com.coeuz.pyscustomer.Requiredclass.Constant;
-import com.coeuz.pyscustomer.Requiredclass.TinyDB;
-import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
+import com.coeuz.pyscustomer.requiredclass.Constant;
+import com.coeuz.pyscustomer.requiredclass.TinyDB;
+import com.coeuz.pyscustomer.requiredclass.VolleySingleton;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -55,29 +46,25 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
     private String mVendorId;
     private String selectedSlotIds;
     private String personCounts;
-
+    private AlertDialog alert;
     private TinyDB tinyDB;
     private LinearLayout noInternetLayout;
     private RelativeLayout allViewLayout;
     private  Integer totalCost;
     String mBookingType;
     boolean visible;
-
+    private TextView applyText,offerRemove;
     TextView mSessionBookedFor,mSessionDate,mSessionTime,mAddress,mbookCosts;
     String vvendorName,vvendorArea,vsessionDate,vsessionTime,vsessionCost,newDates;
     String sendTimeFormate;
 
-    RecyclerView offerRecycler;
     private String offerStart,offerEnd;
-    ArrayList<String> offerStartList=new ArrayList<>();
-    ArrayList<String> offerEndList=new ArrayList<>();
-    ArrayList<String> offerTypeList=new ArrayList<>();
-    ArrayList<String> offerBenefits=new ArrayList<>();
-    ArrayList<Integer> offerDiscount=new ArrayList<>();
-    TextView mTotalDiscount;
+
+
     Integer sum=0;
     private Button btnOne,btnTwo,btnThree,btnFour,btnFive;
     private String mpersonCount;
+    private LinearLayout goOffer;
 
 
 
@@ -117,14 +104,15 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
 
 
        // RecyclerView recyclerDateSlot = findViewById(R.id.RecyclerDateBooking);
-        offerRecycler=findViewById(R.id.RecyclerOffer);
-        mTotalDiscount= findViewById(R.id.TotalDiscount);
+
+
 
         //TextView membershipText = findViewById(R.id.membershipText);
-
+        applyText=findViewById(R.id.ApplyText);
         noInternetLayout =  findViewById(R.id.NoInternetLayout);
         allViewLayout =  findViewById(R.id.allViewlayout);
       //  LinearLayout preConsecLayout =  findViewById(R.id.preConsecLayout);
+        goOffer=findViewById(R.id.goOffer);
 
         Button proceed = findViewById(R.id.nBooking4);
         proceed.setOnClickListener(new View.OnClickListener() {
@@ -158,6 +146,7 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
         mSessionTime.setText(vsessionTime);
         mAddress.setText(vvendorArea);
         mbookCosts.setText(vsessionCost);
+
      /*   TextView text=(TextView)findViewById(R.id.tex);
         Typeface tf = Typeface.createFromAsset(this.getAssets(),"Bamini.ttf");
         text.setTypeface(tf);
@@ -175,123 +164,9 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
         btnFour.setOnClickListener(this);
         btnFive =  findViewById(R.id.fiveButton);
         btnFive.setOnClickListener(this);
-
-
-
-        offerStartList.clear();
-        offerEndList.clear();
-        offerTypeList.clear();
-        offerBenefits.clear();
-
-        String URL3 = Constant.API +"/general/viewOffers?vendorId="+mVendorId;
-
-        StringRequest request3 = new StringRequest(Request.Method.GET, URL3, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                try {
-
-                    JSONArray jsonArray = new JSONArray(response);
-                    if (jsonArray.length() == 0) {
-
-
-                    } else {
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            String startDate = jsonObject.getString("startDate");
-                            String expiryDate = jsonObject.getString("expiryDate");
-                            String discount = jsonObject.getString("discount");
-                            String category = jsonObject.getString("category");
-                         //   String type = jsonObject.getString("type");
-
-                            Integer discount1 = jsonObject.getInt("discount");
-
-                            Long timestamp10 = Long.parseLong(startDate);
-                            Long timestamp20 = Long.parseLong(expiryDate);
-                            try {
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
-                                Date netDate = (new Date(timestamp10));
-                                offerStart = sdf.format(netDate);
-
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            try {
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
-                                Date netDate = (new Date(timestamp20));
-                                offerEnd = sdf.format(netDate);
-
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            offerDiscount.add(discount1);
-                            offerStartList.add(offerStart);
-                            offerEndList.add(offerEnd);
-                            offerTypeList.add(category);
-                            offerBenefits.add(discount);
-                            int s=0;
-                            s+=discount1;
-
-
-
-                            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(ConsecutiveBookingSummary.this);
-                            offerRecycler.setLayoutManager(layoutManager);
-                            RecyclerView.Adapter adapter = new OfferAdapterBookSummary(getApplicationContext(),offerTypeList,offerBenefits);
-                            offerRecycler.setAdapter(adapter);
-
-                        }
-
-
-
-                        for(int j = 0; j < offerDiscount.size(); j++){
-                            if(offerDiscount.get(j)!=null){
-                                sum += offerDiscount.get(j);}}
-
-                        mTotalDiscount.setText(String.valueOf(sum));
-
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-                if (error instanceof NetworkError) {
-
-                    noInternetLayout.setVisibility(View.VISIBLE);
-                    allViewLayout.setVisibility(View.GONE);
-                    Button button=findViewById(R.id.TryAgain);
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            recreate();
-                        }});
-                } else if (error instanceof ServerError) {
-
-
-                } else if (error instanceof ParseError) {
-                    Toast.makeText(getApplicationContext(), "Parsing error! Please try again after some time!!", Toast.LENGTH_SHORT).show();
-
-                } else if (error instanceof TimeoutError) {
-
-                    noInternetLayout.setVisibility(View.VISIBLE);
-                    allViewLayout.setVisibility(View.GONE);
-                    Button button=findViewById(R.id.TryAgain);
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            recreate();
-                        }});
-
-                }
-            }
-        });
-        VolleySingleton.getInstance(ConsecutiveBookingSummary.this).addToRequestQueue(request3);
+        goOffer.setOnClickListener(this);
+         offerRemove = findViewById(R.id.offerRemove);
+        offerRemove.setOnClickListener(this);
 
 
 
@@ -339,10 +214,7 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
                     if(!tCost.isEmpty()){
                         tinyDB.putString(Constant.PAYCOST, String.valueOf(totalCost));
                     }
-                    String offer= mTotalDiscount.getText().toString();
-                    if(!offer.isEmpty()){
-                        tinyDB.putString(Constant.PAYOFFER, offer);
-                    }
+
                     String sTime= mSessionTime.getText().toString();
                     if(!sTime.isEmpty()){
                         tinyDB.putString(Constant.PAYSTIME, sTime);
@@ -654,8 +526,96 @@ public class ConsecutiveBookingSummary extends AppCompatActivity implements View
 
                 break;
 
+            case R.id.goOffer:
+                Intent intent=new Intent(ConsecutiveBookingSummary.this,ApplyOffer.class);
+                startActivity(intent);
+                break;
+
+            case R.id.offerRemove:
+                AlertDialog.Builder builder = new AlertDialog.Builder(ConsecutiveBookingSummary.this);
+                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View customView = inflater.inflate(R.layout.remove_offer_alert, null);
+                builder.setView(customView);
+
+                builder.setCancelable(true);
+                builder.setInverseBackgroundForced(true);
+
+                Button mDialogNo = customView.findViewById(R.id.frmNo);
+                Button mDialogOk = customView.findViewById(R.id.frmOk);
+
+                mDialogOk.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        tinyDB.putString("APPLIED","");
+                        tinyDB.putString(Constant.OFFERCODE, "");
+                        tinyDB.putString(Constant.OFFERAMOUNT, "");
+                        tinyDB.putString(Constant.OFFERPERCENTAGE, "");
+                        alert.dismiss();
+                        recreate();
+                    }
+                });
+
+                mDialogNo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        alert.dismiss();
+                    }
+                });
+                alert = builder.create();
+
+                alert.show();
+                break;
+
+
+
 
         }
 
+    }
+    @Override
+    protected void onResume() {
+        String applied=tinyDB.getString("APPLIED");
+        String malert=tinyDB.getString("ALERT");
+        String offerPercentage=tinyDB.getString(Constant.OFFERPERCENTAGE);
+        if(applied.equalsIgnoreCase("true")){
+            applyText.setText(offerPercentage+" Off is Applied");
+            offerRemove.setVisibility(View.VISIBLE);
+
+        }else{
+            offerRemove.setVisibility(View.GONE);
+            applyText.setText("Apply Offer");
+        }
+        if(!malert.equalsIgnoreCase("")){
+
+            tinyDB.putString("ALERT","");
+            AlertDialog.Builder builder = new AlertDialog.Builder(ConsecutiveBookingSummary.this);
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View customView = inflater.inflate(R.layout.offer_alert, null);
+            builder.setView(customView);
+
+            builder.setCancelable(true);
+            builder.setInverseBackgroundForced(true);
+
+
+            Button cancel = customView.findViewById(R.id.frmOk);
+            TextView offerDetails = customView.findViewById(R.id.text1);
+
+
+            offerDetails.setText("your cashback coupon Rs."+malert+" is Successfully applied!");
+
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    alert.dismiss();
+                }
+            });
+            alert = builder.create();
+
+            alert.show();
+
+        }
+        super.onResume();
     }
 }

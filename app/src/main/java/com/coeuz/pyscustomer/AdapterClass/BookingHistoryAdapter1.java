@@ -2,8 +2,8 @@ package com.coeuz.pyscustomer.AdapterClass;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.RecyclerView;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +47,7 @@ public class BookingHistoryAdapter1 extends RecyclerView.Adapter<BookingHistoryA
         holder.bookingtimeStamp.setText(BookingHistory.get(position).getBookingtimeStamp());
         holder.personcount.setText(BookingHistory.get(position).getPersoncount());
         holder.amount1.setText("Rs."+BookingHistory.get(position).getAmount1());
+        holder.startAndEnd.setText(BookingHistory.get(position).getStartTime()+" to "+BookingHistory.get(position).getEndTime());
         holder.subActivityType.setText(BookingHistory.get(position).getSubActivityType());
         holder.vendorName.setText(BookingHistory.get(position).getVendorName());
 
@@ -61,7 +62,7 @@ public class BookingHistoryAdapter1 extends RecyclerView.Adapter<BookingHistoryA
     class MyViewHolder extends RecyclerView.ViewHolder {
         // view this our custom row layout, so intialize your variables here
         private TextView bookingStatus,booedforDate,bookingtimeStamp,
-                personcount,amount1,subActivityType,vendorName;
+                personcount,amount1,subActivityType,vendorName,startAndEnd;
 
 
 
@@ -76,6 +77,7 @@ public class BookingHistoryAdapter1 extends RecyclerView.Adapter<BookingHistoryA
             amount1=view.findViewById(R.id.amount1);
             subActivityType=view.findViewById(R.id.subActivityType);
             vendorName=view.findViewById(R.id.vendorName);
+            startAndEnd= view.findViewById(R.id.startAndEnd);
                    }
     }
 }

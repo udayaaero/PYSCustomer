@@ -3,10 +3,8 @@ package com.coeuz.pyscustomer;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
@@ -15,33 +13,13 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.location.LocationServices;
-
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-
-import com.google.android.gms.location.LocationRequest;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 @SuppressLint("Registered")
-public class GpsTracker extends Service implements ConnectionCallbacks,
-        OnConnectionFailedListener,
-        LocationListener {
+public class GpsTracker extends Service implements LocationListener {
 
-
-    //private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    private GoogleApiClient mGoogleApiClient;
-    private LocationRequest mLocationRequest;
-    private double currentLatitude;
-    private double currentLongitude;
 
     static final int REQUEST=1;
 
@@ -129,17 +107,7 @@ public class GpsTracker extends Service implements ConnectionCallbacks,
                         != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_COARSE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions((Activity) mContext,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST);
-                }else/*{
-                     location=locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                    if(location !=null){
-                        latitude=location.getLatitude();
-                        longitude=location.getLongitude();
-
-                    }
-                }*/
-                // GPS'ten alinan konum bilgisi;
-
-
+                }else
 
                 if (isGPSEnabled){
 
@@ -240,6 +208,11 @@ public class GpsTracker extends Service implements ConnectionCallbacks,
     }
 
     @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    @Override
     public void onStatusChanged(String provider, int status, Bundle extras)
     {
     }
@@ -255,132 +228,17 @@ public class GpsTracker extends Service implements ConnectionCallbacks,
         return this.canGetLocation;
     }
 
-    // Konum bilgisi kapali ise kullaniciya ayarlar sayfasina baglanti iceren bir mesaj goruntulenir
-    public void showSettingsAlert()
-    {
-        AlertDialog.Builder alertDialog    = new AlertDialog.Builder(mContext);
 
-        // Mesaj basligi
-        alertDialog.setTitle("GPS Kapalı");
+    @Override
+    public void onDestroy() {
 
-        // Mesaj
-        alertDialog.setMessage("Konum bilgisi alınamıyor. Ayarlara giderek gps'i aktif hale getiriniz.");
-
-        // Mesaj ikonu
-        //alertDialog.setIcon(R.drawable.delete);
-
-        // Ayarlar butonuna tiklandiginda
-        alertDialog.setPositiveButton("Ayarlar", new DialogInterface.OnClickListener()
-        {
-            public void onClick(DialogInterface dialog,int which)
-            {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                mContext.startActivity(intent);
-
-            }
-        });
-
-        // Iptal butonuna tiklandiginda
-        alertDialog.setNegativeButton("İptal", new DialogInterface.OnClickListener()
-        {
-            public void onClick(DialogInterface dialog, int which)
-            {
-                dialog.cancel();
-            }
-        });
-
-        // Mesaj kutusunu goster
-        alertDialog.show();
+        stopUsingGPS();
+        super.onDestroy();
     }
-
-    // LocationManager'in gps isteklerini durdurur
-    public void stopUsingGPS()
-    {
-        if(locationManager != null)
-        {
+    public void stopUsingGPS() {
+        if (locationManager != null) {
             locationManager.removeUpdates(GpsTracker.this);
         }
-    }
-    private void getAnotherLocation() {
-        mGoogleApiClient = new GoogleApiClient.Builder(GpsTracker.this)
-                // The next two lines tell the new client that “this” current class will handle connection stuff
-                .addConnectionCallbacks(GpsTracker.this)
-                .addOnConnectionFailedListener(GpsTracker.this)
-                //fourth line adds the LocationServices API endpoint from GooglePlayServices
-                .addApi(LocationServices.API)
-                .build();
 
-
-
-
-
-        // Create the LocationRequest object
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(10 * 1000)        // 10 seconds, in milliseconds
-                .setFastestInterval(1000); // 1 second, in milliseconds
-    }
-
-
-
-
-    /**
-     * If connected get lat and long
-     *
-     */
-    @Override
-    public void onConnected(Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            return;
-        }
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
-        if (location == null) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, (com.google.android.gms.location.LocationListener) GpsTracker.this);
-
-        } else {
-
-            currentLatitude = location.getLatitude();
-            currentLongitude = location.getLongitude();
-          //  mcurrentLatitude= String.valueOf(currentLatitude);
-           // mcurrentLongitude= String.valueOf(currentLongitude);
-
-            if (latitude == 0.0)
-            {
-                latitude = currentLatitude;
-                longitude =currentLongitude;
-
-            }
-
-
-        }
-    }
-
-
-    @Override
-    public void onConnectionSuspended(int i) {}
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-    }
-    @Override
-    public void onLocationChanged(Location location) {
-        currentLatitude = location.getLatitude();
-        currentLongitude = location.getLongitude();
-
-       // mcurrentLatitude= String.valueOf(currentLatitude);
-      //  mcurrentLongitude= String.valueOf(currentLongitude);
-
-
-        if (latitude == 0.0)
-        {
-            latitude = currentLatitude;
-            longitude =currentLongitude;
-
-        }
-
-    }
-
-
+}
 }

@@ -3,8 +3,7 @@ package com.coeuz.pyscustomer.AdapterClass;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.coeuz.pyscustomer.ConsecutiveBookingSummary;
 import com.coeuz.pyscustomer.R;
-import com.coeuz.pyscustomer.Requiredclass.Constant;
-import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.requiredclass.Constant;
+import com.coeuz.pyscustomer.requiredclass.TinyDB;
 import java.util.ArrayList;
 
 
@@ -51,7 +50,7 @@ public class ConsecutiveDateBookingAdapter extends RecyclerView.Adapter<Consecut
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private TextView startTime,cost;
+        private TextView startTime,cost,hyphen;
         TextView Endtime;
         private LinearLayout layout,costlayout;
         public int position=0;
@@ -63,6 +62,7 @@ public class ConsecutiveDateBookingAdapter extends RecyclerView.Adapter<Consecut
             cost=itemView.findViewById(R.id.cost);
             layout=itemView.findViewById(R.id.timemorning);
             costlayout=itemView.findViewById(R.id.timemorning);
+            hyphen=itemView.findViewById(R.id.hyphen);
         }
     }
 
@@ -76,7 +76,7 @@ public class ConsecutiveDateBookingAdapter extends RecyclerView.Adapter<Consecut
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final ConsecutiveDateBookingAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
-
+        holder.hyphen.setVisibility(View.GONE);
         String bookTime=String.valueOf(consecutiveSlotModelsTime.get(position));
         if(bookTime.equals("null")){
             holder.startTime.setText("No slots");
@@ -109,7 +109,9 @@ public class ConsecutiveDateBookingAdapter extends RecyclerView.Adapter<Consecut
                     e.printStackTrace();
                 }*/
                 tinyDB.putString("SlotbookingTime",bookingTime);
-                tinyDB.putString(Constant.PAYMENTSTARTTIME,sendbookingTime);
+
+                tinyDB.putString(Constant.PAYMENTSTARTTIME,bookingTime);
+                tinyDB.putString(Constant.PAYMENTENDTIME,"");
                tinyDB.putString("SlotbookingCost",bookingCost);
 
                 tinyDB.putString(Constant.CONSLOTID,slotIds);

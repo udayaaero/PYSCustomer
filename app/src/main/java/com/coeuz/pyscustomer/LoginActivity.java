@@ -4,7 +4,7 @@ package com.coeuz.pyscustomer;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 
-import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
+import com.coeuz.pyscustomer.requiredclass.VolleySingleton;
 import com.facebook.FacebookSdk;
 import android.content.Context;
 import android.content.Intent;
@@ -14,12 +14,13 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -34,17 +35,15 @@ import com.android.volley.NetworkError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
-import com.coeuz.pyscustomer.Requiredclass.Constant;
-import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.requiredclass.Constant;
+import com.coeuz.pyscustomer.requiredclass.TinyDB;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -60,9 +59,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-
-import com.onesignal.OneSignal;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -74,7 +70,7 @@ import java.util.Map;
 import java.util.Objects;
 
 
-public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class        LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
 
     private AutoCompleteTextView mEmailView;
@@ -106,16 +102,17 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
-        OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
+    /*    OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
             @Override
             public void idsAvailable(String userId, String registrationId) {
-                onsignalUserId=userId;
 
-                if (registrationId != null){}
+                if (registrationId != null){
+                    onsignalUserId=userId;
+                }
 
 
             }
-        });
+        });*/
         setContentView(R.layout.activity_login);
 
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
@@ -238,6 +235,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
+                intent.putExtra("mainpage","PaymentPage");
                 startActivity(intent);
                 finish();
             }
@@ -356,8 +354,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
               
                     if (String.valueOf(error).equals("com.android.volley.AuthFailureError")) {
-                        Toast.makeText(getApplicationContext(), "Couldn't find Your Account! Please SignUp!!", Toast.LENGTH_SHORT).show();
-                    }
+                        Toast toast = Toast.makeText(LoginActivity.this,"Couldn't find Your Account! Please SignUp!!", Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
+                      }
 
                     if (error instanceof NetworkError) {
                         noInternetLayout.setVisibility(View.VISIBLE);
@@ -597,7 +597,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     }
 
-   /* public void disconnectFromFacebook() {
+    @Override
+    protected void onDestroy() {
+
+        super.onDestroy();
+    }
+    /* public void disconnectFromFacebook() {
 
         if (AccessToken.getCurrentAccessToken() == null) {
 
@@ -617,3 +622,4 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
 
 }
+

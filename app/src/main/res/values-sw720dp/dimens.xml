@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <dimen name="design_bottom_navigation_text_size" tools:override="true">10sp</dimen>
+    <dimen name="design_bottom_navigation_active_text_size" tools:override="true">10sp</dimen>
+    <dimen name="text_size_11sp">14sp</dimen>
+    <dimen name="text_size_12sp">15sp</dimen>
+    <dimen name="text_size_13sp">18sp</dimen>
+    <dimen name="text_size_14sp">17sp</dimen>
+    <dimen name="text_size_15sp">19sp</dimen>
+    <dimen name="text_size_16sp">20sp</dimen>
+    <dimen name="text_size_17sp">23sp</dimen>
+    <dimen name="text_size_18sp">24sp</dimen>
+    <dimen name="text_size_19sp">26sp</dimen>
+    <dimen name="text_size_20sp">28sp</dimen>
+
+    <dimen name="distance_0.5dp">0.5dp</dimen>
+    <dimen name="distance_1dp">2dp</dimen>
+    <dimen name="distance_2dp">3dp</dimen>
+    <dimen name="distance_3dp">4dp</dimen>
+    <dimen name="distance_4dp">6dp</dimen>
+    <dimen name="distance_5dp">12dp</dimen>
+    <dimen name="distance_6dp">14dp</dimen>
+    <dimen name="distance_7dp">16dp</dimen>
+    <dimen name="distance_8dp">18dp</dimen>
+    <dimen name="distance_9dp">20dp</dimen>
+    <dimen name="distance_10dp">25dp</dimen>
+    <dimen name="distance_11dp">26dp</dimen>
+    <dimen name="distance_14dp">37dp</dimen>
+    <dimen name="distance_12dp">30dp</dimen>
+    <dimen name="distance_15dp">30dp</dimen>
+    <dimen name="distance_20dp">50dp</dimen>
+    <dimen name="distance_21dp">52dp</dimen>
+    <dimen name="distance_25dp">40dp</dimen>
+    <dimen name="distance_30dp">30dp</dimen>
+    <dimen name="distance_31dp">65dp</dimen>
+    <dimen name="distance_35dp">65dp</dimen>
+    <dimen name="distance_40dp">70dp</dimen>
+    <dimen name="distance_45dp">85dp</dimen>
+    <dimen name="distance_50dp">90dp</dimen>
+    <dimen name="distance_60dp">100dp</dimen>
+    <dimen name="distance_68dp">120dp</dimen>
+    <dimen name="distance_70dp">120dp</dimen>
+    <dimen name="distance_80dp">140dp</dimen>
+    <dimen name="distance_77dp">150dp</dimen>
+    <dimen name="distance_100dp">200dp</dimen>
+    <dimen name="distance_110dp">225dp</dimen>
+    <dimen name="distance_180dp">300dp</dimen>
+    <dimen name="distance_120dp">240dp</dimen>
+    <dimen name="distance_140dp">240dp</dimen>
+    <dimen name="distance_150dp">260dp</dimen>
+    <dimen name="distance_160dp">320dp</dimen>
+    <dimen name="distance_190dp">360dp</dimen>
+    <dimen name="distance_200dp">360dp</dimen>
+
+    <dimen name="distance_165dp">320dp</dimen>
+    <dimen name="distance_250dp">460dp</dimen>
+    <dimen name="distance_310dp">500dp</dimen>
+    <dimen name="distance_370dp">550dp</dimen>
+    <dimen name="distance_400dp">600dp</dimen>
+
+    <dimen name="distance_500dp">800dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">20dp</dimen>
+    <dimen name="activity_vertical_margin">20dp</dimen>
+    <dimen name="upCommingdistance_250dp">650dp</dimen>
+    <dimen name="RecyclerView_height">395dp</dimen>
+
+</resources>

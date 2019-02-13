@@ -4,11 +4,10 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,17 +20,15 @@ import android.widget.Toast;
 import com.android.volley.NetworkError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.coeuz.pyscustomer.AdapterClass.FilterAmenityAdapter;
 import com.coeuz.pyscustomer.ModelClass.AmenitiesModel;
-import com.coeuz.pyscustomer.Requiredclass.Constant;
-import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
+import com.coeuz.pyscustomer.requiredclass.Constant;
+import com.coeuz.pyscustomer.requiredclass.VolleySingleton;
 
 
 import org.json.JSONArray;
@@ -216,7 +213,7 @@ public class FilterActivity extends AppCompatActivity {
                 }
             }
 
-            int selectedId1 = radioGroup1 .getCheckedRadioButtonId();
+                int selectedId1 = radioGroup1 .getCheckedRadioButtonId();
             int selectedId2 = radioGroup2 .getCheckedRadioButtonId();
            // int selectedId3 = radioGroup3 .getCheckedRadioButtonId();
 

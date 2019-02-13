@@ -3,20 +3,23 @@ package com.coeuz.pyscustomer.AdapterClass;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.coeuz.pyscustomer.CourseBookingSummary;
 import com.coeuz.pyscustomer.R;
-import com.coeuz.pyscustomer.Requiredclass.Constant;
-import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.requiredclass.Constant;
+import com.coeuz.pyscustomer.requiredclass.TinyDB;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 
@@ -69,7 +72,7 @@ public class SelectCourseAdapter extends RecyclerView.Adapter<SelectCourseAdapte
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         private TextView cstartDate,cendDate,cstartTime,cendTime,cbookingCost,cRegEndDate;
-        private CardView selectCourse;
+        private LinearLayout selectCourse;
 
 
         public MyViewHolder(View itemView) {
@@ -119,6 +122,29 @@ public class SelectCourseAdapter extends RecyclerView.Adapter<SelectCourseAdapte
                 String courseDuration=nCourseDurationList.get(position);
                 String personCount=nCoursePersonList.get(position);
                 mtinyDb.putString(Constant.PERSONCOUNT,personCount);
+
+
+                try {
+                    final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.getDefault());
+                    final Date dateObj = sdf.parse(courseStartTime );
+                    String timein12Format=new SimpleDateFormat("hh:mm a",Locale.getDefault()).format(dateObj);
+
+                    courseStartTime=String.valueOf(timein12Format);
+
+                    courseStartTime = courseStartTime.replace(".", "");
+                } catch (final ParseException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.getDefault());
+                    final Date dateObj = sdf.parse(courseendTime );
+                    String timein12Format=new SimpleDateFormat("hh:mm a",Locale.getDefault()).format(dateObj);
+
+                    courseendTime=String.valueOf(timein12Format);
+                    courseendTime = courseendTime.replace(".", "");
+                } catch (final ParseException e) {
+                    e.printStackTrace();
+                }
                 mtinyDb.putString(Constant.PAYMENTSTARTTIME,courseStartTime);
                 mtinyDb.putString(Constant.PAYMENTENDTIME,courseendTime);
 
@@ -134,6 +160,7 @@ public class SelectCourseAdapter extends RecyclerView.Adapter<SelectCourseAdapte
 
                 mtinyDb.putString("courseSlotId",courseSlotId);
                 mtinyDb.putString("courseStartTime",courseStartTime);
+                Log.d("fwrewfrewf",courseStartTime+"----"+courseendTime+"----"+bookingTime);
                 mtinyDb.putString("courseendTime",courseendTime);
                 mtinyDb.putString("courseMaxAllowed",courseMaxAllowed);
                 mtinyDb.putString("courseReccurence",courseReccurence);

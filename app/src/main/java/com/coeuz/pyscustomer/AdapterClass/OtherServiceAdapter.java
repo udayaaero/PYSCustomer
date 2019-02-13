@@ -3,9 +3,8 @@ package com.coeuz.pyscustomer.AdapterClass;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,7 @@ import android.widget.TextView;
 
 import com.coeuz.pyscustomer.OnItemClick;
 import com.coeuz.pyscustomer.R;
-import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.requiredclass.TinyDB;
 import java.util.ArrayList;
 
 public class OtherServiceAdapter extends RecyclerView.Adapter<OtherServiceAdapter.MyViewHolder> {
@@ -39,7 +38,6 @@ public class OtherServiceAdapter extends RecyclerView.Adapter<OtherServiceAdapte
 
         mtinyDb=new TinyDB(mcontext);
         subActivityId=mtinyDb.getString("activityId");
-
 
     }
 

@@ -3,21 +3,21 @@ package com.coeuz.pyscustomer;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.tabs.TabLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.coeuz.pyscustomer.CourseFragment.ACTIVE2;
 import com.coeuz.pyscustomer.CourseFragment.COMPLETED2;
 import com.coeuz.pyscustomer.CourseFragment.NEARING2;
-import com.coeuz.pyscustomer.Requiredclass.Constant;
-import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.requiredclass.Constant;
+import com.coeuz.pyscustomer.requiredclass.TinyDB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +62,8 @@ public class CourseActivity extends AppCompatActivity {
         fragment.setArguments(bundle1);
         adapter.addFragment(fragment,"AVAILED");*/
         //adapter.addFragment(new AVAILED(), "Booking AVAILED");
-        adapter.addFragment(new NEARING2(), "NEARING");
         adapter.addFragment(new ACTIVE2(), "ACTIVE");
+        adapter.addFragment(new NEARING2(), "NEARING");
         adapter.addFragment(new COMPLETED2(), "COMPLETED");
 
 

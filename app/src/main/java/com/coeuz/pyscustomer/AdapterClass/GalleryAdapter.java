@@ -1,24 +1,21 @@
 package com.coeuz.pyscustomer.AdapterClass;
 
+import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 
-import com.coeuz.pyscustomer.AfterSelectVendor;
-import com.coeuz.pyscustomer.GalleryActivity;
 import com.coeuz.pyscustomer.R;
-import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.requiredclass.TinyDB;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 
@@ -99,6 +96,23 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
+                        Bitmap img=ImageList.get(position);
+                        final Dialog nagDialog = new Dialog(mcontext,android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+                        nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        nagDialog.setCancelable(true);
+                        nagDialog.setCanceledOnTouchOutside(true);
+                        nagDialog.setContentView(R.layout.preview_image);
+
+                        ImageView ivPreview = nagDialog.findViewById(R.id.myZoomageView);
+                        ivPreview.setImageBitmap(img);
+
+
+                        nagDialog.show();
+
+
+
              /*   ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 Bitmap bmp=ImageList.get(position);
 

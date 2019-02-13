@@ -3,7 +3,7 @@ package com.coeuz.pyscustomer;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.view.View;
@@ -13,8 +13,8 @@ import android.widget.ImageView;
 
 import android.widget.TextView;
 
-import com.coeuz.pyscustomer.Requiredclass.Constant;
-import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.requiredclass.Constant;
+import com.coeuz.pyscustomer.requiredclass.TinyDB;
 
 public class ConfirmationActivity extends AppCompatActivity {
 

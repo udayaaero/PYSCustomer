@@ -44,4 +44,19 @@
     <color name="color_roseLite">#fffbe7</color>
 
 
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorBlock">#000000</color>
+    <color name="colorAsh">#c0c0c0</color>
+    <color name="colorLiteAsh">#f9f9f9</color>
+    <color name="colorSkyblue">#03d3ff</color>
+    <color name="colorLiteGreen">#9dd200</color>
+    <color name="colorDarkSkyblue">#20adff</color>
+    <color name="colorDarkSkyblue1">#4cdfff</color>
+    <color name="colorYellow">#ffff00</color>
+    <color name="colorBlue">#1644d6</color>
+    <color name="colorOrange">#feb275</color>
+    <color name="colorRed">#fe7f72</color>
+    <color name="colorGreen">#76ae88</color>
+
+
 </resources>

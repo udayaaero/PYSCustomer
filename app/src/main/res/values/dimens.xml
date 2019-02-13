@@ -39,4 +39,7 @@
     <dimen name="dimen_56dp">56dp</dimen>
 
     <integer name="animation_dur_medium">300</integer>
+ <!--   <dimen name="Recycler_Height">200dp</dimen>-->
+    <dimen name="service_near_address">90dp</dimen>
+    <dimen name="service_near_address_heading">40dp</dimen>
 </resources>

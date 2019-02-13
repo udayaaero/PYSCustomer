@@ -15,6 +15,9 @@ public class SlotModel {
         @SerializedName("slotStartTime")
         @Expose
         private String slotStartTime;
+    @SerializedName("offerPercentage")
+    @Expose
+    private String offerPercentage;
         @SerializedName("slotEndTime")
         @Expose
         private String slotEndTime;
@@ -123,6 +126,17 @@ public class SlotModel {
 
     }
 
+  public SlotModel(Integer slotId, String slotStartTime, String slotEndTime, Integer maxAllowed, Integer bookingSlotCost,
+                     Integer personCount, String offerPersentage) {
+        this.slotId=slotId;
+        this.slotStartTime=slotStartTime;
+        this.slotEndTime=slotEndTime;
+        this.maxAllowed=maxAllowed;
+        this.bookingCost=bookingSlotCost;
+        this.personCount=personCount;
+        this.offerPercentage=offerPersentage;
+    }
+
     public Integer getSlotId() {
             return slotId;
         }
@@ -138,6 +152,14 @@ public class SlotModel {
         public void setSlotStartTime(String slotStartTime) {
             this.slotStartTime = slotStartTime;
         }
+
+    public String getOfferPercentage() {
+        return offerPercentage;
+    }
+
+    public void setOfferPercentage(String offerPercentage) {
+        this.offerPercentage = offerPercentage;
+    }
 
         public String getSlotEndTime() {
             return slotEndTime;

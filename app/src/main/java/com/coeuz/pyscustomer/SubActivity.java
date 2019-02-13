@@ -8,12 +8,13 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -39,10 +40,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.coeuz.pyscustomer.AdapterClass.SubActivityAdapter;
 import com.coeuz.pyscustomer.ModelClass.SubActivityModel;
-import com.coeuz.pyscustomer.Requiredclass.Constant;
+import com.coeuz.pyscustomer.requiredclass.Constant;
 
-import com.coeuz.pyscustomer.Requiredclass.TinyDB;
-import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
+import com.coeuz.pyscustomer.requiredclass.TinyDB;
+import com.coeuz.pyscustomer.requiredclass.VolleySingleton;
 import com.pnikosis.materialishprogress.ProgressWheel;
 
 import org.json.JSONArray;
@@ -195,7 +196,12 @@ public class SubActivity extends AppCompatActivity {
         subActivityModels.clear();
         if ( filterVales != null  && !filterVales.isEmpty()&&!filterVales.equals("[]")) {
 
-
+            mGender="0";
+            mRelavance="0";
+            mfromAmount="0";
+            mtoAmount="0";
+            mprogressRate="0";
+            mamenitiesList="0";
 
             mGender=intent.getStringExtra("nGender");
             mRelavance=intent.getStringExtra("nRelavance");
@@ -203,7 +209,9 @@ public class SubActivity extends AppCompatActivity {
             mtoAmount=intent.getStringExtra("toAmount");
             mprogressRate=intent.getStringExtra("progressRate");
              mamenitiesList=intent.getStringExtra("amenitiesList");
-         /*   if( mGender != null  && !mGender.isEmpty()){
+
+
+          if( mGender != null  && !mGender.isEmpty()){
 
             }else{mGender="";}
             if( mRelavance != null  && !mRelavance.isEmpty()){
@@ -221,21 +229,23 @@ public class SubActivity extends AppCompatActivity {
             }else{mprogressRate="0";}
             if( mamenitiesList != null  && !mamenitiesList.isEmpty()){
 
-            }else{mamenitiesList="0";}*/
+            }else{mamenitiesList="";}
 
+            Log.d("gregetgt",mGender+"----"+mRelavance+"---"+mfromAmount+"---"+mtoAmount+"---"+mprogressRate+"---"+mamenitiesList+"--"+msubActivityId);
 
 
             if (searchLat != null && !searchLat.isEmpty()) {
 
                 double mSearchLat = Double.parseDouble(searchLat);
                 double mSearchLong = Double.parseDouble(searchLong);
-                String URL = Constant.API +"/user/getVendorsByFilters?amenityId="+mamenitiesList+"&cost="+mprogressRate+"&fromCost="+mfromAmount+"&tocost="+mtoAmount+"&order="+mRelavance+"&lat="+mSearchLat+"&long="+mSearchLong+"&offset=0&limit=5&gender="+mGender+"&subActivityId="+msubActivityId;
+
+                String URL = Constant.API +"/user/getVendorsByFilters?amenityId="+mamenitiesList+"&cost=0"+"&fromCost="+mfromAmount+"&tocost="+mprogressRate+"&order="+mRelavance+"&lat="+mSearchLat+"&long="+mSearchLong+"&offset=0&limit=5&gender="+mGender+"&subActivityId="+msubActivityId;
                 //String URL = Constant.API + "/user/getVendorsByFilters?amenityId="+mamenitiesList+"&cost="+mprogressRate+"&fromCost="+mfromAmount+"&tocost="+mtoAmount+"&order="+mRelavance+"&lat="+searchLat+"&long="+searchLong+"&offset=0&limit=5"+"&gender="+mGender;
                 itShouldLoadMore = false;
                 StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
+                        Log.d("grege",response);
                         mprogressBar.setVisibility(View.GONE);
                         itShouldLoadMore = true;
                         try {
@@ -317,14 +327,14 @@ public class SubActivity extends AppCompatActivity {
                 VolleySingleton.getInstance(SubActivity.this).addToRequestQueue(request1);
             } else {
 
-                String URL = Constant.API +"/user/getVendorsByFilters?amenityId="+mamenitiesList+"&cost="+mprogressRate+"&fromCost="+mfromAmount+"&tocost="+mtoAmount+"&order="+mRelavance+"&lat="+latitude+"&long="+longitude+"&offset=0&limit=5&gender="+mGender+"&subActivityId="+msubActivityId;
+                String URL = Constant.API +"/user/getVendorsByFilters?amenityId="+mamenitiesList+"&cost=0"+"&fromCost="+mfromAmount+"&tocost="+mprogressRate+"&order="+mRelavance+"&lat="+latitude+"&long="+longitude+"&offset=0&limit=5&gender="+mGender+"&subActivityId="+msubActivityId;
 
                 itShouldLoadMore = false;
 
                 StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
+                            Log.d("tehteh",response);
                         mprogressBar.setVisibility(View.GONE);
                         itShouldLoadMore = true;
                         try {
@@ -421,7 +431,7 @@ public class SubActivity extends AppCompatActivity {
                 StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
+                        Log.d("rethetjh",response);
                         mprogressBar.setVisibility(View.GONE);
                         itShouldLoadMore = true;
                         try {
@@ -604,7 +614,7 @@ public class SubActivity extends AppCompatActivity {
 
                 double mSearchLat = Double.parseDouble(searchLat);
                 double mSearchLong = Double.parseDouble(searchLong);
-                String URL = Constant.API + "/user/getVendorsByFilters?amenityId=" + mamenitiesList + "&cost=" + mprogressRate + "&fromCost=" + mfromAmount + "&tocost=" + mtoAmount + "&order=" + mRelavance + "&lat=" + mSearchLat + "&long=" + mSearchLong + "&offset=" + mOffset + "&limit=" + mLimit + "&gender=" + mGender+"&subActivityId="+msubActivityId;
+                String URL = Constant.API + "/user/getVendorsByFilters?amenityId=" + mamenitiesList + "&cost=0" +  "&fromCost=" + mfromAmount + "&tocost=" + mprogressRate + "&order=" + mRelavance + "&lat=" + mSearchLat + "&long=" + mSearchLong + "&offset=" + mOffset + "&limit=" + mLimit + "&gender=" + mGender+"&subActivityId="+msubActivityId;
 
                 itShouldLoadMore = false;
                 StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
@@ -689,7 +699,7 @@ public class SubActivity extends AppCompatActivity {
                 VolleySingleton.getInstance(SubActivity.this).addToRequestQueue(request1);
             } else {
 
-                String URL = Constant.API + "/user/getVendorsByFilters?amenityId=" + mamenitiesList + "&cost=" + mprogressRate + "&fromCost=" + mfromAmount + "&tocost=" + mtoAmount + "&order=" + mRelavance + "&lat=" + latitude + "&long=" + longitude + "&offset=" + mOffset + "&limit=" + mLimit + "&gender=" + mGender+"&subActivityId="+msubActivityId;
+                String URL = Constant.API + "/user/getVendorsByFilters?amenityId=" + mamenitiesList + "&cost=0" +  "&fromCost=" + mfromAmount + "&tocost=" + mprogressRate + "&order=" + mRelavance + "&lat=" + latitude + "&long=" + longitude + "&offset=" + mOffset + "&limit=" + mLimit + "&gender=" + mGender+"&subActivityId="+msubActivityId;
 
                 itShouldLoadMore = false;
 
@@ -1143,8 +1153,8 @@ public class SubActivity extends AppCompatActivity {
             finish();
         }
         if (id == android.R.id.home) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+        /*    Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);*/
             this.finish();
         }
 

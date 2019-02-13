@@ -46,6 +46,9 @@
     <dimen name="margin_40dp">40dp</dimen>
     <dimen name="margin_50dp">50dp</dimen>
 
+
+    <dimen name="RecyclerView_height">395dp</dimen>
+
     <dimen name="location_change_image_size">200dp</dimen>
     <dimen name="progressbar_100dp">100dp</dimen>
     <dimen name="button_distance_250">250dp</dimen>
@@ -58,11 +61,15 @@
     <dimen name="service_near_width">150dp</dimen>
     <dimen name="service_near_padding8">8dp</dimen>
     <dimen name="service_near_padding3">3dp</dimen>
-    <dimen name="service_near_address">90dp</dimen>
+    <dimen name="service_near_address">70dp</dimen>
+    <dimen name="service_near_address_heading">30dp</dimen>
     <dimen name="subactivity_icon">50dp</dimen>
     <dimen name="vendor_main_image">180dp</dimen>
     <dimen name="gallery_image_size">80dp</dimen>
     <dimen name="no_Slot_available_image">50dp</dimen>
     <dimen name="chart_height">120dp</dimen>
     <dimen name="map_hight">300dp</dimen>
+    <dimen name="Recycler_Height">415dp</dimen>
+    <dimen name="Recycler_Height1">600dp</dimen>
+
 </resources>

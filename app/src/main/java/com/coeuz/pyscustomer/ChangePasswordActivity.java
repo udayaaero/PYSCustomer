@@ -4,7 +4,7 @@ package com.coeuz.pyscustomer;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,8 +26,11 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.coeuz.pyscustomer.Requiredclass.Constant;
-import com.coeuz.pyscustomer.Requiredclass.TinyDB;
+import com.coeuz.pyscustomer.requiredclass.Constant;
+import com.coeuz.pyscustomer.requiredclass.TinyDB;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -107,12 +110,24 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
+                            Log.d("g4h56",response);
+                            try {
+                                JSONObject jsonObject = new JSONObject(response);
+                                String status = jsonObject.getString("status");
+                                if(status.equalsIgnoreCase("SUCCESS")){
+                                    Toast.makeText(getApplicationContext(), "Your password has been Successfully changed", Toast.LENGTH_LONG).show();
 
-                            Toast.makeText(getApplicationContext(), "Your Password is Updated", Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }else{
+                                    Toast.makeText(getApplicationContext(), "Wrong password, Try again or click Forgot password to reset it.", Toast.LENGTH_LONG).show();
 
-                           Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
-                            startActivity(intent);
-                            finish();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
 
 
                         }

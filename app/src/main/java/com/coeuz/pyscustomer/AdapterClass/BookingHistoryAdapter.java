@@ -4,12 +4,12 @@ package com.coeuz.pyscustomer.AdapterClass;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.RecyclerView;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,20 +18,16 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.coeuz.pyscustomer.BookingHistoryActivity;
 import com.coeuz.pyscustomer.ModelClass.BookingHistoryModel;
 import com.coeuz.pyscustomer.R;
-import com.coeuz.pyscustomer.Requiredclass.Constant;
-import com.coeuz.pyscustomer.Requiredclass.TinyDB;
-import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
-
-import org.json.JSONObject;
+import com.coeuz.pyscustomer.requiredclass.Constant;
+import com.coeuz.pyscustomer.requiredclass.TinyDB;
+import com.coeuz.pyscustomer.requiredclass.VolleySingleton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,7 +69,9 @@ public class BookingHistoryAdapter extends RecyclerView.Adapter<BookingHistoryAd
         holder.amount1.setText("Rs."+BookingHistory.get(position).getAmount1());
         holder.subActivityType.setText(BookingHistory.get(position).getSubActivityType());
         holder.vendorName.setText(BookingHistory.get(position).getVendorName());
+        holder.startAndEnd.setText(BookingHistory.get(position).getStartTime()+" to "+BookingHistory.get(position).getEndTime());
         holder.otp.setText("OTP - "+BookingHistory.get(position).getOtp());
+        Log.d("gregetg","---"+String.valueOf(BookingHistory.get(position).getOtp()));
         holder.cancelSlot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -160,7 +158,7 @@ public class BookingHistoryAdapter extends RecyclerView.Adapter<BookingHistoryAd
     class MyViewHolder extends RecyclerView.ViewHolder {
 
         private TextView bookingStatus,booedforDate,bookingtimeStamp,
-                personcount,amount1,subActivityType,vendorName,otp;
+                personcount,amount1,subActivityType,vendorName,otp,startAndEnd;
         private Button cancelSlot;
 
 
@@ -177,6 +175,7 @@ public class BookingHistoryAdapter extends RecyclerView.Adapter<BookingHistoryAd
             vendorName= view.findViewById(R.id.vendorName);
             otp= view.findViewById(R.id.otp);
             cancelSlot= view.findViewById(R.id.cancelSlot);
+            startAndEnd= view.findViewById(R.id.startAndEnd);
 
 
         }

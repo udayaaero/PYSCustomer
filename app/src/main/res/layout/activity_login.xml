@@ -41,7 +41,7 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColorHint="@color/block"
@@ -63,9 +63,9 @@
 
                     android:textColorHint="@color/white"
                     tools:ignore="HardcodedText,UnusedAttribute" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColorHint="@color/block"
@@ -89,7 +89,7 @@
                     android:singleLine="true"
                     android:textColor="@color/block"
                     tools:ignore="UnusedAttribute" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <Button
                 android:id="@+id/email_sign_in_button"

@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+
+<LinearLayout android:layout_marginBottom="5dp"
+    android:layout_marginTop="10dp"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/select_course"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<androidx.cardview.widget.CardView
+    xmlns:tools="http://schemas.android.com/tools"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="0dp"
     android:padding="5dp"
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
     <LinearLayout
-    android:background="@drawable/backedittexit"
-        android:padding="2dp"
+        android:background="#e8e8e8"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -36,6 +46,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content">
             <TextView
+                android:gravity="start"
+                android:textSize="12sp"
                 android:layout_weight="1"
                 android:text="StartDate"
                 tools:ignore="HardcodedText,NestedWeights"
@@ -43,6 +55,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
             <TextView
+                android:gravity="start"
+                android:textSize="12sp"
                 android:id="@+id/cStartDates"
                 android:layout_weight="1"
                 android:text=""
@@ -59,6 +73,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content">
             <TextView
+                android:gravity="start"
+                android:textSize="12sp"
                 android:layout_weight="1"
                 tools:ignore="HardcodedText,NestedWeights"
                 android:text="EndDate"
@@ -66,6 +82,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
             <TextView
+                android:gravity="start"
+                android:textSize="12sp"
                 android:layout_weight="1"
                 android:id="@+id/cEndDates"
                 android:text=""
@@ -92,6 +110,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content">
             <TextView
+                android:gravity="start"
+                android:textSize="12sp"
                 android:layout_weight="1"
                 tools:ignore="HardcodedText,NestedWeights"
                 android:text="Timings"
@@ -99,6 +119,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
             <TextView
+                android:gravity="start"
+                android:textSize="12sp"
                 android:id="@+id/cStartTime"
                 android:layout_weight="1"
                 android:text=""
@@ -115,6 +137,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content">
             <TextView
+                android:gravity="start"
+                android:textSize="12sp"
                 android:layout_weight="1"
                 android:text="Duration"
                 tools:ignore="HardcodedText,NestedWeights"
@@ -122,6 +146,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
             <TextView
+                android:gravity="start"
+                android:textSize="12sp"
                 android:layout_weight="1"
                 android:id="@+id/cEndTime"
                 android:text=""
@@ -148,6 +174,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content">
             <TextView
+                android:gravity="start"
+                android:textSize="12sp"
                 android:layout_weight="1"
                 android:text="Cost"
                 tools:ignore="HardcodedText,NestedWeights"
@@ -155,6 +183,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
             <TextView
+                android:gravity="start"
+                android:textSize="12sp"
                 android:id="@+id/cbookCost"
                 android:layout_weight="1"
                 android:text=""
@@ -171,6 +201,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content">
             <TextView
+                android:gravity="start"
+                android:textSize="12sp"
                 android:layout_weight="1"
                 android:text="@string/Registration"
                 android:textColor="@color/block"
@@ -178,6 +210,8 @@
                 android:layout_height="wrap_content"
                 tools:ignore="NestedWeights" />
             <TextView
+                android:gravity="start"
+                android:textSize="12sp"
                 android:layout_weight="1"
                 android:id="@+id/cRegEndDate"
                 android:text=""
@@ -188,4 +222,5 @@
     </LinearLayout>
 </LinearLayout>
 </LinearLayout>
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>
+</LinearLayout>

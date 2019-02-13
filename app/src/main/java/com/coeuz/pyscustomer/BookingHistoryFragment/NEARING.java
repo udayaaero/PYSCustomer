@@ -3,10 +3,11 @@ package com.coeuz.pyscustomer.BookingHistoryFragment;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,19 +22,17 @@ import android.widget.Toast;
 import com.android.volley.NetworkError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.coeuz.pyscustomer.AdapterClass.BookingHistoryAdapter1;
 import com.coeuz.pyscustomer.ModelClass.BookingHistoryModel;
 import com.coeuz.pyscustomer.R;
-import com.coeuz.pyscustomer.Requiredclass.Constant;
-import com.coeuz.pyscustomer.Requiredclass.TinyDB;
-import com.coeuz.pyscustomer.Requiredclass.VolleySingleton;
+import com.coeuz.pyscustomer.requiredclass.Constant;
+import com.coeuz.pyscustomer.requiredclass.TinyDB;
+import com.coeuz.pyscustomer.requiredclass.VolleySingleton;
 import com.pnikosis.materialishprogress.ProgressWheel;
 
 import org.json.JSONArray;
@@ -162,7 +161,7 @@ public class NEARING extends Fragment{
         StringRequest request1 = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
+                Log.d("nvjrnier",response);
                 mprogressBar.setVisibility(View.GONE);
                 itShouldLoadMore = true;
                 try {
@@ -186,6 +185,8 @@ public class NEARING extends Fragment{
                             String personcount = jsonObject.getString("personcount");
                             String amount1 = jsonObject.getString("amount1");
                             String slotid = jsonObject.getString("slotid");
+                            String startTime = jsonObject.getString("startTime");
+                            String endTime = jsonObject.getString("endTime");
                             String subActivityType = jsonObject.getString("subActivityType");
                             String vendorName = jsonObject.getString("vendorName");
                             bookingtimeStamp = bookingtimeStamp.substring(11, 16);
@@ -216,7 +217,7 @@ public class NEARING extends Fragment{
 
 
                             recyclerModels.add(new BookingHistoryModel(bookingStatus, bookingType, booedforDate, bookingtimeStamp, bookingid
-                                    , personcount, amount1, slotid, subActivityType, vendorName));
+                                    , personcount, amount1, slotid, subActivityType, vendorName,startTime,endTime));
                             recyclerAdapter.notifyDataSetChanged();
 
 
@@ -325,6 +326,8 @@ public class NEARING extends Fragment{
                             String bookingid = jsonObject.getString("bookingid");
                             String personcount = jsonObject.getString("personcount");
                             String amount1 = jsonObject.getString("amount1");
+                            String startTime = jsonObject.getString("startTime");
+                            String endTime = jsonObject.getString("endTime");
                             String slotid = jsonObject.getString("slotid");
                             String subActivityType = jsonObject.getString("subActivityType");
                             String vendorName = jsonObject.getString("vendorName");
@@ -356,7 +359,7 @@ public class NEARING extends Fragment{
 
 
                             recyclerModels.add(new BookingHistoryModel(bookingStatus, bookingType, booedforDate, bookingtimeStamp, bookingid
-                                    , personcount, amount1, slotid, subActivityType, vendorName));
+                                    , personcount, amount1, slotid, subActivityType, vendorName,startTime,endTime));
                             recyclerAdapter.notifyDataSetChanged();
 
                         }

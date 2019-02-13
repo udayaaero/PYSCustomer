@@ -1,7 +1,7 @@
 package com.coeuz.pyscustomer.AdapterClass;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +14,7 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.MyViewHolder
 
     public Context mcontext;
 
-    //private ArrayList<OfferModel> offerModel;
+
     private ArrayList<String> mofferStartList;
     private ArrayList<String> mofferEndList;
     private ArrayList<String> mofferTypeList;
@@ -33,11 +33,11 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.MyViewHolder
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private TextView offerFrom,offerTo,mofferCategorytype,mBenefits;
+        private TextView offerTo,mofferCategorytype,mBenefits;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            offerFrom=itemView.findViewById(R.id.offerfrom);
+
             offerTo=itemView.findViewById(R.id.offerto);
             mofferCategorytype=itemView.findViewById(R.id.offerCategorytype);
             mBenefits=itemView.findViewById(R.id.benefits);
@@ -56,10 +56,9 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.MyViewHolder
     public void onBindViewHolder(final OfferAdapter.MyViewHolder holder, final int position) {
 
 
-        holder.offerFrom.setText(mofferStartList.get(position));
-        holder.offerTo.setText(mofferEndList.get(position));
-        holder.mofferCategorytype.setText( mofferTypeList.get(position));
-        holder.mBenefits.setText(mofferBenefits.get(position));
+        holder.mofferCategorytype.setText( "Rs."+mofferTypeList.get(position)+" maximum discount for this Offer");
+        holder.mBenefits.setText("Get "+mofferBenefits.get(position)+" cashback on this booking!");
+        holder.offerTo.setText("Offer Valid till "+mofferEndList.get(position)+" ,23.59 PM");
 
         }
 

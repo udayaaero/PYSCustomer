@@ -5,7 +5,7 @@
     android:layout_width="@dimen/service_near_width"
     android:padding="@dimen/service_near_padding8"
     android:layout_height="wrap_content">
-<android.support.v7.widget.CardView
+<androidx.cardview.widget.CardView
     android:background="@color/white"
     android:id="@+id/SelectChard"
     android:layout_width="wrap_content"
@@ -34,7 +34,10 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
         <TextView
+            android:maxLines="1"
+            android:ellipsize="end"
            android:layout_centerHorizontal="true"
             android:id="@+id/NameOfVendor"
             android:text="Name Of Vendor"
@@ -43,8 +46,10 @@
             android:textSize="13sp"
             android:textColor="@color/colorPrimary"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"  />
         <TextView
+            android:maxLines="4"
+            android:ellipsize="end"
             android:layout_below="@+id/NameOfVendor"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/margin_2dp"
@@ -58,5 +63,5 @@
             android:layout_height="@dimen/service_near_address" />
         </RelativeLayout>
     </LinearLayout>
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>
 </LinearLayout>

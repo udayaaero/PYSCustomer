@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/linear_interpolator">
     <item>
         <rotate
             android:drawable="@drawable/progress"
@@ -8,7 +9,7 @@
             android:pivotX="50%"
             android:pivotY="50%"
             android:toDegrees="360"
-            android:duration="6000"
+            android:duration="5000"
             android:repeatMode="restart"
             android:repeatCount="infinite"/>
     </item>
